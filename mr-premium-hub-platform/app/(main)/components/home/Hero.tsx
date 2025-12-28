@@ -21,7 +21,7 @@ export default function Hero() {
       <div className="absolute inset-0 z-0">
         <Image
           src="/Images/Baner/Layer 5.png"
-          alt="Background"
+          alt="مسترپریمیوم هاب - خدمات پرداخت ارزی و نقد کردن درآمد پی پال"
           fill
           className="object-cover object-center"
           priority
