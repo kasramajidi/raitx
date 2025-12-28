@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Header } from "@/components/layout";
+import { Header, Footer } from "@/components/layout";
 
 const iransans = localFont({
   src: [
@@ -50,6 +50,7 @@ export default function RootLayout({
       >
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );
