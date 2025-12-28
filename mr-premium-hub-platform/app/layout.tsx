@@ -33,6 +33,13 @@ const iransans = localFont({
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com"),
   title: {
+    default: "Mr Premium Hub",
+    template: "%s | Mr Premium Hub",
+  },
+  description: "نقد کردن درآمدهای ارزی و پرداخت ارزی آنلاین",
+  icons: {
+    icon: "/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png",
+    apple: "/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png",
     default: "مسترپریمیوم هاب | Mr Premium Hub - خدمات پرداخت ارزی و پی پال",
     template: "%s | مسترپریمیوم هاب",
   },
@@ -100,8 +107,7 @@ export const metadata: Metadata = {
     // yandex: "your-yandex-verification-code",
   },
   alternates: {
-    canonical: "/",
-  },
+    canonical: "/",  },
 };
 
 export default function RootLayout({

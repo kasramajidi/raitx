@@ -27,7 +27,7 @@ export default function Header({
             </div>
           </div>
 
-          <div className="hidden min-[500px]:flex items-center flex-1 justify-center px-2 md:px-4 lg:px-6 xl:px-8 order-2 overflow-x-auto scrollbar-hide">
+          <div className="hidden min-[500px]:flex items-center flex-1 justify-center px-2 md:px-4 lg:px-6 xl:px-8 order-2 overflow-visible">
             <NavLinks />
           </div>
 

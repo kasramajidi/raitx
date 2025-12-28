@@ -16,12 +16,12 @@ export default function Logo({
       className="inline-flex items-center group transition-opacity hover:opacity-90 cursor-pointer"
       aria-label="صفحه اصلی"
     >
-      <div className="relative h-8 sm:h-9 md:h-10 lg:h-12 xl:h-14 w-auto flex items-center justify-center">
+      <div className="relative h-20 sm:h-22 md:h-24  w-auto flex items-center justify-center">
         <Image
-          src="/Images/Logo/logo stock copy 2.png"
+          src="/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png"
           alt={alt}
-          width={180}
-          height={60}
+          width={450}
+          height={120}
           className="h-full w-auto object-contain"
           priority
         />
