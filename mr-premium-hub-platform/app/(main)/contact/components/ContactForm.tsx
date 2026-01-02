@@ -1,94 +1,59 @@
-"use client";
-
-import { useState } from "react";
-import { FaArrowLeft } from "react-icons/fa6";
-
 export default function ContactForm() {
-  const [formData, setFormData] = useState({
-    name: "",
-    mobile: "",
-    email: "",
-    message: "",
-  });
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    // Handle form submission here
-    console.log("Form submitted:", formData);
-    // Reset form
-    setFormData({
-      name: "",
-      mobile: "",
-      email: "",
-      message: "",
-    });
-  };
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
   return (
-    <div className="bg-gray-800 rounded-xl sm:rounded-2xl p-4 sm:p-5 md:p-6 lg:p-8 shadow-lg h-[488px] sm:h-[552px] md:h-[652px] lg:h-[716px] xl:h-[770px] flex flex-col">
-      <h2 className="text-lg sm:text-xl md:text-2xl font-bold text-white mb-4 sm:mb-5 md:mb-6">
-        ارسال پیام
+    <div className="order-1 lg:order-1 flex flex-col min-h-[350px] sm:min-h-[300px] md:h-[350px]">
+      <h2 className="text-xs sm:text-sm md:text-base font-bold text-gray-800 mb-3 sm:mb-4 text-right">
+        سوالی دارید؟ بپرسید
       </h2>
-      <form onSubmit={handleSubmit} className="flex-1 flex flex-col space-y-3 sm:space-y-4">
-        <div>
-          <input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="نام و نام خانوادگی"
-            required
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white rounded-lg sm:rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          />
+      <form className="bg-white rounded-lg md:rounded-xl p-3 sm:p-4 md:p-5 shadow-sm space-y-2.5 sm:space-y-3 flex-1 flex flex-col [&_input:focus]:border-[#ff5538] [&_textarea:focus]:border-[#ff5538]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+          <div>
+            <input
+              type="text"
+              placeholder="نام"
+              required
+              className="w-full px-3 py-2 text-xs sm:text-sm bg-gray-50 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#ff5538] focus:border-transparent text-right"
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              placeholder="آدرس ایمیل"
+              required
+              className="w-full px-3 py-2 text-xs sm:text-sm bg-gray-50 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#ff5538] focus:border-transparent text-right"
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="tel"
-            name="mobile"
-            value={formData.mobile}
-            onChange={handleChange}
-            placeholder="شماره موبایل"
-            required
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white rounded-lg sm:rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 sm:gap-3">
+          <div>
+            <input
+              type="text"
+              placeholder="موضوع پیام"
+              required
+              className="w-full px-3 py-2 text-xs sm:text-sm bg-gray-50 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#ff5538] focus:border-transparent text-right"
+            />
+          </div>
+          <div>
+            <input
+              type="tel"
+              placeholder="شماره تماس"
+              required
+              className="w-full px-3 py-2 text-xs sm:text-sm bg-gray-50 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#ff5538] focus:border-transparent text-right"
+            />
+          </div>
         </div>
-        <div>
-          <input
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="ایمیل"
-            required
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white rounded-lg sm:rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400"
-          />
-        </div>
-        <div className="flex-1">
+        <div className="flex-1 min-h-[100px] sm:min-h-[120px]">
           <textarea
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
             placeholder="پیام"
             required
-            rows={5}
-            className="w-full px-3 sm:px-4 py-2.5 sm:py-3 text-sm sm:text-base bg-white rounded-lg sm:rounded-xl text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-gray-400 resize-none h-full"
-          />
+            className="w-full h-full px-3 py-2 text-xs sm:text-sm bg-gray-50 rounded-lg border border-gray-200 text-gray-800 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-[#ff5538] focus:border-transparent resize-none text-right"
+          ></textarea>
         </div>
         <button
           type="submit"
-          className="w-full bg-gray-700 hover:bg-gray-600 text-white text-sm sm:text-base font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg sm:rounded-xl transition-colors flex items-center justify-center gap-2"
+          className="w-full text-white text-xs sm:text-sm font-medium py-2 sm:py-2.5 px-4 sm:px-5 rounded-lg transition-opacity hover:opacity-90 mt-2 sm:mt-0"
+          style={{ backgroundColor: '#ff5538' }}
         >
-          <span>ارسال پیام</span>
-          <FaArrowLeft className="text-base sm:text-lg" />
+          ارسال
         </button>
       </form>
     </div>
