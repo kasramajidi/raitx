@@ -10,3 +10,10 @@ export {
 } from "./carousel";
 export type { CarouselApi } from "./carousel";
 
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "./accordion";
+
