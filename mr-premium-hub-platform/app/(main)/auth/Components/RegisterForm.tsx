@@ -42,6 +42,16 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
       data: { id: string; username: string; email: string },
       variables: RegisterFormData
     ) => {
+      // Store user data temporarily before auto-login
+      if (typeof window !== "undefined") {
+        const userData = {
+          id: data.id,
+          username: data.username,
+          email: data.email,
+        };
+        localStorage.setItem("user", JSON.stringify(userData));
+      }
+      
       loginMutation.mutate({
         email: variables.email,
         password: variables.password,
