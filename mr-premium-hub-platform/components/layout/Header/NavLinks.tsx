@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ServicesDropdown from "./ServicesDropdown";
 
 interface NavLink {
   label: string;
@@ -11,6 +10,7 @@ interface NavLink {
 
 const navLinks: NavLink[] = [
   { label: "صفحه اصلی", href: "/" },
+  { label: "خدمات", href: "/services" },
   { label: "فروشگاه", href: "/shop" },
   { label: "اخبار و مقالات", href: "/news" },
   { label: "سوالات متداول", href: "/faq" },
@@ -23,26 +23,8 @@ export default function NavLinks() {
 
   return (
     <nav className="flex items-center gap-2 min-[500px]:gap-2.5 md:gap-3 lg:gap-5 xl:gap-6 flex-wrap justify-center overflow-visible" aria-label="منوی اصلی">
-      <Link
-        href="/"
-        className={`
-          relative text-xs min-[500px]:text-xs md:text-sm lg:text-sm font-medium transition-colors duration-200 cursor-pointer whitespace-nowrap px-1 md:px-2
-          ${pathname === "/" 
-            ? "text-[#ff5538] font-bold" 
-            : "text-gray-700 hover:text-[#ff5538]"
-          }
-          after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-[#ff5538] after:transition-all after:duration-200
-          hover:after:w-full
-          ${pathname === "/" ? "after:w-full" : ""}
-        `}
-      >
-        صفحه اصلی
-      </Link>
-      
-      <ServicesDropdown />
-
-      {navLinks.slice(1).map((link) => {
-        const isActive = pathname === link.href;
+      {navLinks.map((link) => {
+        const isActive = pathname === link.href || (link.href === "/services" && pathname?.startsWith("/services"));
         return (
           <Link
             key={link.href}
