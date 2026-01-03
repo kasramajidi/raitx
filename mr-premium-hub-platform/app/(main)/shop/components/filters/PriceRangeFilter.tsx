@@ -95,16 +95,12 @@ export default function PriceRangeFilter() {
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center gap-2">
-        <div className="w-1 h-5 bg-gradient-to-b from-[#ff5538] to-[#ff5538] rounded-full"></div>
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800">محدوده قیمت</h3>
-      </div>
-
+      <h3 className="text-base font-medium text-gray-900">محدوده قیمت</h3>
       <div className="flex items-center gap-3 mt-4">
         <div className="flex-1">
           <label
             htmlFor="price-min"
-            className="block mb-1 text-sm text-gray-600"
+            className="block mb-1 text-xs text-gray-600"
           >
             از
           </label>
@@ -116,14 +112,14 @@ export default function PriceRangeFilter() {
             onChange={handleMinChange}
             onBlur={handleMinBlur}
             aria-label="حداقل قیمت"
-            className="w-full px-3 py-2 text-xs sm:text-sm text-center border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#ff5538] focus:border-[#ff5538] transition-all bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 text-sm text-center border-b border-gray-300 focus:outline-none focus:border-[#ff5538] transition-colors bg-transparent placeholder-gray-400"
             placeholder="340,000"
           />
         </div>
         <div className="flex-1">
           <label
             htmlFor="price-max"
-            className="block mb-1 text-sm text-gray-600"
+            className="block mb-1 text-xs text-gray-600"
           >
             تا
           </label>
@@ -135,7 +131,7 @@ export default function PriceRangeFilter() {
             onChange={handleMaxChange}
             onBlur={handleMaxBlur}
             aria-label="حداکثر قیمت"
-            className="w-full px-3 py-2 text-xs sm:text-sm text-center border border-gray-300 rounded-lg focus:ring-1 focus:ring-[#ff5538] focus:border-[#ff5538] transition-all bg-white placeholder-gray-400"
+            className="w-full px-3 py-2 text-sm text-center border-b border-gray-300 focus:outline-none focus:border-[#ff5538] transition-colors bg-transparent placeholder-gray-400"
             placeholder="19,000,000"
           />
         </div>

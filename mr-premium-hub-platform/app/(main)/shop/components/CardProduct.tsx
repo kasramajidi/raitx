@@ -28,11 +28,11 @@ export default function ProductCard({ product }: ProductCardProps) {
 
   return (
     <div
-      className="bg-white rounded-2xl p-3 md:p-4 transition-all duration-300 hover:-translate-y-2 cursor-pointer h-full flex flex-col shadow-sm border border-gray-200 hover:shadow-md"
+      className="cursor-pointer h-full flex flex-col transition-opacity hover:opacity-80"
       onClick={handleProductClick}
     >
-      <div className="relative grow mb-3">
-        <div className="relative flex items-center justify-center w-full h-40 overflow-hidden bg-white md:h-56 rounded-xl">
+      <div className="relative grow mb-4">
+        <div className="relative flex items-center justify-center w-full h-48 overflow-hidden bg-white md:h-64">
           {image ? (
             <Image
               src={image}
@@ -42,7 +42,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               sizes="(max-width: 768px) 100vw, 50vw"
             />
           ) : (
-            <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded-full md:w-16 md:h-16">
+            <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full md:w-16 md:h-16">
               <svg
                 className="w-6 h-6 text-gray-400 md:w-8 md:h-8"
                 fill="none"
@@ -60,30 +60,28 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
         {discountPercentage > 0 && (
-          <div className="absolute top-2 right-2 bg-[#ff5538] text-white px-2 py-1 rounded-full text-xs font-bold">
+          <div className="absolute top-2 right-2 bg-[#ff5538] text-white px-2 py-1 text-xs font-medium">
             -{discountPercentage}%
           </div>
         )}
       </div>
-      <h3 className="mb-3 text-xs font-medium leading-tight text-right text-gray-900 md:text-sm">
+      <h3 className="mb-4 text-sm font-medium leading-tight text-right text-gray-900">
         {name}
       </h3>
-      <div className="flex items-center justify-center mt-auto gap-3">
-        <div className="text-left flex-1">
+      <div className="flex items-center justify-between mt-auto pt-4 border-t border-gray-200">
+        <div className="text-left">
           {originalPrice && originalPrice > price ? (
             <div className="flex flex-col items-start gap-1">
-              <span className="text-xs text-gray-500 line-through">
-                {formatPrice(originalPrice)}{" "}
-                <span className="text-gray-400">تومان</span>
+              <span className="text-xs text-gray-400 line-through">
+                {formatPrice(originalPrice)} تومان
               </span>
-              <span className="text-sm font-bold text-gray-900 md:text-base">
-                {formatPrice(price)}{" "}
-                <span className="text-gray-400">تومان</span>
+              <span className="text-base font-semibold text-gray-900">
+                {formatPrice(price)} تومان
               </span>
             </div>
           ) : (
-            <span className="text-sm font-bold text-gray-900 md:text-base">
-              {formatPrice(price)} <span className="text-gray-400">تومان</span>
+            <span className="text-base font-semibold text-gray-900">
+              {formatPrice(price)} تومان
             </span>
           )}
         </div>
@@ -92,10 +90,9 @@ export default function ProductCard({ product }: ProductCardProps) {
             e.stopPropagation();
             handleProductClick();
           }}
-          className="bg-[#ff5538] text-white py-2 md:py-2.5 px-3 md:px-4 rounded-l-full rounded-r-2xl font-medium text-xs hover:opacity-90 transition-opacity duration-200 flex flex-col items-center justify-center leading-tight shrink-0"
+          className="bg-[#ff5538] text-white py-2 px-4 rounded-lg font-medium text-sm hover:opacity-90 transition-opacity shrink-0"
         >
-          <span>خرید</span>
-          <span>محصول</span>
+          خرید محصول
         </button>
       </div>
     </div>

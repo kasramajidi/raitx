@@ -21,13 +21,7 @@ export default function CategoryFilter() {
 
   return (
     <section className="space-y-3" aria-label="فیلتر دسته بندی">
-      <div className="flex items-center gap-2">
-        <div
-          className="w-1 h-5 bg-gradient-to-b from-[#ff5538] to-[#ff5538] rounded-full"
-          aria-hidden="true"
-        ></div>
-        <h3 className="text-base sm:text-lg font-semibold text-gray-800">دسته‌بندی‌ها</h3>
-      </div>
+      <h3 className="text-base font-medium text-gray-900">دسته‌بندی‌ها</h3>
 
       <div className="space-y-3" role="group" aria-label="انتخاب دسته بندی">
         {visibleCategories.map((category) => {
@@ -49,10 +43,10 @@ export default function CategoryFilter() {
                 aria-label={`انتخاب دسته بندی ${category}`}
               />
               <div
-                className={`w-5 h-5 border-2 rounded-md group-hover:border-[#ff5538] transition-all duration-200 cursor-pointer flex items-center justify-center shadow-sm ${
+                className={`w-4 h-4 border-2 rounded group-hover:border-[#ff5538] transition-all duration-200 cursor-pointer flex items-center justify-center ${
                   isChecked
-                    ? "bg-[#ff5538] border-[#ff5538] shadow-md"
-                    : "border-gray-300 bg-white hover:bg-gray-50"
+                    ? "bg-[#ff5538] border-[#ff5538]"
+                    : "border-gray-300 bg-white"
                 }`}
                 role="checkbox"
                 aria-checked={isChecked}
