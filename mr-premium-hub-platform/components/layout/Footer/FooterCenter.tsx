@@ -51,6 +51,7 @@ export default function FooterCenter() {
           <Link
             key={link.href}
             href={link.href}
+            prefetch={false}
             className="text-sm md:text-base text-gray-300 hover:text-white transition-colors duration-200"
           >
             {link.label}
