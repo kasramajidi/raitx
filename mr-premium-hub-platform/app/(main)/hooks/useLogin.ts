@@ -27,20 +27,36 @@ export function useLogin(
   const mutate = async (data: LoginData) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch("/api/auth/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error("Login failed");
+      // Mock API call - will be replaced with actual API later
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+      
+      // Try to get existing user from localStorage
+      let existingUser = null;
+      if (typeof window !== "undefined") {
+        try {
+          const storedUser = localStorage.getItem("user");
+          if (storedUser) {
+            existingUser = JSON.parse(storedUser);
+          }
+        } catch {}
       }
-
-      const result: LoginResponse = await response.json();
+      
+      // Mock successful response
+      const result: LoginResponse = {
+        user: {
+          id: existingUser?.id || `user_${Date.now()}`,
+          email: data.email,
+          username: existingUser?.username || data.email.split("@")[0], // Extract username from email
+        },
+        token: existingUser?.token || `mock_token_${Date.now()}`,
+      };
+      
+      // Update localStorage with complete user data
+      if (typeof window !== "undefined") {
+        localStorage.setItem("user", JSON.stringify(result.user));
+        localStorage.setItem("token", result.token);
+      }
+      
       onSuccess?.(result);
     } catch (error) {
       onError?.(error);

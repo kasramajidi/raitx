@@ -23,20 +23,16 @@ export function useRegister(
   const mutate = async (data: RegisterData) => {
     setIsLoading(true);
     try {
-      // TODO: Replace with actual API call
-      const response = await fetch("/api/auth/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-
-      if (!response.ok) {
-        throw new Error("Registration failed");
-      }
-
-      const result: RegisterResponse = await response.json();
+      // Mock API call - will be replaced with actual API later
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate network delay
+      
+      // Mock successful response
+      const result: RegisterResponse = {
+        id: `user_${Date.now()}`,
+        username: data.username,
+        email: data.email,
+      };
+      
       onSuccess?.(result, data);
     } catch (error) {
       onError?.(error);
