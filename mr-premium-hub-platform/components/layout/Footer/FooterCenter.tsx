@@ -20,17 +20,43 @@ const footerLinks: FooterLink[] = [
 ];
 
 export default function FooterCenter() {
+  const inactiveLinks = [
+    "/register",
+    "/login",
+    "/payment/mastercard",
+    "/payment/paypal",
+    "/payment/carrier",
+    "/payment/hotel",
+    "/articles",
+  ];
+
   return (
     <nav className="flex flex-col items-center space-y-2 md:space-y-3">
-      {footerLinks.map((link) => (
-        <Link
-          key={link.href}
-          href={link.href}
-          className="text-sm md:text-base text-gray-300 hover:text-white transition-colors duration-200"
-        >
-          {link.label}
-        </Link>
-      ))}
+      {footerLinks.map((link) => {
+        const isInactive = inactiveLinks.includes(link.href);
+        
+        if (isInactive) {
+          return (
+            <span
+              key={link.href}
+              onClick={(e) => e.preventDefault()}
+              className="text-sm md:text-base text-gray-500 hover:text-gray-400 transition-colors duration-200 cursor-not-allowed opacity-60"
+            >
+              {link.label}
+            </span>
+          );
+        }
+        
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className="text-sm md:text-base text-gray-300 hover:text-white transition-colors duration-200"
+          >
+            {link.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

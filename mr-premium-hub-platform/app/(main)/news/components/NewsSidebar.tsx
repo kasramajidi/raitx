@@ -1,4 +1,4 @@
-import Link from "next/link";
+"use client";
 
 const categories = [
   "طراحی گرافیک",
@@ -19,12 +19,12 @@ export default function NewsSidebar() {
         {categories.map((category, index) => (
           <div key={index} className="flex items-center gap-x-2 mb-0 sm:mb-3 md:mb-4 last:mb-0">
             <span className="block w-1 h-1 sm:w-1.5 sm:h-1.5 rounded-full shrink-0" style={{ backgroundColor: '#ff5538' }}></span>
-            <Link 
-              href={`/news/category/${category}`} 
-              className="text-gray-600 hover:text-[#ff5538] transition-colors text-[11px] xs:text-xs sm:text-sm md:text-base line-clamp-1"
+            <span
+              onClick={(e) => e.preventDefault()}
+              className="text-gray-600 hover:text-[#ff5538] transition-colors text-[11px] xs:text-xs sm:text-sm md:text-base line-clamp-1 cursor-not-allowed opacity-60"
             >
               {category}
-            </Link>
+            </span>
           </div>
         ))}
       </div>
