@@ -16,18 +16,27 @@ export default function Header({
   isAuthenticated = false,
 }: HeaderProps) {
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200">
-      <div className="w-full px-2 sm:px-3 md:px-4 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20 xl:h-20 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4">
-          <div className="flex items-center gap-2 sm:gap-3 md:gap-4 order-1 shrink-0">
+    <header className="z-50 bg-white border-b-2 border-[#ff5538]/20 shadow-sm">
+      <div className="w-full px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8">
+        <div className="flex items-center justify-between h-14 sm:h-16 md:h-18 lg:h-20 xl:h-20 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4 lg:gap-4">
+          <div className="flex items-center gap-2 order-1 shrink-0 max-[500px]:flex">
             <MobileMenu cartCount={cartCount} isAuthenticated={isAuthenticated} />
-            <div className="hidden min-[500px]:flex items-center gap-2 sm:gap-3 md:gap-4">
-              <CartIcon cartCount={cartCount} />
-              <LoginButton isAuthenticated={isAuthenticated} />
-            </div>
           </div>
 
-          <div className="hidden min-[500px]:flex items-center flex-1 justify-center px-2 md:px-4 lg:px-6 xl:px-8 order-2 overflow-visible">
+          <div className="hidden min-[500px]:flex lg:hidden items-center gap-3 md:gap-4 order-1 shrink-0">
+            <CartIcon cartCount={cartCount} />
+          </div>
+
+          <div className="hidden lg:flex items-center gap-2 sm:gap-3 md:gap-4 order-1 shrink-0">
+            <CartIcon cartCount={cartCount} />
+            <LoginButton isAuthenticated={isAuthenticated} />
+          </div>
+
+          <div className="hidden min-[500px]:flex lg:hidden items-center flex-1 justify-center px-3 md:px-4 order-2 overflow-visible min-w-0">
+            <NavLinks />
+          </div>
+
+          <div className="hidden lg:flex items-center flex-1 justify-center px-2 md:px-4 lg:px-6 xl:px-8 order-2 overflow-visible">
             <NavLinks />
           </div>
 

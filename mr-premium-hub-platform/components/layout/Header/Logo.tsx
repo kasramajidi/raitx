@@ -16,7 +16,7 @@ export default function Logo({
       className="inline-flex items-center group transition-opacity hover:opacity-90 cursor-pointer"
       aria-label="صفحه اصلی"
     >
-      <div className="relative h-20 sm:h-22 md:h-24  w-auto flex items-center justify-center">
+      <div className="relative h-10 sm:h-14 md:h-16 lg:h-20 xl:h-20 w-auto flex items-center justify-center">
         <Image
           src="/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png"
           alt={alt}

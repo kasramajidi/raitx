@@ -99,8 +99,8 @@ export default function MobileMenu({
               px-6 py-3 text-base font-medium transition-colors duration-200 relative cursor-pointer shrink-0
               ${
                 pathname === "/"
-                  ? "text-gray-900 bg-gray-50 border-r-4 border-gray-900"
-                  : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                  ? "text-[#ff5538] bg-orange-50 border-r-4 border-[#ff5538] font-bold"
+                  : "text-gray-700 hover:text-[#ff5538] hover:bg-orange-50"
               }
             `}
           >
@@ -120,8 +120,8 @@ export default function MobileMenu({
                   px-6 py-3 text-base font-medium transition-colors duration-200 relative cursor-pointer shrink-0
                   ${
                     isActive
-                      ? "text-gray-900 bg-gray-50 border-r-4 border-gray-900"
-                      : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+                      ? "text-[#ff5538] bg-orange-50 border-r-4 border-[#ff5538] font-bold"
+                      : "text-gray-700 hover:text-[#ff5538] hover:bg-orange-50"
                   }
                 `}
               >

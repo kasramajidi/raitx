@@ -11,7 +11,7 @@ const categories = [
 
 export default function NewsSidebar() {
   return (
-    <aside className="lg:w-[190px] xl:w-[210px] w-full bg-white shadow-sm rounded-lg p-3 sm:p-4 md:p-5 h-fit border border-gray-200 lg:sticky lg:top-4 lg:self-start">
+    <aside className="lg:w-[190px] xl:w-[210px] w-full bg-white shadow-sm rounded-lg p-3 sm:p-4 md:p-5 h-fit border border-gray-200">
       <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 mb-3 sm:mb-4 text-right hidden sm:block">
         دسته‌بندی‌ها
       </h3>

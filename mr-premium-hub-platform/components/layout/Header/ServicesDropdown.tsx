@@ -100,13 +100,14 @@ export default function ServicesDropdown() {
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={`
-          relative flex items-center gap-1 text-xs min-[500px]:text-sm md:text-sm font-medium transition-colors duration-200 cursor-pointer
+          relative flex items-center gap-1 text-xs min-[500px]:text-xs md:text-sm lg:text-sm font-medium transition-colors duration-200 cursor-pointer whitespace-nowrap px-1 md:px-2
           ${isActive 
-            ? "text-gray-900 font-semibold" 
-            : "text-gray-600 hover:text-gray-900"
+            ? "text-[#ff5538] font-bold" 
+            : "text-gray-700 hover:text-[#ff5538]"
           }
-          after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-gray-900 after:transition-all after:duration-200
+          after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-[#ff5538] after:transition-all after:duration-200
           hover:after:w-full
+          ${isActive ? "after:w-full" : ""}
         `}
         aria-expanded={isOpen}
         aria-haspopup="true"
@@ -118,7 +119,7 @@ export default function ServicesDropdown() {
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border border-gray-200 py-2 z-50 max-h-[600px] overflow-y-auto">
+        <div className="absolute top-full left-0 mt-2 w-72 bg-white rounded-lg shadow-xl border-2 border-[#ff5538]/20 py-2 z-50 max-h-[600px] overflow-y-auto">
           {services.map((service) => {
             const isServiceActive = pathname === service.href;
             return (
@@ -127,8 +128,8 @@ export default function ServicesDropdown() {
                 href={service.href}
                 onClick={() => setIsOpen(false)}
                 className={`
-                  flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150
-                  ${isServiceActive ? "bg-gray-50 border-r-2 border-red-500" : ""}
+                  flex items-center gap-3 px-4 py-3 text-sm text-gray-700 hover:bg-orange-50 transition-colors duration-150
+                  ${isServiceActive ? "bg-orange-50 border-r-3 border-[#ff5538]" : ""}
                 `}
               >
                 {service.icon && (
@@ -138,7 +139,7 @@ export default function ServicesDropdown() {
                 )}
                 <div className="flex-1 flex items-center justify-between">
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium">{service.label}</span>
+                    <span className={`text-sm font-medium ${isServiceActive ? "text-[#ff5538]" : ""}`}>{service.label}</span>
                     {service.labelEn && (
                       <span className="text-xs text-gray-500">{service.labelEn}</span>
                     )}

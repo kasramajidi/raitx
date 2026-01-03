@@ -22,17 +22,18 @@ export default function NavLinks() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex items-center gap-3 min-[500px]:gap-4 md:gap-5 lg:gap-6 xl:gap-8 whitespace-nowrap overflow-visible" aria-label="منوی اصلی">
+    <nav className="flex items-center gap-2 min-[500px]:gap-2.5 md:gap-3 lg:gap-5 xl:gap-6 flex-wrap justify-center overflow-visible" aria-label="منوی اصلی">
       <Link
         href="/"
         className={`
-          relative text-xs min-[500px]:text-sm md:text-sm font-medium transition-colors duration-200 cursor-pointer
+          relative text-xs min-[500px]:text-xs md:text-sm lg:text-sm font-medium transition-colors duration-200 cursor-pointer whitespace-nowrap px-1 md:px-2
           ${pathname === "/" 
-            ? "text-gray-900 font-semibold" 
-            : "text-gray-600 hover:text-gray-900"
+            ? "text-[#ff5538] font-bold" 
+            : "text-gray-700 hover:text-[#ff5538]"
           }
-          after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-gray-900 after:transition-all after:duration-200
+          after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-[#ff5538] after:transition-all after:duration-200
           hover:after:w-full
+          ${pathname === "/" ? "after:w-full" : ""}
         `}
       >
         صفحه اصلی
@@ -47,13 +48,14 @@ export default function NavLinks() {
             key={link.href}
             href={link.href}
             className={`
-              relative text-xs min-[500px]:text-sm md:text-sm font-medium transition-colors duration-200 cursor-pointer
+              relative text-xs min-[500px]:text-xs md:text-sm lg:text-sm font-medium transition-colors duration-200 cursor-pointer whitespace-nowrap px-1 md:px-2
               ${isActive 
-                ? "text-gray-900 font-semibold" 
-                : "text-gray-600 hover:text-gray-900"
+                ? "text-[#ff5538] font-bold" 
+                : "text-gray-700 hover:text-[#ff5538]"
               }
-              after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-gray-900 after:transition-all after:duration-200
+              after:content-[''] after:absolute after:bottom-0 after:right-0 after:w-0 after:h-0.5 after:bg-[#ff5538] after:transition-all after:duration-200
               hover:after:w-full
+              ${isActive ? "after:w-full" : ""}
             `}
           >
             {link.label}

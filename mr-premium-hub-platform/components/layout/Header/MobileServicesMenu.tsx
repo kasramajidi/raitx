@@ -94,8 +94,8 @@ export default function MobileServicesMenu({ onClose }: MobileServicesMenuProps)
           w-full flex items-center justify-between px-6 py-3 text-base font-medium transition-colors duration-200 relative cursor-pointer
           ${
             isActive
-              ? "text-gray-900 bg-gray-50 border-r-4 border-gray-900"
-              : "text-gray-700 hover:text-gray-900 hover:bg-gray-50"
+              ? "text-[#ff5538] bg-orange-50 border-r-4 border-[#ff5538] font-bold"
+              : "text-gray-700 hover:text-[#ff5538] hover:bg-orange-50"
           }
         `}
       >
@@ -106,7 +106,7 @@ export default function MobileServicesMenu({ onClose }: MobileServicesMenuProps)
       </button>
 
       {isOpen && (
-        <div className="bg-gray-50">
+        <div className="bg-orange-50">
           {services.map((service) => {
             const isServiceActive = pathname === service.href;
             return (
@@ -115,8 +115,8 @@ export default function MobileServicesMenu({ onClose }: MobileServicesMenuProps)
                 href={service.href}
                 onClick={handleClose}
                 className={`
-                  flex items-center gap-3 px-10 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors duration-150
-                  ${isServiceActive ? "bg-gray-100 border-r-4 border-red-500" : ""}
+                  flex items-center gap-3 px-10 py-3 text-sm text-gray-700 hover:bg-orange-100 transition-colors duration-150
+                  ${isServiceActive ? "bg-orange-100 border-r-4 border-[#ff5538]" : ""}
                 `}
               >
                 {service.icon && (
@@ -125,7 +125,7 @@ export default function MobileServicesMenu({ onClose }: MobileServicesMenuProps)
                   </div>
                 )}
                 <div className="flex-1 flex flex-col">
-                  <span className="text-sm font-medium">{service.label}</span>
+                  <span className={`text-sm font-medium ${isServiceActive ? "text-[#ff5538] font-bold" : ""}`}>{service.label}</span>
                   {service.labelEn && (
                     <span className="text-xs text-gray-500">{service.labelEn}</span>
                   )}
