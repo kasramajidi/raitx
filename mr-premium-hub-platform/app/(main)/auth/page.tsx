@@ -20,16 +20,14 @@ export default function AuthPage() {
   }, [router]);
 
   return (
-    <main className="min-h-screen bg-gray-50 pt-4 sm:pt-6 md:pt-8 lg:pt-4 pb-4 sm:pb-6 md:pb-8 lg:pb-10">
-      <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-4xl">
+    <main className="min-h-screen bg-white pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">
+      <div className="container mx-auto px-4 sm:px-6 md:px-8 max-w-md">
         <MainContainer>
-          <div className="pt-2 sm:pt-4 md:pt-6 pb-6 sm:pb-8 md:pb-10 lg:pb-12">
-            {isLogin ? (
-              <LoginForm onSwitchToRegister={() => setIsLogin(false)} />
-            ) : (
-              <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
-            )}
-          </div>
+          {isLogin ? (
+            <LoginForm onSwitchToRegister={() => setIsLogin(false)} />
+          ) : (
+            <RegisterForm onSwitchToLogin={() => setIsLogin(true)} />
+          )}
         </MainContainer>
       </div>
     </main>
