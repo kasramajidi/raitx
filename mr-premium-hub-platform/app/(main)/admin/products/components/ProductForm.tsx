@@ -9,7 +9,7 @@ interface ProductFormProps {
     category: string;
     price: string;
     stock: number;
-    description: string;
+    description?: string;
   };
   onClose: () => void;
   onSave: (product: any) => void;

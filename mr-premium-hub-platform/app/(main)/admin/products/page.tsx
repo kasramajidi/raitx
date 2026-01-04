@@ -16,6 +16,14 @@ interface Product {
   description?: string;
 }
 
+interface ProductFormData {
+  name: string;
+  category: string;
+  price: string;
+  stock: number;
+  description: string;
+}
+
 const initialProducts: Product[] = [
   {
     id: "1",
@@ -68,11 +76,12 @@ export default function ProductsPage() {
     }
   };
 
-  const handleSave = (formData: any) => {
-    const priceFormatted = new Intl.NumberFormat("fa-IR").format(
-      parseInt(formData.price.replace(/,/g, "")) || 0
-    ) + " تومان";
-    
+  const handleSave = (formData: ProductFormData) => {
+    const priceFormatted =
+      new Intl.NumberFormat("fa-IR").format(
+        parseInt(formData.price.replace(/,/g, "")) || 0
+      ) + " تومان";
+
     if (editingProduct) {
       setProducts(
         products.map((product) =>
@@ -144,7 +153,18 @@ export default function ProductsPage() {
 
         {showForm && (
           <ProductForm
-            product={editingProduct || undefined}
+            product={
+              editingProduct
+                ? {
+                    id: editingProduct.id,
+                    name: editingProduct.name,
+                    category: editingProduct.category,
+                    price: editingProduct.price,
+                    stock: editingProduct.stock,
+                    description: editingProduct.description || "",
+                  }
+                : undefined
+            }
             onClose={() => {
               setShowForm(false);
               setEditingProduct(null);
