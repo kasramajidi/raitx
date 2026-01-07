@@ -98,6 +98,63 @@ const serviceDetails: Record<
     description:
       "بلیزارد (Blizzard) یکی از بزرگ‌ترین شرکت‌های تولید بازی‌های کامپیوتری است. این شرکت در سال ۱۹۹۶ با نام بتل‌نت کالیفرنیا آغاز به کار کرد و با عرضه بازی‌های محبوب اکشن و ماجراجویی به شهرت رسید. یکی از معروف‌ترین محصولات آن، بازی وارکرفت، از مجموعه بتل‌نت (Battle.NET) است.\n\nفرایند عضویت و ساخت اکانت در بلیزارد بتل‌نت ساده و سریع است، به همین دلیل این پلتفرم بین گیمرها بسیار محبوب است. با این حال، برای استفاده از بازی‌های آنلاین و دیگر خدمات بتل‌نت، نیاز به خرید گیفت کارت بلیزارد بتل‌نت خواهید داشت.",
   },
+  "mastercard-prime": {
+    features: [
+      "لینک شدن به پی پال انگلیس - می‌توانید در لحظه به حساب پی پال خود لینک شوید",
+      "امکان استفاده از ATM - می‌توانید در همه کشورها با این کارت از دستگاه خودپرداز استفاده نمایید",
+      "پشتیبانی مستر پرمینیوم هاب - پشتیبانی مستر پرمینیوم هاب ۲۴ ساعته به شما کمک خواهد کرد",
+      "دارای اعتبار 3 ساله - این کارت اعتبار 3 ساله دارد و امکان تمدید آن وجود ندارد",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "مسترکارت پرایم (Prime) نوعی کارت دبیت است که قابلیت استفاده در دستگاه‌های ATM و POS در سراسر جهان را دارد. این کارت به ارز پوند صادر می‌شود و دارای اعتبار سه ساله است؛ پس از پایان این مدت امکان تمدید آن وجود ندارد.\n\nبا استفاده از مسترکارت پرایم می‌توانید آن را به حساب پی‌پال انگلیس متصل کرده و حواله‌های پوندی خود را در داخل انگلیس ارسال یا دریافت کنید. این کارت در سطح Premium ارائه می‌شود و به همراه آن یک سیم‌کارت فیزیکی نیز ارائه خواهد شد.",
+  },
+  "mastercard-us-virtual": {
+    features: [
+      "مدت زمان صدور - دریافت طی ۱ روز کاری",
+      "بیلینگ آدرس معتبر - آدرس آمریکا",
+      "تاریخ انقضا - ۶ ماهه",
+      "قابلیت تغییر آدرس - ندارد",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "مسترکارت مجازی آمریکایی یکی از کارت‌های معتبر است که به شما امکان می‌دهد پرداخت‌های اینترنتی را در درگاه‌های پذیرنده کارت‌های پیش‌پرداخت مجازی (Virtual Prepaid) انجام دهید. این کارت‌ها به صورت مجازی ارائه می‌شوند و پس از خرید، مشخصات کارت از طریق ایمیل برای شما ارسال خواهد شد.\n\nمسترکارت مجازی آمریکا به ارز دلار آمریکا صادر می‌شود و تنها برای پرداخت به دلار و در سایت‌های آمریکایی پذیرنده این نوع کارت قابل استفاده است.",
+  },
+  "mastercard-virtual": {
+    features: [
+      "تحویل در سریع ترین زمان ممکن",
+      "مناسب‌ترین کارمزد",
+      "خرید از فروشگاه‌های خارجی",
+      "پرداخت در سایت‌های خارجی",
+      "انجام پرداخت‌های بین المللی",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "مسترکارت مجازی (Virtual MasterCard) کارت‌های اعتباری بین‌المللی هستند که با استفاده از آن‌ها می‌توانید تمامی خریدهای اینترنتی و پرداخت‌های ارزی خود را در سراسر جهان انجام دهید. این کارت‌ها شامل شماره ۱۶ رقمی، تاریخ انقضا (Expiration Date) و کد سه رقمی CVV2 می‌باشند و کاربرد اصلی آن‌ها انجام پرداخت‌های آنلاین در وب‌سایت‌ها یا اپلیکیشن‌ها است.",
+  },
+  "mastercard-physical": {
+    features: [
+      "انجام پرداخت‌های بین المللی",
+      "پرداخت در سایت‌های خارجی",
+      "امکان برداشت وجه از ATM",
+      "تحویل در سریع ترین زمان ممکن",
+      "مناسب‌ترین کارمزد",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "مسترکارت فیزیکی یکی از کارت‌های اعتباری بین‌المللی است که به شما امکان انجام تمامی پرداخت‌های ارزی در سراسر جهان را می‌دهد. این کارت‌ها به حساب بانکی شما متصل هستند و می‌توانید با آن‌ها در هر نقطه دنیا خرید کنید، انتقال وجه داشته باشید و از تمامی دستگاه‌های ATM پول دریافت کنید.",
+  },
+  "mastercard-personal": {
+    features: [
+      "قابلیت شارژ مجدد - شارژ کارت‌ها در هر ماه فقط تا سقف ۲۷۵۰ لیر با کارمزد ۶٪ از طریق مستر پرمینیوم هاب صورت می‌گیرد",
+      "موجودی اولیه - موجودی اولیه پری پید کارت صفر است؛ برای فعال سازی کارت نیاز به حداقل شارژ ۱۰۰۰ لیر می‌باشد",
+      "اعتبار 3 ساله - تاریخ انقضای مسترکارت پرسونال 3 سال است",
+      "پذیرندگی بین‌المللی - این کارت پذیرندگی خوبی در سطح بین المللی خواهد داشت",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "مسترکارت پرسونال (Personal) یا پری‌پید کارت، نوعی کارت پیش‌پرداخت فیزیکی است. موجودی اولیه این کارت صفر است و برای فعال شدن نیاز به شارژ حداقل ۱,۰۰۰ لیر دارد. این کارت‌ها برای انجام تراکنش‌های مالی بین‌المللی مورد استفاده قرار می‌گیرند و پرداخت‌ها بر اساس واحد پول کشور مقصد انجام می‌شوند (در صورت تفاوت با لیر، کارمزد تبدیل ارز اعمال می‌شود).\n\nکارت‌های Prepaid به حساب بانکی متصل نیستند و دریافت آن‌ها نیازی به افتتاح حساب ندارد. شارژ این کارت‌ها در هر ماه تا سقف ۲,۷۵۰ لیر با کارمزد ۶٪ از طریق مستر پرمینیوم هاب انجام می‌شود.",
+  },
   paypal: {
     features: [
       "نقد کردن موجودی پی پال به ریال",
@@ -224,6 +281,87 @@ export default function ServiceDetailContent({
           </div>
         )}
       </div>
+
+      {/* Terms of Use for Mastercard Prime */}
+      {service.id === "mastercard-prime" && (
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+            شرایط استفاده از مستر کارت پرایم
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {/* ATM Usage Terms */}
+            <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-3 sm:mb-4 text-right">
+                شرایط استفاده از ATM
+              </h3>
+              <ul className="space-y-2 sm:space-y-2.5 text-right">
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>محدودیت روزانه ۲۰۰ پوند برداشت از ATM</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>کارمزد ماهانه ندارد</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>کارمزد دریافت ارز از ATM ۱.۵ الی ۲.۵ پوند</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>استعلام موجودی از ATM ۰.۵ پوند</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Online Payment Terms */}
+            <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-3 sm:mb-4 text-right">
+                شرایط انجام پرداخت اینترنتی
+              </h3>
+              <ul className="space-y-2 sm:space-y-2.5 text-right">
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>لیمیت تراکنش در روز ۵۰۰۰ پوند</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>لیمیت تراکنش در هفته ۱۰۰۰۰ پوند</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>هر تراکنش اشتباه ۹۹ سنت کارمزد</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>امکان پرداخت به ارزهای دیگر</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Pound Transfer Terms */}
+            <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-3 sm:mb-4 text-right">
+                شرایط انجام حواله پوندی
+              </h3>
+              <ul className="space-y-2 sm:space-y-2.5 text-right">
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>کارمزد اولین واریز ۵ پوند</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>ارسال هر حواله پوندی ۱.۴۹ پوند کارمزد</span>
+                </li>
+                <li className="flex items-start gap-2 text-[10px] sm:text-xs text-gray-700">
+                  <span className="text-green-600 mt-1 shrink-0">✓</span>
+                  <span>دریافت هر حواله پوندی ۱.۲۵ پوند کارمزد</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
