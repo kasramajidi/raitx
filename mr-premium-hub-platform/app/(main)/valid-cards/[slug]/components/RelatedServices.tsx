@@ -8,12 +8,7 @@ interface RelatedServicesProps {
 export default function RelatedServices({
   currentService,
 }: RelatedServicesProps) {
-  const visaCardIds = [
-    "visa-virtual",
-    "visa-physical",
-    "visa-gift",
-    "credit-card",
-  ];
+  const visaCardIds = ["visa-virtual", "visa-physical", "credit-card"];
   const isVisaCard = visaCardIds.includes(currentService.id);
 
   const relatedServices = services
@@ -21,8 +16,29 @@ export default function RelatedServices({
       if (isVisaCard) {
         return visaCardIds.includes(s.id) && s.id !== currentService.id;
       }
+      if (currentService.id === "gift-card-visa") {
+        return (
+          s.category === "gift" &&
+          s.id !== currentService.id &&
+          s.id !== "visa-gift"
+        );
+      }
       if (currentService.category === "visa") {
+        return (
+          s.category === "visa" &&
+          s.id !== currentService.id &&
+          s.id !== "visa-gift"
+        );
+      }
+      if (currentService.id === "visa-gift") {
         return s.category === "visa" && s.id !== currentService.id;
+      }
+      if (currentService.category === "gift") {
+        return (
+          s.category === "gift" &&
+          s.id !== currentService.id &&
+          s.id !== "visa-gift"
+        );
       }
       return (
         s.category === currentService.category && s.id !== currentService.id

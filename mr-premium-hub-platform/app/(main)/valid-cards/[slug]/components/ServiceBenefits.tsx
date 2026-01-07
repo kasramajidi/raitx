@@ -14,12 +14,15 @@ import {
   HiUser,
   HiDesktopComputer,
   HiMail,
+  HiDownload,
+  HiFilm,
 } from "react-icons/hi";
 import { BiShoppingBag, BiTransfer } from "react-icons/bi";
 import { MdPayment, MdAccountBalance, MdSimCard } from "react-icons/md";
 import { FaGamepad } from "react-icons/fa";
 import { HiOutlineGift } from "react-icons/hi";
 import { SiPaypal } from "react-icons/si";
+import ReactCountryFlag from "react-country-flag";
 
 interface ServiceBenefitsProps {
   service: Service;
@@ -95,7 +98,7 @@ const visaGiftBenefits = [
     color: "bg-blue-900",
   },
   {
-    icon: <MdPayment className="text-2xl sm:text-3xl text-white" />,
+    icon: <HiCreditCard className="text-2xl sm:text-3xl text-white" />,
     title: "پرداخت در سایتهای خارجی",
     description:
       "این کارتها مجازی میباشند و قابلیت پرداخت در سایتهای خارجی را دارند.",
@@ -393,10 +396,35 @@ const mastercardPersonalBenefits = [
   },
 ];
 
+const amazonBenefits = [
+  {
+    icon: <BiShoppingBag className="text-2xl sm:text-3xl text-white" />,
+    title: "خرید محصولات فیزیکی و دیجیتالی",
+    description:
+      "با گیفت کارت آمازون می‌توانید تمامی محصولات فیزیکی و دیجیتالی موجود در فروشگاه آمازون را به‌راحتی خریداری کنید.",
+    color: "bg-blue-900",
+  },
+  {
+    icon: <HiGlobe className="text-2xl sm:text-3xl text-white" />,
+    title: "استفاده با VPN",
+    description:
+      "برای جلوگیری از مسدود شدن حساب، حتماً خرید خود را با استفاده از VPN و آی‌پی غیر ایرانی انجام دهید.",
+    color: "bg-blue-900",
+  },
+  {
+    icon: <HiCurrencyDollar className="text-2xl sm:text-3xl text-white" />,
+    title: "مبالغ متنوع",
+    description:
+      "گیفت کارت آمازون در مبالغ مختلف از ۵ دلار تا ۱۰۰ دلار قابل ارائه است.",
+    color: "bg-blue-900",
+  },
+];
+
 export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
   const isVisaCard =
     service.id === "visa-virtual" || service.id === "visa-physical";
   const isVisaGift = service.id === "visa-gift";
+  const isGiftCardVisa = service.id === "gift-card-visa";
   const isCreditCard = service.id === "credit-card";
   const isPlaystation = service.id === "playstation";
   const isXbox = service.id === "xbox";
@@ -407,6 +435,10 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
   const isMastercardVirtual = service.id === "mastercard-virtual";
   const isMastercardPhysical = service.id === "mastercard-physical";
   const isMastercardPersonal = service.id === "mastercard-personal";
+  const isAmazon = service.id === "amazon";
+  const isApple = service.id === "apple";
+  const isSpotify = service.id === "spotify";
+  const isNetflix = service.id === "netflix";
 
   return (
     <>
@@ -449,15 +481,15 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
           <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
             مزایای خرید ویزا کارت هدیه
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
             {visaGiftBenefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200"
+                className="bg-white rounded-lg p-4 sm:p-5 shadow-sm"
               >
                 <div className="flex items-center justify-center mb-3 sm:mb-4">
                   <div
-                    className={`${benefit.color} p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center`}
+                    className={`${benefit.color} w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center`}
                   >
                     {benefit.icon}
                   </div>
@@ -465,13 +497,154 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
                 <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
                   {benefit.title}
                 </h3>
-                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
                   {benefit.description}
                 </p>
               </div>
             ))}
           </div>
         </div>
+      )}
+
+      {isGiftCardVisa && (
+        <>
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+              مزایای خرید و فروش گیفت کارت ویزا
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <BiShoppingBag className="text-2xl sm:text-3xl text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  خرید از سایت‌های بین‌المللی
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                  استفاده از آن برای خرید کالاهای مورد نظر می‌توانید از سایت‌های
+                  بین‌المللی خرید کنید. اکثر سایت‌های دنیا گیفت کارت ویزا را
+                  می‌پذیرند.
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <HiShieldCheck className="text-2xl sm:text-3xl text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  قابل تعویض در صورت سرقت یا گم شدن
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                  قابل تعویض در صورت سرقت یا گم شدن. امنیت بالا و قابلیت تعویض
+                  در شرایط خاص.
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                    <HiCreditCard className="text-2xl sm:text-3xl text-white" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  عدم امکان برداشت از ATM
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                  عدم امکان برداشت از دستگاه‌های ATM و کارتخوان. این کارت صرفاً
+                  برای پرداخت‌های آنلاین طراحی شده است.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+              ویژگی‌های گیفت کارت ویزا
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    سریع
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  طی ۱ الی ۵ روز کاری
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    تاریخ انقضای طولانی
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  تاریخ انقضا هفت ماهه
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    بیلینگ آدرس معتبر
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  بیلینگ آدرس کارت آمریکا است.
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    قابلیت تعویض بیلینگ آدرس
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  به آدرس دلخواه شما
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    بدون هزینه Decline
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  برای پرداخت‌های قبول نشده هزینه کسر نمی‌گردد.
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-lg p-4 sm:p-5">
+                <div className="flex items-center gap-3 mb-2">
+                  <div className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center shrink-0">
+                    <HiCheckCircle className="text-white text-sm" />
+                  </div>
+                  <h3 className="text-xs sm:text-sm font-bold text-gray-900">
+                    مبلغ
+                  </h3>
+                </div>
+                <p className="text-[10px] sm:text-xs text-gray-600 text-right">
+                  در مبالغ مختلفی صادر می‌شود.
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       {isCreditCard && (
@@ -826,6 +999,267 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
             ))}
           </div>
         </div>
+      )}
+
+      {isAmazon && (
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+            مزایای گیفت کارت آمازون
+          </h2>
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 text-center mb-4 sm:mb-6 leading-5 sm:leading-6">
+            گیفت کارت آمازون راهی آسان و مطمئن برای خرید از بزرگ‌ترین فروشگاه
+            آنلاین جهان است.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {amazonBenefits.map((benefit, index) => (
+              <div
+                key={index}
+                className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200"
+              >
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div
+                    className={`${benefit.color} p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center`}
+                  >
+                    {benefit.icon}
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  {benefit.title}
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                  {benefit.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {isApple && (
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+            مزایای خرید گیفت کارت اپل
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <HiCheckCircle className="text-2xl sm:text-3xl text-white" />
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                بدون نیاز به ویزا کارت
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                دیگر نیازی به وارد کردن شماره ویزا کارت یا مسترکارت خود ندارید.
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <HiGlobe className="text-2xl sm:text-3xl text-white" />
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                رفع محدودیت‌های جغرافیایی
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                دسترسی به برنامه‌ها و خدماتی که برای کاربران ایرانی محدود است.
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-md hover:shadow-lg transition-all duration-200">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 p-3 sm:p-4 rounded-lg sm:rounded-xl flex items-center justify-center">
+                  <HiCurrencyDollar className="text-2xl sm:text-3xl text-white" />
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                مبالغ متنوع
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-justify sm:text-right">
+                امکان خرید گیفت کارت در مبالغ مختلف از ۲ دلار تا ۵۰۰ دلار.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isSpotify && (
+        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+          <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+            مزایای اکانت پرمیوم اسپاتیفای
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                  <span className="text-white text-2xl sm:text-3xl font-normal">
+                    ♪
+                  </span>
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                کتابخانه موسیقی عظیم
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                دسترسی به میلیون‌ها ترانه از هنرمندان مختلف سراسر جهان
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                  <HiRefresh className="text-white text-2xl sm:text-3xl" />
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                پیشنهاد هوشمند
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                پیشنهاد موسیقی مناسب سلیقه شما با استفاده از هوش مصنوعی
+              </p>
+            </div>
+            <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+              <div className="flex items-center justify-center mb-3 sm:mb-4">
+                <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                  <HiDesktopComputer className="text-white text-2xl sm:text-3xl" />
+                </div>
+              </div>
+              <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                پشتیبانی از همه دستگاه‌ها
+              </h3>
+              <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                استفاده روی انواع سیستم عامل‌های مختلف مانند ویندوز، مک، اندروید
+                و iOS
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isNetflix && (
+        <>
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+              مزایای گیفت کارت نتفلیکس
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                    <HiDownload className="text-white text-2xl sm:text-3xl" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  دانلود برای تماشای آفلاین
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                  دانلود فیلم و سریال‌ها برای تماشای بدون اینترنت
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                    <HiDeviceMobile className="text-white text-2xl sm:text-3xl" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  تماشا روی همه دستگاه‌ها
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                  امکان تماشا روی موبایل، تبلت، لپ‌تاپ، تلویزیون و کنسول‌های
+                  بازی
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm">
+                <div className="flex items-center justify-center mb-3 sm:mb-4">
+                  <div className="bg-blue-900 w-14 h-14 sm:w-16 sm:h-16 rounded-lg flex items-center justify-center">
+                    <HiFilm className="text-white text-2xl sm:text-3xl" />
+                  </div>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 text-center">
+                  تماشای فیلم و سریال‌های اختصاصی
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 text-right">
+                  دسترسی به محتوای اختصاصی نتفلیکس که در هیچ جای دیگر یافت
+                  نمی‌شود.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+              پیشنهاد مستر پرمینیوم هاب به شما
+            </h2>
+            <h3 className="text-xs sm:text-sm md:text-base font-bold text-gray-900 mb-4 sm:mb-6 text-center">
+              سایر گیفت کارت‌های نتفلیکس
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm text-center">
+                <div className="flex items-center justify-center mx-auto mb-3 sm:mb-4 w-16 h-16 sm:w-20 sm:h-20">
+                  <svg
+                    viewBox="0 0 36 36"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="w-full h-full"
+                  >
+                    <rect fill="#0033A0" width="36" height="36" />
+                    <g fill="#FFCC00">
+                      <circle cx="18" cy="18" r="3.5" />
+                      <path d="M18 9l-2.5 7.5h7.5z" />
+                      <path d="M27 18l-7.5-2.5v7.5z" />
+                      <path d="M18 27l2.5-7.5h-7.5z" />
+                      <path d="M9 18l7.5 2.5v-7.5z" />
+                    </g>
+                  </svg>
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2">
+                  گیفت کارت نتفلیکس اروپا
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
+                  گیفت کارت نتفلیکس اروپا با محتوای متنوع
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm text-center">
+                <div className="flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <ReactCountryFlag
+                    countryCode="AE"
+                    svg
+                    style={{
+                      width: "4rem",
+                      height: "4rem",
+                    }}
+                    title="AE"
+                  />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2">
+                  گیفت کارت نتفلیکس امارات
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
+                  گیفت کارت نتفلیکس امارات برای منطقه خاورمیانه
+                </p>
+              </div>
+              <div className="bg-white rounded-lg p-4 sm:p-5 shadow-sm text-center">
+                <div className="flex items-center justify-center mx-auto mb-3 sm:mb-4">
+                  <ReactCountryFlag
+                    countryCode="TR"
+                    svg
+                    style={{
+                      width: "4rem",
+                      height: "4rem",
+                    }}
+                    title="TR"
+                  />
+                </div>
+                <h3 className="text-xs sm:text-sm font-bold text-gray-900 mb-2">
+                  گیفت کارت نتفلیکس ترکیه
+                </h3>
+                <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
+                  گیفت کارت نتفلیکس ترکیه با قیمت مناسب‌تر
+                </p>
+              </div>
+            </div>
+          </div>
+        </>
       )}
 
       <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">

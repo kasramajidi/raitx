@@ -96,7 +96,7 @@ const creditCardCategories: Category[] = [
     items: [
       {
         label: "گیفت کارت ویزا",
-        href: "/valid-cards/visa-gift",
+        href: "/valid-cards/gift-card-visa",
         icon: React.createElement(SiVisa, {
           className: "text-3xl sm:text-4xl md:text-5xl text-[#1A1F71]",
         }),

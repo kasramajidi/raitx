@@ -209,6 +209,15 @@ export const services: Service[] = [
     category: "gift",
   },
   {
+    id: "gift-card-visa",
+    label: "گیفت کارت ویزا",
+    labelEn: "Visa Gift Card",
+    href: "/valid-cards/gift-card-visa",
+    icon: React.createElement(SiVisa, { className: "text-3xl sm:text-4xl md:text-5xl text-[#1A1F71]" }),
+    description: "خرید انواع گیفت کارت‌های بین‌المللی",
+    category: "gift",
+  },
+  {
     id: "amazon",
     label: "گیفت کارت آمازون",
     labelEn: "Amazon Gift Card",
