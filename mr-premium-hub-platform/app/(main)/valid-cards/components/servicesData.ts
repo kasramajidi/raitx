@@ -201,11 +201,11 @@ export const services: Service[] = [
   },
   {
     id: "visa-gift",
-    label: "گیفت کارت ویزا",
+    label: "ویزا کارت هدیه",
     labelEn: "Visa Gift Card",
     href: "/valid-cards/visa-gift",
     icon: React.createElement(SiVisa, { className: "text-3xl sm:text-4xl md:text-5xl text-[#1A1F71]" }),
-    description: "خرید گیفت کارت ویزا",
+    description: "خرید ویزا کارت هدیه",
     category: "gift",
   },
   {

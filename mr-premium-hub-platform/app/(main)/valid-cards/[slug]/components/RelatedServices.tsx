@@ -5,10 +5,30 @@ interface RelatedServicesProps {
   currentService: Service;
 }
 
-export default function RelatedServices({ currentService }: RelatedServicesProps) {
+export default function RelatedServices({
+  currentService,
+}: RelatedServicesProps) {
+  const visaCardIds = [
+    "visa-virtual",
+    "visa-physical",
+    "visa-gift",
+    "credit-card",
+  ];
+  const isVisaCard = visaCardIds.includes(currentService.id);
+
   const relatedServices = services
-    .filter((s) => s.category === currentService.category && s.id !== currentService.id)
-    .slice(0, 3);
+    .filter((s) => {
+      if (isVisaCard) {
+        return visaCardIds.includes(s.id) && s.id !== currentService.id;
+      }
+      if (currentService.category === "visa") {
+        return s.category === "visa" && s.id !== currentService.id;
+      }
+      return (
+        s.category === currentService.category && s.id !== currentService.id
+      );
+    })
+    .slice(0, 4);
 
   if (relatedServices.length === 0) return null;
 
@@ -42,4 +62,3 @@ export default function RelatedServices({ currentService }: RelatedServicesProps
     </div>
   );
 }
-

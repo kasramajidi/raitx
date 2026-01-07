@@ -82,10 +82,12 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Features */}
           <div>
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2">
+            <div className="mb-3 sm:mb-4 text-right flex items-center gap-2">
               <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
-              ویژگی‌های خدمت
-            </h2>
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+                ویژگی‌های {service.label}
+              </h2>
+            </div>
             <ul className="space-y-2.5 sm:space-y-3 text-right">
               {details.features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700">

@@ -4,7 +4,56 @@ interface ServiceDetailContentProps {
   service: Service;
 }
 
-const serviceDetails: Record<string, { features: string[]; steps: string[]; note?: string; description?: string }> = {
+const serviceDetails: Record<
+  string,
+  { features: string[]; steps: string[]; note?: string; description?: string }
+> = {
+  "visa-virtual": {
+    features: [
+      "انجام پرداخت‌های بین المللی",
+      "پرداخت در سایت‌های خارجی",
+      "خرید از فروشگاه‌های خارجی",
+      "تحویل در سریع ترین زمان ممکن",
+      "مناسب‌ترین کارمزد",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "ویزا کارت مجازی (Virtual Visa Card) نوعی کارت اعتباری با موجودی مشخص است که امکان شارژ مجدد ندارد. این کارت‌ها شامل شماره ۱۶ رقمی، تاریخ انقضا و کد امنیتی CVV2 بوده و صرفاً برای انجام پرداخت‌های آنلاین در وب‌سایت‌ها و اپلیکیشن‌های بین‌المللی مورد استفاده قرار می‌گیرند. ویزا کارت‌های مجازی گزینه‌ای امن و کاربردی برای پرداخت‌های اینترنتی بدون نیاز به کارت فیزیکی محسوب می‌شوند.",
+  },
+  "visa-physical": {
+    features: [
+      "انجام پرداخت‌های بین المللی",
+      "پرداخت در سایت‌های خارجی",
+      "امکان برداشت وجه از ATM",
+      "تحویل در سریع‌ترین زمان ممکن",
+      "مناسب‌ترین کارمزد",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "ویزا کارت فیزیکی، نوعی کارت اعتباری است که به حساب اصلی شما متصل می‌شود و مشابه کارت‌های بانکی معمولی عمل می‌کند. این کارت‌ها امکاناتی مانند پرداخت خرید، دریافت و انتقال وجه را در اختیار کاربران قرار می‌دهند و با استفاده از آن می‌توان در بسیاری از کشورهای جهان خرید انجام داده و تراکنش‌های مالی بین‌المللی را به‌راحتی مدیریت کرد.",
+  },
+  "visa-gift": {
+    features: [
+      "تاریخ انقضای طولانی - تاریخ انقضا ۶ ماه",
+      "مدت زمان صدور - دریافت طی ۱ الی ۳ روز کاری",
+      "بیلینگ آدرس معتبر - بیلینگ آدرس کارت آمریکا",
+      "قابلیت تعویض بیلینگ آدرس - قابل انجام با پرداخت هزینه",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "ویزا کارت مجازی هدیه (Visa Gift Card) یکی از کارت‌های بین‌المللی معتبر است که امکان انجام پرداخت‌های اینترنتی در درگاه‌های پذیرنده کارت‌های پیش‌پرداخت مجازی (Virtual Prepaid) را فراهم می‌کند. این کارت به صورت مجازی ارائه می‌شود؛ به این معنا که پس از ثبت درخواست خرید، مشخصات کارت از طریق ایمیل برای شما ارسال خواهد شد.\n\nویزا کارت هدیه مجازی به‌صورت دلار آمریکا صادر می‌شود، اما پرداخت به ارزهای دیگر نیز با اعمال کارمزد تبدیل ارز ۴.۵ درصد امکان‌پذیر است.",
+  },
+  "credit-card": {
+    features: [
+      "خرید از سایت‌های خارجی - برای خرید کالا و خدمات سایت‌های خارجی که به آن‌ها علاقه‌مند هستید",
+      "دارای اعتبار 5 ساله - این کارت دارای اعتبار 5 ساله است و بعد از آن با مراجه به بانک، کارت جدید صادر می‌شود",
+      "کارت اعتبار فیزیکی - حضور کاربر به مدت 10 روز در کشور ترکیه و شهر استانبول الزامی است",
+      "پذیرندگی بین‌المللی - این کارت پذیرندگی خوبی در سطح بین المللی خواهد داشت",
+    ],
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "کردیت کارت، یکی از انواع کارت‌های اعتباری بانکی است که به کاربران امکان می‌دهد تا سقف مشخصی که توسط بانک صادرکننده تعیین می‌شود، از اعتبار کارت برای انجام تراکنش‌ها استفاده کنند. این کارت‌ها پذیرش گسترده‌ای در سطح بین‌المللی دارند و ابزار مناسبی برای انجام پرداخت‌های جهانی به شمار می‌آیند.\n\nحساب بانکی شما توسط بانک زراعت ترکیه صادر شده و بر پایه ارز لیر افتتاح می‌شود. این حساب‌ها مجهز به خدمات اینترنت‌بانک، موبایل‌بانک و سامانه پیامکی (SMS Banking) هستند تا مدیریت مالی برای کاربران به‌صورت آنلاین و آسان فراهم گردد.",
+  },
   paypal: {
     features: [
       "نقد کردن موجودی پی پال به ریال",
@@ -21,7 +70,8 @@ const serviceDetails: Record<string, { features: string[]; steps: string[]; note
       "دریافت مبلغ به ریال",
     ],
     note: "نرخ تبدیل بر اساس نرخ روز بازار محاسبه می‌شود.",
-    description: "خدمات پی پال ما شامل نقد کردن موجودی پی پال به ریال و پرداخت با پی پال برای خریدهای آنلاین است. ما با سال‌ها تجربه در این زمینه، بهترین نرخ‌ها و سریع‌ترین پردازش را به شما ارائه می‌دهیم.",
+    description:
+      "خدمات پی پال ما شامل نقد کردن موجودی پی پال به ریال و پرداخت با پی پال برای خریدهای آنلاین است. ما با سال‌ها تجربه در این زمینه، بهترین نرخ‌ها و سریع‌ترین پردازش را به شما ارائه می‌دهیم.",
   },
   tickets: {
     features: [
@@ -39,11 +89,14 @@ const serviceDetails: Record<string, { features: string[]; steps: string[]; note
       "پرداخت و دریافت بلیط",
     ],
     note: "امکان کنسل و تغییر بلیط با توجه به قوانین خطوط هوایی وجود دارد.",
-    description: "ما خدمات خرید بلیط هواپیما، قطار و اتوبوس را برای مسیرهای داخلی و بین‌المللی ارائه می‌دهیم. همچنین می‌توانید برای رزرو هتل نیز از خدمات ما استفاده کنید.",
+    description:
+      "ما خدمات خرید بلیط هواپیما، قطار و اتوبوس را برای مسیرهای داخلی و بین‌المللی ارائه می‌دهیم. همچنین می‌توانید برای رزرو هتل نیز از خدمات ما استفاده کنید.",
   },
 };
 
-export default function ServiceDetailContent({ service }: ServiceDetailContentProps) {
+export default function ServiceDetailContent({
+  service,
+}: ServiceDetailContentProps) {
   const details = serviceDetails[service.id] || {
     features: [
       "خدمات با کیفیت و تضمین شده",
@@ -53,13 +106,9 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
       "نرخ‌های رقابتی",
       "پردازش در کوتاه‌ترین زمان",
     ],
-    steps: [
-      "ثبت درخواست",
-      "بررسی و تایید",
-      "انجام خدمت",
-      "تایید نهایی",
-    ],
-    description: "ما با سال‌ها تجربه در زمینه خدمات ارزی و پرداخت‌های بین‌المللی، آماده ارائه بهترین خدمات به شما هستیم.",
+    steps: ["ثبت درخواست", "بررسی و تایید", "انجام خدمت", "تایید نهایی"],
+    description:
+      "ما با سال‌ها تجربه در زمینه خدمات ارزی و پرداخت‌های بین‌المللی، آماده ارائه بهترین خدمات به شما هستیم.",
   };
 
   return (
@@ -71,7 +120,7 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
             درباره {service.label}
           </h2>
-          <p className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right">
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right whitespace-pre-line">
             {details.description}
           </p>
         </div>
@@ -82,14 +131,19 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Features */}
           <div>
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2">
+            <div className="mb-3 sm:mb-4 text-right flex items-center gap-2">
               <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
-              ویژگی‌های خدمت
-            </h2>
+              <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+                ویژگی‌های {service.label}
+              </h2>
+            </div>
             <ul className="space-y-2.5 sm:space-y-3 text-right">
               {details.features.map((feature, index) => (
-                <li key={index} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700">
-                  <span className="text-[#ff5538] mt-1 flex-shrink-0">✓</span>
+                <li
+                  key={index}
+                  className="flex items-start gap-2 text-xs sm:text-sm text-gray-700"
+                >
+                  <span className="text-[#ff5538] mt-1 shrink-0">✓</span>
                   <span>{feature}</span>
                 </li>
               ))}
@@ -104,8 +158,11 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             </h2>
             <ol className="space-y-2.5 sm:space-y-3 text-right">
               {details.steps.map((step, index) => (
-                <li key={index} className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
-                  <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#ff5538]/10 text-[#ff5538] flex items-center justify-center text-[10px] sm:text-xs font-bold border-2 border-[#ff5538]/20">
+                <li
+                  key={index}
+                  className="flex items-start gap-3 text-xs sm:text-sm text-gray-700"
+                >
+                  <span className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#ff5538]/10 text-[#ff5538] flex items-center justify-center text-[10px] sm:text-xs font-bold border-2 border-[#ff5538]/20">
                     {index + 1}
                   </span>
                   <span className="pt-0.5">{step}</span>
@@ -126,4 +183,3 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
     </>
   );
 }
-

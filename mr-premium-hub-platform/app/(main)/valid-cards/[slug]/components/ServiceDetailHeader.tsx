@@ -15,8 +15,8 @@ export default function ServiceDetailHeader({ service }: ServiceDetailHeaderProp
           صفحه اصلی
         </Link>
         <span>/</span>
-        <Link href="/services" className="hover:text-[#ff5538] transition-colors">
-          خدمات
+        <Link href="/valid-cards" className="hover:text-[#ff5538] transition-colors">
+          کارت‌های اعتباری
         </Link>
         <span>/</span>
         <span className="text-gray-800">{service.label}</span>
