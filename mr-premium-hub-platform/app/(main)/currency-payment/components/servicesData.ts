@@ -276,7 +276,7 @@ export const services: Service[] = [
     labelEn: "International SIM Card",
     href: "/currency-payment/international-sim",
     icon: React.createElement(MdSimCard, { className: "text-3xl sm:text-4xl md:text-5xl text-blue-500" }),
-    description: "خرید سیم کارت بین‌المللی",
+    description: "خرید معتبرترین سیم‌کارت‌های بین‌المللی برای سفرهای خارجی",
     category: "international",
   },
   {

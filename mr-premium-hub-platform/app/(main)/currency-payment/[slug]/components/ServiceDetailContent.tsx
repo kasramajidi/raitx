@@ -41,6 +41,22 @@ const serviceDetails: Record<string, { features: string[]; steps: string[]; note
     note: "امکان کنسل و تغییر بلیط با توجه به قوانین خطوط هوایی وجود دارد.",
     description: "ما خدمات خرید بلیط هواپیما، قطار و اتوبوس را برای مسیرهای داخلی و بین‌المللی ارائه می‌دهیم. همچنین می‌توانید برای رزرو هتل نیز از خدمات ما استفاده کنید.",
   },
+  "international-sim": {
+    features: [
+      "خرید انواع سیم‌کارت بین‌المللی",
+      "شارژ سریع و آسان",
+      "بدون نیاز به کارت اعتباری بین‌المللی",
+      "تحویل در ۲ الی ۴ روز کاری",
+    ],
+    steps: [
+      "ثبت درخواست خرید سیم‌کارت",
+      "بررسی سفارش و هماهنگی",
+      "ارسال و اعلام وضعیت",
+      "تحویل در بازه اعلام‌شده",
+    ],
+    description:
+      "خرید معتبرترین سیم‌کارت‌های بین‌المللی برای سفرهای خارجی.\n\nاگر قصد یا تجربه سفر به کشورهای خارجی را داشته باشید، می‌دانید که تهیه سیم‌کارت‌های بین‌المللی تا چه حد می‌تواند چالش‌های ارتباطی را از لحاظ سرویس‌دهی، سهولت تماس، اتصال به اینترنت و همچنین هزینه‌ها برطرف کند!\n\nبا استفاده از خدمات نئودیجی می‌توانید در کوتاه‌ترین زمان ممکن و بدون نیاز به داشتن حساب ارزی و کارت اعتباری بین‌المللی، تنها با پرداخت معادل ریالی سرویس، معتبرترین سیم‌کارت‌های بین‌المللی را خریداری کنید.",
+  },
 };
 
 export default function ServiceDetailContent({ service }: ServiceDetailContentProps) {
@@ -71,7 +87,7 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
             درباره {service.label}
           </h2>
-          <p className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right">
+          <p className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right whitespace-pre-line">
             {details.description}
           </p>
         </div>
