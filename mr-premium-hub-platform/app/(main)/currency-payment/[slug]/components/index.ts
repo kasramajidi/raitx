@@ -6,4 +6,5 @@ export { default as ServiceStats } from "./ServiceStats";
 export { default as ServiceFAQ } from "./ServiceFAQ";
 export { default as RelatedServices } from "./RelatedServices";
 export { default as SimCardTypes } from "./SimCardTypes";
+export { default as VirtualNumberTypes } from "./VirtualNumberTypes";
 

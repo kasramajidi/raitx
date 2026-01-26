@@ -79,7 +79,7 @@ export default function SimCardTypes() {
         خرید انواع سیم کارت خارجی و بین المللی
       </h2>
       <p className="text-[10px] sm:text-xs md:text-sm text-gray-600 text-center mb-4 sm:mb-6">
-        خرید معتبرترین سیم کارت‌های بین المللی از طریق خدمت پرداخت ارزی نئودیجی
+        خرید معتبرترین سیم کارت‌های بین المللی از طریق خدمت پرداخت ارزی مستر پریمیوم هاب
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {simCardTypes.map((simCard) => (

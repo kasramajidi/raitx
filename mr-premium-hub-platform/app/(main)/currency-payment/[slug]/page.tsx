@@ -10,6 +10,7 @@ import {
   ServiceFAQ,
   RelatedServices,
   SimCardTypes,
+  VirtualNumberTypes,
 } from "./components";
 
 interface ServicePageProps {
@@ -63,6 +64,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             <ServiceBenefits service={service} />
             <ServiceStats service={service} />
             {service.id === "international-sim" && <SimCardTypes />}
+            {service.id === "virtual-number" && <VirtualNumberTypes />}
             <ServiceFAQ service={service} />
             <RelatedServices currentService={service} />
           </div>
