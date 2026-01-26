@@ -7,8 +7,7 @@ interface RelatedServicesProps {
 
 export default function RelatedServices({ currentService }: RelatedServicesProps) {
   const relatedServices = services
-    .filter((s) => s.category === currentService.category && s.id !== currentService.id)
-    .slice(0, 3);
+    .filter((s) => s.category === currentService.category && s.id !== currentService.id);
 
   if (relatedServices.length === 0) return null;
 

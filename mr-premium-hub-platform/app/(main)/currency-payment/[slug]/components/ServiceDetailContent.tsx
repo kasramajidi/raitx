@@ -41,6 +41,21 @@ const serviceDetails: Record<string, { features: string[]; steps: string[]; note
     note: "امکان کنسل و تغییر بلیط با توجه به قوانین خطوط هوایی وجود دارد.",
     description: "ما خدمات خرید بلیط هواپیما، قطار و اتوبوس را برای مسیرهای داخلی و بین‌المللی ارائه می‌دهیم. همچنین می‌توانید برای رزرو هتل نیز از خدمات ما استفاده کنید.",
   },
+  "international-sim": {
+    features: [
+      "خرید انواع سیمکارت بین المللی",
+      "شارژ سریع و آسان",
+      "بدون نیاز به کارت اعتباری بین‌المللی",
+      "تحویل در ۲ الی ۴ روز کاری",
+    ],
+    steps: [
+      "ثبت درخواست",
+      "بررسی و تایید",
+      "انجام خدمت",
+      "تایید نهایی",
+    ],
+    description: "اگر قصد و یا تجربه سفر به کشورهای خارجی را داشته باشید، میدانید که خرید سیم کارت های بین المللی تا چه حد می‌توانند چالش‌های ارتباطی شما را از لحاظ سرویس‌دهی، سهولت تماس، اتصال به اینترنت و همچنین هزینه برطرف سازند!\n\nبا استفاده از خدمات نئودیجی می‌توانید در کوتاه‌ترین زمان ممکن و بدون نیاز به داشتن حساب ارزی و کارت اعتباری بین المللی، تنها با پرداخت معادل ریالی سرویس، معتبرترین سیم کارت‌های بین المللی را خریداری کنید.",
+  },
 };
 
 export default function ServiceDetailContent({ service }: ServiceDetailContentProps) {
@@ -71,9 +86,11 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
             درباره {service.label}
           </h2>
-          <p className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right">
-            {details.description}
-          </p>
+          <div className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right space-y-3 sm:space-y-4">
+            {details.description.split('\n\n').map((paragraph, index) => (
+              <p key={index}>{paragraph}</p>
+            ))}
+          </div>
         </div>
       )}
 
@@ -91,7 +108,7 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             <ul className="space-y-2.5 sm:space-y-3 text-right">
               {details.features.map((feature, index) => (
                 <li key={index} className="flex items-start gap-2 text-xs sm:text-sm text-gray-700">
-                  <span className="text-[#ff5538] mt-1 flex-shrink-0">✓</span>
+                  <span className="text-[#ff5538] mt-1 shrink-0">✓</span>
                   <span>{feature}</span>
                 </li>
               ))}
@@ -107,7 +124,7 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             <ol className="space-y-2.5 sm:space-y-3 text-right">
               {details.steps.map((step, index) => (
                 <li key={index} className="flex items-start gap-3 text-xs sm:text-sm text-gray-700">
-                  <span className="flex-shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#ff5538]/10 text-[#ff5538] flex items-center justify-center text-[10px] sm:text-xs font-bold border-2 border-[#ff5538]/20">
+                  <span className="shrink-0 w-6 h-6 sm:w-7 sm:h-7 rounded-full bg-[#ff5538]/10 text-[#ff5538] flex items-center justify-center text-[10px] sm:text-xs font-bold border-2 border-[#ff5538]/20">
                     {index + 1}
                   </span>
                   <span className="pt-0.5">{step}</span>

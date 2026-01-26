@@ -15,8 +15,8 @@ export default function ServiceDetailHeader({ service }: ServiceDetailHeaderProp
           صفحه اصلی
         </Link>
         <span>/</span>
-        <Link href="/services" className="hover:text-[#ff5538] transition-colors">
-          خدمات
+        <Link href="/currency-payment" className="hover:text-[#ff5538] transition-colors">
+          پرداخت ارزی
         </Link>
         <span>/</span>
         <span className="text-gray-800">{service.label}</span>
@@ -24,7 +24,7 @@ export default function ServiceDetailHeader({ service }: ServiceDetailHeaderProp
 
       {/* Header */}
       <div className="flex items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-[#ff5538]/10 flex items-center justify-center flex-shrink-0">
+        <div className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 rounded-full bg-[#ff5538]/10 flex items-center justify-center shrink-0">
           <div className="text-[#ff5538]">
             {service.icon}
           </div>
