@@ -303,7 +303,7 @@ export const services: Service[] = [
     labelEn: "Host Purchase",
     href: "/currency-payment/host",
     icon: React.createElement(MdCloud, { className: "text-3xl sm:text-4xl md:text-5xl text-blue-500" }),
-    description: "خرید هاست",
+    description: "هاست خارجی برای راه‌اندازی وب‌سایت‌های حرفه‌ای؛ خرید از ارائه‌دهندگان معتبر با کیفیت بالا و پشتیبانی ۲۴ ساعته",
     category: "international",
   },
   {

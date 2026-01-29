@@ -14,6 +14,8 @@ import {
   DomainExtensions,
   DomainTips,
   DomainProviders,
+  HostTypes,
+  HostTips,
 } from "./components";
 
 interface ServicePageProps {
@@ -123,6 +125,12 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 <DomainExtensions />
                 <DomainTips />
                 <DomainProviders />
+              </>
+            )}
+            {service.id === "host" && (
+              <>
+                <HostTypes />
+                <HostTips />
               </>
             )}
             <ServiceFAQ service={service} />

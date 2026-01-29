@@ -10,4 +10,6 @@ export { default as VirtualNumberTypes } from "./VirtualNumberTypes";
 export { default as DomainExtensions } from "./DomainExtensions";
 export { default as DomainTips } from "./DomainTips";
 export { default as DomainProviders } from "./DomainProviders";
+export { default as HostTypes } from "./HostTypes";
+export { default as HostTips } from "./HostTips";
 
