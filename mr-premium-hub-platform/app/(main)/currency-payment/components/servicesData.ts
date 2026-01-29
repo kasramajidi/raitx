@@ -231,7 +231,7 @@ export const services: Service[] = [
     labelEn: "Game Account",
     href: "/currency-payment/game-account",
     icon: React.createElement(FaGamepad, { className: "text-3xl sm:text-4xl md:text-5xl text-green-500" }),
-    description: "خرید اکانت بازی",
+    description: "خرید اکانت‌های پریمیوم بازی؛ Xbox Game Pass، PlayStation Plus، Steam، Epic Games و سایر پلتفرم‌ها از طریق مستر پریمیوم هاب",
     category: "premium",
   },
   {

@@ -20,6 +20,7 @@ import {
   TrendyolCategories,
   AIAccounts,
   SeoTools,
+  GameAccounts,
 } from "./components";
 
 interface ServicePageProps {
@@ -141,6 +142,7 @@ export default async function ServicePage({ params }: ServicePageProps) {
             {service.id === "trendyol" && <TrendyolCategories />}
             {service.id === "ai-account" && <AIAccounts />}
             {service.id === "seo-account" && <SeoTools />}
+            {service.id === "game-account" && <GameAccounts />}
             <ServiceFAQ service={service} />
             <RelatedServices currentService={service} />
           </div>
