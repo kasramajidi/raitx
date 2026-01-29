@@ -213,7 +213,7 @@ export const services: Service[] = [
     labelEn: "AI Account",
     href: "/currency-payment/ai-account",
     icon: React.createElement(FaBrain, { className: "text-3xl sm:text-4xl md:text-5xl text-green-500" }),
-    description: "خرید اکانت‌های هوش مصنوعی",
+    description: "خرید اکانت‌های پریمیوم هوش مصنوعی؛ ChatGPT، Midjourney، Jasper و سایر ابزارهای AI از طریق مستر پریمیوم هاب",
     category: "premium",
   },
   {

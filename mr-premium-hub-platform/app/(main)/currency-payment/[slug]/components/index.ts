@@ -14,4 +14,5 @@ export { default as HostTypes } from "./HostTypes";
 export { default as HostTips } from "./HostTips";
 export { default as AmazonSites } from "./AmazonSites";
 export { default as TrendyolCategories } from "./TrendyolCategories";
+export { default as AIAccounts } from "./AIAccounts";
 
