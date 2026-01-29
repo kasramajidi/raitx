@@ -136,6 +136,43 @@ const serviceDetails: Record<
     description:
       "هاست خارجی یکی از بهترین گزینه‌ها برای راه‌اندازی وب‌سایت‌های حرفه‌ای است. با خرید هاست از ارائه‌دهندگان معتبر خارجی، از کیفیت بالا، سرعت عالی و پشتیبانی ۲۴ ساعته بهره‌مند شوید.\n\nمستر پریمیوم هاب با ارائه خدمات خرید هاست خارجی، این امکان را فراهم کرده که بدون نیاز به کارت اعتباری بین‌المللی، به بهترین ارائه‌دهندگان هاست جهان دسترسی داشته باشید.",
   },
+  amazon: {
+    features: [
+      "تحویل درب منزل — تحویل کالا در درب منزل شما در ایران",
+      "پرداخت ریالی — پرداخت معادل ریالی بدون نیاز به کارت خارجی",
+      "خرید از چندین کشور — خرید از آمازون انگلیس، آمریکا، کانادا و سایر کشورها",
+      "ضمانت تحویل — ضمانت تحویل کالا یا بازگشت وجه",
+      "مدت زمان تحویل — ۴ تا ۸ هفته کاری",
+    ],
+    steps: [
+      "انتخاب کالا از سایت آمازون",
+      "کپی لینک محصول و ثبت در پنل",
+      "پرداخت هزینه",
+      "تحویل درب منزل",
+    ],
+    description:
+      "خرید کالا از فروشگاه اینترنتی آمازون با تحویل درب منزل در کمترین زمان.\n\nبا خدمات مستر پریمیوم هاب، شما می‌توانید به راحتی از فروشگاه اینترنتی آمازون خرید کنید. ما کالای شما را از آمازون خریداری کرده و در ایران به دست شما می‌رسانیم.\n\nدر حال حاضر، خرید از آمازون کشورهای انگلیس، ایتالیا، آمریکا، کانادا، استرالیا، امارات، ترکیه و آلمان توسط مجموعه مستر پریمیوم هاب انجام می‌شود.",
+  },
+  trendyol: {
+    features: [
+      "تحویل درب منزل — تحویل کالا در درب منزل شما در ایران",
+      "پرداخت ریالی — پرداخت معادل ریالی بدون نیاز به کارت خارجی",
+      "مارک‌های جهانی — دسترسی به مارک‌های جهانی و داخلی پوشاک",
+      "ضمانت تحویل — ضمانت تحویل کالا یا بازگشت وجه",
+      "مدت زمان تحویل — ۴ تا ۶ هفته کاری",
+    ],
+    steps: [
+      "انتخاب کالا از سایت ترندیول",
+      "کپی کردن لینک محصول",
+      "وارد کردن لینک در پنل مستر پریمیوم هاب",
+      "محاسبه قیمت نهایی",
+      "پرداخت هزینه",
+      "خرید و ارسال کالا",
+      "تحویل درب منزل",
+    ],
+    description:
+      "خرید از ترندیول ترکیه یکی از پرتقاضاترین خدمات بین‌المللی در زمینه خرید از فروشگاه‌های اینترنتی است. ترندیول (Trendyol) به‌عنوان یکی از معتبرترین فروشگاه‌های آنلاین در خاورمیانه، با فروش برندهای جهانی و داخلی پوشاک و محصولات متنوع، توانسته جایگاه ویژه‌ای در میان دیگر فروشگاه‌های اینترنتی جهانی به دست آورد.\n\nاکنون شما می‌توانید برای خرید از سایت ترندیول از خدمات مستر پریمیوم هاب استفاده کنید. برای خرید محصولات خود، تنها کافی است لینک کالای مورد نظر را از ترندیول به ما بدهید و پس از انجام کلیه امور مربوط به ارسال، کالا را درب منزل خود دریافت کنید.\n\nمحصولات موجود شامل پوشاک زنان، مردان و کودکان، لوازم جانبی، وسایل ورزشی، لوازم الکترونیکی، عطر و ادکلن، محصولات بهداشتی و آرایشی و بسیاری دیگر از اقلام متنوع می‌شود.",
+  },
 };
 
 export default function ServiceDetailContent({ service }: ServiceDetailContentProps) {
@@ -157,13 +194,23 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
     description: "ما با سال‌ها تجربه در زمینه خدمات ارزی و پرداخت‌های بین‌المللی، آماده ارائه بهترین خدمات به شما هستیم.",
   };
 
+  const aboutId = `about-${service.id}`;
+  const featuresId = `features-${service.id}`;
+  const stepsId = `steps-${service.id}`;
+
   return (
     <>
-      {/* Description */}
+      {/* Description - SEO: section + heading id */}
       {details.description && (
-        <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
-          <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2">
-            <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
+        <section
+          aria-labelledby={aboutId}
+          className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6"
+        >
+          <h2
+            id={aboutId}
+            className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2"
+          >
+            <span className="w-1 h-6 bg-[#ff5538] rounded" aria-hidden></span>
             درباره {service.label}
           </h2>
           <div className="text-[10px] sm:text-xs md:text-sm text-gray-700 leading-6 sm:leading-7 text-justify sm:text-right space-y-3 sm:space-y-4">
@@ -171,17 +218,23 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
               <p key={index}>{paragraph}</p>
             ))}
           </div>
-        </div>
+        </section>
       )}
 
-      {/* Features and Steps */}
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6">
+      {/* Features and Steps - SEO: section + heading ids */}
+      <section
+        aria-labelledby={`${featuresId} ${stepsId}`}
+        className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6 mb-6"
+      >
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
           {/* Features */}
           <div>
             <div className="mb-3 sm:mb-4 text-right flex items-center gap-2">
-              <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
-              <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900">
+              <span className="w-1 h-6 bg-[#ff5538] rounded" aria-hidden></span>
+              <h2
+                id={featuresId}
+                className="text-sm sm:text-base md:text-lg font-bold text-gray-900"
+              >
                 ویژگی‌های {service.label}
               </h2>
             </div>
@@ -197,8 +250,11 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
 
           {/* Steps */}
           <div>
-            <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2">
-              <span className="w-1 h-6 bg-[#ff5538] rounded"></span>
+            <h2
+              id={stepsId}
+              className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-3 sm:mb-4 text-right flex items-center gap-2"
+            >
+              <span className="w-1 h-6 bg-[#ff5538] rounded" aria-hidden></span>
               {details.stepsDetail
                 ? "فرآیند خرید دامنه در مستر پریمیوم هاب"
                 : "مراحل انجام کار"}
@@ -248,7 +304,7 @@ export default function ServiceDetailContent({ service }: ServiceDetailContentPr
             </p>
           </div>
         )}
-      </div>
+      </section>
     </>
   );
 }

@@ -16,6 +16,8 @@ import {
   DomainProviders,
   HostTypes,
   HostTips,
+  AmazonSites,
+  TrendyolCategories,
 } from "./components";
 
 interface ServicePageProps {
@@ -133,6 +135,8 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 <HostTips />
               </>
             )}
+            {service.id === "amazon" && <AmazonSites />}
+            {service.id === "trendyol" && <TrendyolCategories />}
             <ServiceFAQ service={service} />
             <RelatedServices currentService={service} />
           </div>

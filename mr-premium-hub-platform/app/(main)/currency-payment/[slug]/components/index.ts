@@ -12,4 +12,6 @@ export { default as DomainTips } from "./DomainTips";
 export { default as DomainProviders } from "./DomainProviders";
 export { default as HostTypes } from "./HostTypes";
 export { default as HostTips } from "./HostTips";
+export { default as AmazonSites } from "./AmazonSites";
+export { default as TrendyolCategories } from "./TrendyolCategories";
 

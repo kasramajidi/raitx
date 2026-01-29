@@ -312,7 +312,7 @@ export const services: Service[] = [
     labelEn: "Amazon Purchase",
     href: "/currency-payment/amazon",
     icon: React.createElement(SiAmazon, { className: "text-3xl sm:text-4xl md:text-5xl text-[#FF9900]" }),
-    description: "خرید از آمازون",
+    description: "خرید کالا از فروشگاه اینترنتی آمازون با تحویل درب منزل؛ خرید از آمازون انگلیس، آمریکا، کانادا و سایر کشورها از طریق مستر پریمیوم هاب",
     category: "international",
   },
   {
@@ -321,7 +321,7 @@ export const services: Service[] = [
     labelEn: "Trendyol Turkey",
     href: "/currency-payment/trendyol",
     icon: React.createElement(BiShoppingBag, { className: "text-3xl sm:text-4xl md:text-5xl text-red-500" }),
-    description: "خرید از ترندیول ترکیه",
+    description: "خرید از ترندیول ترکیه با تحویل درب منزل؛ پوشاک، الکترونیک، عطر و ادکلن و سایر دسته‌بندی‌ها از طریق مستر پریمیوم هاب",
     category: "international",
   },
 ];
