@@ -186,7 +186,7 @@ export const services: Service[] = [
     labelEn: "VPS USA",
     href: "/currency-payment/vps-usa",
     icon: React.createElement(HiServer, { className: "text-3xl sm:text-4xl md:text-5xl text-red-500" }),
-    description: "سرویس VPS در آمریکا",
+    description: "سرور مجازی آمریکا از مستر پریمیوم هاب؛ پلن پایه و حرفه‌ای، آی‌پی آمریکا، تحویل ۲ تا ۲۴ ساعت",
     category: "vps",
   },
   {

@@ -29,4 +29,7 @@ export { default as VPSTradingBenefits } from "./VPSTradingBenefits";
 export { default as VPSDailySteps } from "./VPSDailySteps";
 export { default as VPSDailyPlans } from "./VPSDailyPlans";
 export { default as VPSDailyBenefits } from "./VPSDailyBenefits";
+export { default as VPSUSASteps } from "./VPSUSASteps";
+export { default as VPSUSAPlans } from "./VPSUSAPlans";
+export { default as VPSUSABenefits } from "./VPSUSABenefits";
 
