@@ -11,7 +11,7 @@ export default function CartIcon({ cartCount = 0 }: CartIconProps) {
   return (
     <Link
       href="/cart"
-      className="relative inline-flex items-center justify-center text-gray-700 hover:text-[#ff5538] transition-colors duration-200 p-1.5 sm:p-2 md:p-2 lg:p-2 rounded-lg hover:bg-orange-50 cursor-pointer"
+      className="relative inline-flex items-center justify-center text-gray-700 hover:text-[#ff5538] transition-colors duration-200 p-1.5 sm:p-2 md:p-2 lg:p-2 rounded-lg hover:bg-[#ff5538]/10 cursor-pointer"
       aria-label="سبد خرید"
     >
       <FiShoppingCart className="text-lg min-[500px]:text-xl sm:text-2xl md:text-2xl lg:text-2xl" />

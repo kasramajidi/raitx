@@ -35,4 +35,8 @@ export { default as VPSUSABenefits } from "./VPSUSABenefits";
 export { default as VPSNetherlandsSteps } from "./VPSNetherlandsSteps";
 export { default as VPSNetherlandsPlans } from "./VPSNetherlandsPlans";
 export { default as VPSNetherlandsBenefits } from "./VPSNetherlandsBenefits";
+export { default as VPSFranceSteps } from "./VPSFranceSteps";
+export { default as VPSFrancePlans } from "./VPSFrancePlans";
+export { default as VPSFranceBenefits } from "./VPSFranceBenefits";
+export { default as VPSFranceFeatures } from "./VPSFranceFeatures";
 

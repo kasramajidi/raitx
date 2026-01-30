@@ -140,9 +140,29 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
   const isVPSDaily = service.id === "vps-daily";
   const isVPSUSA = service.id === "vps-usa";
   const isVPSNetherlands = service.id === "vps-netherlands";
+  const isVPSFrance = service.id === "vps-france";
 
   return (
     <>
+      {isVPSFrance && (
+        <>
+          {/* VPS France Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
+                <FaServer className="text-3xl sm:text-4xl" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
+                VPS فرانسه
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
+                سرویس‌های VPS برای تریدینگ و استفاده روزانه
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
       {isVPSNetherlands && (
         <>
           {/* VPS Netherlands Intro Box - site theme #ff5538 */}
@@ -164,13 +184,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isVPSUSA && (
         <>
-          {/* VPS USA Intro Box - like image: white card, red/orange accent */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-200">
+          {/* VPS USA Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-50 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <FaServer className="text-3xl sm:text-4xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 VPS آمریکا
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
@@ -183,13 +203,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isVPSDaily && (
         <>
-          {/* VPS Daily Intro Box - like image: white card, reddish-orange accent */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-200">
+          {/* VPS Daily Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-50 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <FaServer className="text-3xl sm:text-4xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 VPS روزانه
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
@@ -202,13 +222,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isVPSTrading && (
         <>
-          {/* VPS Trading Intro Box - like image: white card, reddish-orange accent */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-200">
+          {/* VPS Trading Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-50 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <FaServer className="text-3xl sm:text-4xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 VPS تریدینگ
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
@@ -221,13 +241,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isInternationalExam && (
         <>
-          {/* International Exam Intro Box */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-100">
+          {/* International Exam Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-100 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <FaGlobeAmericas className="text-3xl sm:text-4xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 آزمون‌های بین‌المللی
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
@@ -240,13 +260,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isStudentPayment && (
         <>
-          {/* Student Payment Intro Box */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-100">
+          {/* Student Payment Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-100 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <HiAcademicCap className="text-4xl sm:text-5xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 پرداخت دانشجویی
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
@@ -259,13 +279,13 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
 
       {isLanguageExam && (
         <>
-          {/* Language Exam Intro Box */}
-          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-gray-100">
+          {/* Language Exam Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
             <div className="flex flex-col items-center">
-              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-100 flex items-center justify-center mb-4 text-orange-500">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
                 <HiAcademicCap className="text-4xl sm:text-5xl" />
               </div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-900 text-center mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
                 ثبت نام آزمون زبان
               </h2>
               <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">

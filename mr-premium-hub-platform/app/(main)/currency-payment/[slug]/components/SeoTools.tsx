@@ -51,7 +51,7 @@ const seoTools: SeoTool[] = [
     titleEn: "SEMrush Account",
     href: "/currency-payment/seo-account",
     icon: <MdAnalytics className="text-white text-2xl sm:text-3xl" />,
-    iconBg: "bg-orange-500",
+    iconBg: "bg-[#ff5538]",
   },
   {
     id: "woorank",

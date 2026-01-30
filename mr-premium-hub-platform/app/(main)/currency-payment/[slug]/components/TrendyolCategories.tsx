@@ -68,7 +68,7 @@ const trendyolCategories: TrendyolCategory[] = [
     titleEn: "Sports & Outdoor",
     href: "/currency-payment/trendyol",
     icon: <MdSportsSoccer className="text-white text-3xl sm:text-4xl" />,
-    iconBg: "bg-orange-500",
+    iconBg: "bg-[#ff5538]",
   },
 ];
 

@@ -109,8 +109,8 @@ export default function MobileMenu({
                   px-6 py-3 text-base font-medium transition-colors duration-200 relative cursor-pointer shrink-0
                   ${
                     isActive
-                      ? "text-[#ff5538] bg-orange-50 border-r-4 border-[#ff5538] font-bold"
-                      : "text-gray-700 hover:text-[#ff5538] hover:bg-orange-50"
+                      ? "text-[#ff5538] bg-[#ff5538]/10 border-r-4 border-[#ff5538] font-bold"
+                      : "text-gray-700 hover:text-[#ff5538] hover:bg-[#ff5538]/10"
                   }
                 `}
               >

@@ -86,7 +86,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
         <MdPhone className="text-white text-xl sm:text-2xl" />
       </div>
     ),
-    iconColor: "bg-orange-600",
+    iconColor: "bg-[#ff5538]",
   },
 ];
 

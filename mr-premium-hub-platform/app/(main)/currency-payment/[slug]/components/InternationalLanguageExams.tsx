@@ -49,7 +49,7 @@ const languageExams: LanguageExam[] = [
     titleEn: "TOEFL",
     href: "/currency-payment/international-exam",
     icon: <FaBook className="text-3xl" />,
-    iconColor: "text-orange-500",
+    iconColor: "text-[#ff5538]",
   },
 ];
 

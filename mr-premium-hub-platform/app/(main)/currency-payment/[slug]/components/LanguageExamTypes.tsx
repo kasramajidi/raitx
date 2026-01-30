@@ -117,7 +117,7 @@ export default function LanguageExamTypes() {
                 className="w-14 h-14 rounded-lg bg-gray-100 flex items-center justify-center"
                 aria-hidden
               >
-                <HiAcademicCap className="text-orange-500 text-3xl" />
+                <HiAcademicCap className="text-[#ff5538] text-3xl" />
               </div>
             </div>
             <h3 className="text-base font-bold text-gray-900 mb-3 text-center min-h-[48px] flex items-center justify-center">

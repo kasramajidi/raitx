@@ -130,7 +130,7 @@ const currencyPaymentCategories: Category[] = [
     labelEn: "Education & Exam",
     description: "ثبت نام آزمون‌های زبان و بین‌المللی و پرداخت‌های دانشجویی",
     icon: React.createElement(HiAcademicCap, {
-      className: "text-3xl sm:text-4xl md:text-5xl text-orange-500",
+      className: "text-3xl sm:text-4xl md:text-5xl text-[#ff5538]",
     }),
     category: "education",
     color: "orange",
@@ -139,21 +139,21 @@ const currencyPaymentCategories: Category[] = [
         label: "ثبت نام آزمون زبان",
         href: "/currency-payment/language-exam",
         icon: React.createElement(HiAcademicCap, {
-          className: "text-3xl sm:text-4xl md:text-5xl text-orange-500",
+          className: "text-3xl sm:text-4xl md:text-5xl text-[#ff5538]",
         }),
       },
       {
         label: "پرداخت دانشجویی",
         href: "/currency-payment/student-payment",
         icon: React.createElement(HiAcademicCap, {
-          className: "text-3xl sm:text-4xl md:text-5xl text-orange-500",
+          className: "text-3xl sm:text-4xl md:text-5xl text-[#ff5538]",
         }),
       },
       {
         label: "آزمونهای بین المللی",
         href: "/currency-payment/international-exam",
         icon: React.createElement(HiGlobe, {
-          className: "text-3xl sm:text-4xl md:text-5xl text-orange-500",
+          className: "text-3xl sm:text-4xl md:text-5xl text-[#ff5538]",
         }),
       },
     ],

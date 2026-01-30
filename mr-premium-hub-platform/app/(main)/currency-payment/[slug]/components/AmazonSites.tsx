@@ -51,7 +51,7 @@ const amazonSites: AmazonSite[] = [
     titleEn: "Amazon Germany",
     href: "/currency-payment/amazon",
     icon: <BiCart className="text-white text-2xl sm:text-3xl" />,
-    iconBg: "bg-orange-500",
+    iconBg: "bg-[#ff5538]",
   },
   {
     id: "amazon-italy",

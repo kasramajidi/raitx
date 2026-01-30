@@ -34,8 +34,8 @@ const internationalExams: InternationalExam[] = [
     titleEn: "USMLE",
     href: "/currency-payment/international-exam",
     icon: <FaUserMd className="text-3xl" />,
-    iconBg: "bg-orange-50",
-    iconColor: "text-orange-500",
+    iconBg: "bg-[#ff5538]/10",
+    iconColor: "text-[#ff5538]",
   },
   {
     id: "pmp",
@@ -164,7 +164,7 @@ export default function InternationalExamTypes() {
                 {item.titleEn}
               </p>
             </div>
-            <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-sm font-semibold text-center py-3 px-4 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-all duration-200 w-full shadow-sm">
+            <div className="bg-[#ff5538] text-white text-sm font-semibold text-center py-3 px-4 rounded-lg hover:bg-[#e54d32] transition-all duration-200 w-full shadow-sm">
               <span className="inline-flex items-center gap-2 justify-center">
                 ثبت نام آزمون
                 <span className="text-base">←</span>
