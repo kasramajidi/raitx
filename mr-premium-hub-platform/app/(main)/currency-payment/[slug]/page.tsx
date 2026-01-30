@@ -36,6 +36,9 @@ import {
   VPSUSASteps,
   VPSUSAPlans,
   VPSUSABenefits,
+  VPSNetherlandsSteps,
+  VPSNetherlandsPlans,
+  VPSNetherlandsBenefits,
 } from "./components";
 
 interface ServicePageProps {
@@ -195,6 +198,13 @@ export default async function ServicePage({ params }: ServicePageProps) {
                 <VPSUSASteps />
                 <VPSUSAPlans />
                 <VPSUSABenefits />
+              </>
+            )}
+            {service.id === "vps-netherlands" && (
+              <>
+                <VPSNetherlandsSteps />
+                <VPSNetherlandsPlans />
+                <VPSNetherlandsBenefits />
               </>
             )}
             <ServiceFAQ service={service} />

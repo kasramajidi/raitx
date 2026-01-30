@@ -195,7 +195,7 @@ export const services: Service[] = [
     labelEn: "VPS Netherlands",
     href: "/currency-payment/vps-netherlands",
     icon: React.createElement(HiServer, { className: "text-3xl sm:text-4xl md:text-5xl text-red-500" }),
-    description: "سرویس VPS در هلند",
+    description: "سرور مجازی هلند از مستر پریمیوم هاب؛ پلن پایه و حرفه‌ای، آی‌پی آمستردام، تحویل ۲ تا ۲۴ ساعت",
     category: "vps",
   },
   {

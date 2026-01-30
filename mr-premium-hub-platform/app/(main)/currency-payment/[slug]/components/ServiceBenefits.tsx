@@ -139,9 +139,29 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
   const isVPSTrading = service.id === "vps-trading";
   const isVPSDaily = service.id === "vps-daily";
   const isVPSUSA = service.id === "vps-usa";
+  const isVPSNetherlands = service.id === "vps-netherlands";
 
   return (
     <>
+      {isVPSNetherlands && (
+        <>
+          {/* VPS Netherlands Intro Box - site theme #ff5538 */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-[#ff5538]/20">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-[#ff5538]/10 flex items-center justify-center mb-4 text-[#ff5538]">
+                <FaServer className="text-3xl sm:text-4xl" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-[#ff5538] text-center mb-2">
+                VPS هلند
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
+                سرویس‌های VPS برای تریدینگ و استفاده روزانه
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
       {isVPSUSA && (
         <>
           {/* VPS USA Intro Box - like image: white card, red/orange accent */}

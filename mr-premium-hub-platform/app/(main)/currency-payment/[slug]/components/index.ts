@@ -32,4 +32,7 @@ export { default as VPSDailyBenefits } from "./VPSDailyBenefits";
 export { default as VPSUSASteps } from "./VPSUSASteps";
 export { default as VPSUSAPlans } from "./VPSUSAPlans";
 export { default as VPSUSABenefits } from "./VPSUSABenefits";
+export { default as VPSNetherlandsSteps } from "./VPSNetherlandsSteps";
+export { default as VPSNetherlandsPlans } from "./VPSNetherlandsPlans";
+export { default as VPSNetherlandsBenefits } from "./VPSNetherlandsBenefits";
 
