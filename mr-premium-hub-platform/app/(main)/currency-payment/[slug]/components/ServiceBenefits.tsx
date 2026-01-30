@@ -133,9 +133,29 @@ export default function ServiceBenefits({ service }: ServiceBenefitsProps) {
   const isVirtualNumber = service.id === "virtual-number";
   const isDomain = service.id === "domain";
   const isLanguageExam = service.id === "language-exam";
+  const isStudentPayment = service.id === "student-payment";
 
   return (
     <>
+      {isStudentPayment && (
+        <>
+          {/* Student Payment Intro Box */}
+          <div className="bg-white rounded-2xl shadow-lg p-6 md:p-8 mb-6 border border-orange-100">
+            <div className="flex flex-col items-center">
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-orange-100 flex items-center justify-center mb-4 text-orange-500">
+                <HiAcademicCap className="text-4xl sm:text-5xl" />
+              </div>
+              <h2 className="text-xl md:text-2xl font-bold text-orange-600 text-center mb-2">
+                پرداخت دانشجویی
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600 text-center max-w-2xl leading-relaxed">
+                ثبت نام آزمون‌های زبان و بین‌المللی و پرداخت‌های دانشجویی
+              </p>
+            </div>
+          </div>
+        </>
+      )}
+
       {isLanguageExam && (
         <>
           {/* Language Exam Intro Box */}

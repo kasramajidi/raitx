@@ -23,6 +23,8 @@ import {
   GameAccounts,
   LanguageExamTypes,
   LanguageExamServices,
+  StudentPaymentTypes,
+  StudentPaymentServices,
 } from "./components";
 
 interface ServicePageProps {
@@ -149,6 +151,12 @@ export default async function ServicePage({ params }: ServicePageProps) {
               <>
                 <LanguageExamTypes />
                 <LanguageExamServices />
+              </>
+            )}
+            {service.id === "student-payment" && (
+              <>
+                <StudentPaymentTypes />
+                <StudentPaymentServices />
               </>
             )}
             <ServiceFAQ service={service} />

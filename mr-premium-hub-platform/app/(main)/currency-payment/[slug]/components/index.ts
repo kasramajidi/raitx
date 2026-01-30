@@ -19,4 +19,6 @@ export { default as SeoTools } from "./SeoTools";
 export { default as GameAccounts } from "./GameAccounts";
 export { default as LanguageExamTypes } from "./LanguageExamTypes";
 export { default as LanguageExamServices } from "./LanguageExamServices";
+export { default as StudentPaymentTypes } from "./StudentPaymentTypes";
+export { default as StudentPaymentServices } from "./StudentPaymentServices";
 

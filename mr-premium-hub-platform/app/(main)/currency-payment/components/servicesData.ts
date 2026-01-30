@@ -258,7 +258,7 @@ export const services: Service[] = [
     labelEn: "Student Payment",
     href: "/currency-payment/student-payment",
     icon: React.createElement(HiAcademicCap, { className: "text-3xl sm:text-4xl md:text-5xl text-orange-500" }),
-    description: "پرداخت هزینه‌های دانشجویی",
+    description: "پرداخت هزینه‌های دانشجویی؛ شهریه، خوابگاه، اپلیکیشن فی، WES و فعالیت‌های علمی بین‌المللی از طریق مستر پریمیوم هاب",
     category: "education",
   },
   {
