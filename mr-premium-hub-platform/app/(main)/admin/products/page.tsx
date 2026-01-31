@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
 import ProductsTable from "./components/ProductsTable";
 import ProductForm, { ShopApiPayload } from "./components/ProductForm";
+import { useCart } from "../../context/CartContext";
 
 const API_URL = "https://mrpremiumhub.org/api.ashx?action=shop";
 
@@ -29,10 +30,9 @@ function mapApiToProduct(item: ApiProduct, index: number): Product {
     priceNum > 0
       ? new Intl.NumberFormat("fa-IR").format(priceNum) + " تومان"
       : "—";
-  const stock = Number(item.value ?? item.stock ?? item.Stock ?? 0);
-  const sales = Number(item.sales ?? item.Sales ?? item.NumberOfComments ?? 0);
-  const status =
-    stock > 0 ? "موجود" : String(item.status ?? item.Status ?? "ناموجود");
+  const stock = Math.max(0, Number(item.value ?? item.stock ?? item.Stock ?? 0));
+  const sales = Math.max(0, Number(item.sales ?? item.Sales ?? item.NumberOfComments ?? 0));
+  const status = stock > 0 ? "موجود" : "ناموجود";
   const description = item.text ? String(item.text) : undefined;
   return {
     id,
@@ -98,22 +98,95 @@ export default function ProductsPage() {
     fetchProducts();
   }, [fetchProducts]);
   const [showForm, setShowForm] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<Product | null>(null);
+  const [editingProduct, setEditingProduct] = useState<import("./components/ProductForm").ApiProductForEdit | null>(null);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleAdd = () => {
     setEditingProduct(null);
+    setEditError(null);
     setShowForm(true);
   };
 
-  const handleEdit = (product: Product) => {
-    setEditingProduct(product);
-    setShowForm(true);
+  const handleEdit = async (product: Product) => {
+    setEditError(null);
+    setEditLoading(true);
+    try {
+      const res = await fetch(`${API_URL}&id=${product.id}`, { method: "GET" });
+      let data: unknown;
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
+      const obj = data as Record<string, unknown>;
+      if (!res.ok) {
+        const msg =
+          (typeof obj.error === "string" && obj.error) ||
+          (typeof obj.message === "string" && obj.message) ||
+          "خطا در دریافت اطلاعات محصول";
+        throw new Error(msg);
+      }
+      const apiProduct = obj as import("./components/ProductForm").ApiProductForEdit;
+      setEditingProduct({
+        id: apiProduct.id ?? product.id,
+        title: apiProduct.title,
+        groups: apiProduct.groups,
+        brand: apiProduct.brand,
+        price: apiProduct.price,
+        value: apiProduct.value,
+        img: apiProduct.img,
+        video: apiProduct.video,
+        text: apiProduct.text,
+        Specifications: apiProduct.Specifications,
+        Score: apiProduct.Score,
+        NumberOfComments: apiProduct.NumberOfComments,
+        UserComments: apiProduct.UserComments,
+        search: apiProduct.search,
+        RelatedProducts: apiProduct.RelatedProducts,
+        inPersonDelivery: apiProduct.inPersonDelivery,
+      });
+      setShowForm(true);
+    } catch (err) {
+      setEditError(
+        err instanceof Error ? err.message : "خطا در بارگذاری محصول برای ویرایش"
+      );
+    } finally {
+      setEditLoading(false);
+    }
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm("آیا از حذف این محصول اطمینان دارید؟")) {
-      setProducts(products.filter((product) => product.id !== id));
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("آیا از حذف این محصول اطمینان دارید؟")) return;
+    setDeleteError(null);
+    setDeletingId(id);
+    try {
+      const res = await fetch(`${API_URL}&id=${id}`, { method: "DELETE" });
+      let data: Record<string, unknown> = {};
+      try {
+        data = await res.json();
+      } catch {
+        data = {};
+      }
+      const isFailed = !res.ok || data.statu === 0;
+      if (isFailed) {
+        const msg =
+          (typeof data.error === "string" && data.error) ||
+          (typeof data.message === "string" && data.message) ||
+          "حذف ناموفق بود. لطفاً دوباره تلاش کنید.";
+        throw new Error(msg);
+      }
+      await fetchProducts();
+    } catch (err) {
+      setDeleteError(
+        err instanceof Error ? err.message : "خطا در حذف محصول"
+      );
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -123,7 +196,22 @@ export default function ProductsPage() {
     fetchProducts();
   };
 
-  const filteredProducts = products.filter(
+  const { items: cartItems } = useCart();
+
+  const cartQuantityByProductId = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const item of cartItems) {
+      const id = String(item.product.id);
+      map[id] = (map[id] ?? 0) + item.quantity;
+    }
+    return map;
+  }, [cartItems]);
+
+  const filteredProducts = products.map((p) => ({
+    ...p,
+    stock: Math.max(0, p.stock),
+    sales: Math.max(0, cartQuantityByProductId[p.id] ?? 0),
+  })).filter(
     (product) =>
       product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       product.category.toLowerCase().includes(searchTerm.toLowerCase())
@@ -132,42 +220,85 @@ export default function ProductsPage() {
   return (
     <AdminLayout>
       <div className="space-y-6">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-medium text-gray-900 mb-2">
+            <h1 className="text-2xl font-semibold text-gray-900 mb-1">
               مدیریت محصولات فروشگاه
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-gray-500">
               افزودن محصول جدید، ویرایش و حذف محصولات موجود
             </p>
           </div>
           <button
             onClick={handleAdd}
-            className="bg-[#ff5538] text-white px-6 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
+            className="inline-flex items-center gap-2 bg-[#ff5538] text-white px-6 py-2.5 text-sm font-medium rounded-xl hover:bg-[#ff6b52] hover:shadow-lg hover:shadow-[#ff5538]/25 transition-all duration-200 shrink-0"
           >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+            </svg>
             افزودن محصول جدید
           </button>
         </div>
 
-        <div className="bg-white border-b border-gray-200 p-4">
+        <div className="relative">
           <input
             type="text"
             placeholder="جستجو در لیست محصولات (نام یا دسته‌بندی)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
+            className="w-full h-12 bg-white rounded-xl border border-gray-200 pl-4 pr-12 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
           />
+          <svg
+            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
         </div>
 
+        {editError && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50/80 border border-red-200 text-red-700 text-sm">
+            <span className="shrink-0 w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white text-lg">!</span>
+            <div className="flex-1">
+              <p className="font-medium mb-0.5">علت خطا در بارگذاری محصول برای ویرایش:</p>
+              <p>{editError}</p>
+              <button
+                onClick={() => setEditError(null)}
+                className="mt-2 text-red-600 hover:underline text-sm"
+              >
+                بستن
+              </button>
+            </div>
+          </div>
+        )}
+
+        {deleteError && (
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50/80 border border-red-200 text-red-700 text-sm">
+            <span className="shrink-0 w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white text-lg">!</span>
+            <div className="flex-1">
+              <p className="font-medium mb-0.5">علت خطا در حذف محصول:</p>
+              <p>{deleteError}</p>
+              <button
+                onClick={() => setDeleteError(null)}
+                className="mt-2 text-red-600 hover:underline text-sm"
+              >
+                بستن
+              </button>
+            </div>
+          </div>
+        )}
+
         {fetchError && (
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-sm">
-            <span className="shrink-0 w-8 h-8 rounded-full bg-red-500 flex items-center justify-center text-white">!</span>
-            <div>
-                <p className="font-medium mb-0.5">علت خطا در دریافت لیست محصولات:</p>
+          <div className="flex items-center gap-3 p-4 rounded-xl bg-red-50/80 border border-red-200 text-red-700 text-sm">
+            <span className="shrink-0 w-10 h-10 rounded-xl bg-red-500 flex items-center justify-center text-white text-lg">!</span>
+            <div className="flex-1">
+              <p className="font-medium mb-0.5">علت خطا در دریافت لیست محصولات:</p>
               <p>{fetchError}</p>
               <button
                 onClick={fetchProducts}
-                className="mt-2 text-[#ff5538] hover:underline text-sm"
+                className="mt-2 inline-flex items-center gap-1.5 px-4 py-2 rounded-lg bg-red-100 hover:bg-red-200 text-red-700 font-medium text-sm transition-colors"
               >
                 تلاش مجدد
               </button>
@@ -176,10 +307,15 @@ export default function ProductsPage() {
         )}
 
         {loading ? (
-          <div className="bg-white border-b border-gray-200 p-12 flex items-center justify-center">
-            <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-2 border-[#ff5538] border-t-transparent rounded-full animate-spin" />
-              <p className="text-sm text-gray-600">در حال بارگذاری لیست محصولات از سرور...</p>
+          <div className="bg-white rounded-2xl border border-gray-100 p-16 flex items-center justify-center shadow-sm">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-12 h-12 border-2 border-[#ff5538]/30 border-t-[#ff5538] rounded-full animate-spin" />
+              <p className="text-sm text-gray-500">در حال بارگذاری لیست محصولات از سرور...</p>
+              <div className="flex gap-1">
+                <span className="w-2 h-2 rounded-full bg-[#ff5538]/60 animate-bounce [animation-delay:0ms]" />
+                <span className="w-2 h-2 rounded-full bg-[#ff5538]/60 animate-bounce [animation-delay:150ms]" />
+                <span className="w-2 h-2 rounded-full bg-[#ff5538]/60 animate-bounce [animation-delay:300ms]" />
+              </div>
             </div>
           </div>
         ) : (
@@ -187,23 +323,14 @@ export default function ProductsPage() {
           products={filteredProducts}
           onEdit={handleEdit}
           onDelete={handleDelete}
+          deletingId={deletingId}
+          editLoading={editLoading}
         />
         )}
 
         {showForm && (
           <ProductForm
-            product={
-              editingProduct
-                ? {
-                    id: editingProduct.id,
-                    name: editingProduct.name,
-                    category: editingProduct.category,
-                    price: editingProduct.price,
-                    stock: editingProduct.stock,
-                    description: editingProduct.description || "",
-                  }
-                : undefined
-            }
+            product={editingProduct ?? undefined}
             onClose={() => {
               setShowForm(false);
               setEditingProduct(null);

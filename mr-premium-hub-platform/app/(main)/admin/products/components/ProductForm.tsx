@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export interface ShopApiPayload {
+  id?: number | string;
   img?: string;
   video?: string;
   price?: number;
@@ -20,31 +21,80 @@ export interface ShopApiPayload {
   inPersonDelivery?: boolean;
 }
 
+/** محصول از API با تمام فیلدها برای ویرایش */
+export interface ApiProductForEdit {
+  id: number | string;
+  title?: string;
+  groups?: string;
+  brand?: string;
+  price?: number;
+  value?: number;
+  img?: string;
+  video?: string;
+  text?: string;
+  Specifications?: string;
+  Score?: number;
+  NumberOfComments?: number;
+  UserComments?: string;
+  search?: string;
+  RelatedProducts?: string;
+  inPersonDelivery?: boolean;
+}
+
 interface ProductFormProps {
-  product?: {
-    id: string;
-    name: string;
-    category: string;
-    price: string;
-    stock: number;
-    description?: string;
-  };
+  product?: ApiProductForEdit;
   onClose: () => void;
   onSave: (data: ShopApiPayload) => void;
 }
 
 const API_URL = "https://mrpremiumhub.org/api.ashx?action=shop";
 
+const readFileAsDataUrl = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+
+const parseTags = (str: string): string[] => {
+  if (!str || typeof str !== "string") return [];
+  return str
+    .split(/[,،]/)
+    .map((s) => s.trim())
+    .filter(Boolean);
+};
+
+/** نظرات را برای نمایش در فرم به رشتهٔ JSON تبدیل می‌کند (API ممکن است رشته یا آبجکت برگرداند) */
+function userCommentsToFormValue(value: string | UserCommentItem[] | undefined): string {
+  if (value == null || value === "") return "";
+  if (typeof value === "string") return value;
+  try {
+    return JSON.stringify(value, null, 2);
+  } catch {
+    return "";
+  }
+}
+
 export default function ProductForm({
   product,
   onClose,
   onSave,
 }: ProductFormProps) {
-  const parsePrice = (p: string) => {
-    const num = p.replace(/[^\d]/g, "");
-    return num ? num : "";
-  };
-
+  const [searchTags, setSearchTags] = useState<string[]>(
+    parseTags(product?.search ?? "")
+  );
+  const [searchInput, setSearchInput] = useState("");
+  const [relatedTags, setRelatedTags] = useState<string[]>(
+    parseTags(product?.RelatedProducts ?? "")
+  );
+  const [relatedInput, setRelatedInput] = useState("");
+  useEffect(() => {
+    setSearchTags(parseTags(product?.search ?? ""));
+  }, [product?.search]);
+  useEffect(() => {
+    setRelatedTags(parseTags(product?.RelatedProducts ?? ""));
+  }, [product?.RelatedProducts]);
   const [formData, setFormData] = useState<Record<string, string | number | boolean>>({
     img: "",
     video: "",
@@ -74,23 +124,15 @@ export default function ProductForm({
 
   const buildPayload = (): ShopApiPayload => {
     const payload: ShopApiPayload = {};
+    if (product?.id != null) payload.id = product.id;
     if (formData.img) payload.img = String(formData.img);
     if (formData.video) payload.video = String(formData.video);
-    if (formData.price !== "" && formData.price !== undefined)
-      payload.price = Number(formData.price) || 0;
     if (formData.title) payload.title = String(formData.title);
     if (formData.groups) payload.groups = String(formData.groups);
     if (formData.value !== "" && formData.value !== undefined)
-      payload.value = Number(formData.value) ?? 0;
-    if (formData.search) payload.search = String(formData.search);
-    if (formData.UserComments) payload.UserComments = String(formData.UserComments);
-    if (formData.RelatedProducts) payload.RelatedProducts = String(formData.RelatedProducts);
-    if (formData.Specifications) payload.Specifications = String(formData.Specifications);
-    if (formData.Score !== "" && formData.Score !== undefined)
-      payload.Score = Number(formData.Score);
-    if (formData.NumberOfComments !== "" && formData.NumberOfComments !== undefined)
-      payload.NumberOfComments = Number(formData.NumberOfComments);
-    if (formData.brand) payload.brand = String(formData.brand);
+      payload.value = Math.max(0, Number(formData.value) ?? 0);
+    if (searchTags.length > 0) payload.search = searchTags.join("، ");
+    if (relatedTags.length > 0) payload.RelatedProducts = relatedTags.join("، ");
     if (formData.text) payload.text = String(formData.text);
     payload.inPersonDelivery = Boolean(formData.inPersonDelivery);
     return payload;
@@ -103,11 +145,15 @@ export default function ProductForm({
     setSuccess(null);
     const payload = buildPayload();
 
+    const isEdit = product?.id != null;
+    const url = isEdit ? `${API_URL}&id=${product.id}` : API_URL;
+    const method = isEdit ? "PATCH" : "POST";
+
     try {
       let res: Response;
       try {
-        res = await fetch(API_URL, {
-          method: "POST",
+        res = await fetch(url, {
+          method,
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload),
         });
@@ -142,7 +188,7 @@ export default function ProductForm({
         throw new Error(errMsg);
       }
 
-      setSuccess("محصول با موفقیت ثبت شد");
+      setSuccess(isEdit ? "محصول با موفقیت ویرایش شد" : "محصول با موفقیت ثبت شد");
       onSave(payload);
       setTimeout(() => {
         onClose();
@@ -220,33 +266,16 @@ export default function ProductForm({
                 />
               </div>
               <div>
-                <label className={labelClass}>برند محصول</label>
-                <input
-                  type="text"
-                  value={String(formData.brand ?? "")}
-                  onChange={(e) => updateField("brand", e.target.value)}
-                  placeholder="مثال: گوگل"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>قیمت محصول (تومان)</label>
-                <input
-                  type="text"
-                  value={String(formData.price ?? "")}
-                  onChange={(e) => updateField("price", e.target.value)}
-                  placeholder="مثال: 25000000"
-                  className={inputClass}
-                />
-              </div>
-              <div>
                 <label className={labelClass}>ارزش یا موجودی</label>
                 <input
                   type="number"
+                  min={0}
                   value={formData.value === "" ? "" : Number(formData.value)}
-                  onChange={(e) =>
-                    updateField("value", parseInt(e.target.value) || 0)
-                  }
+                  onChange={(e) => {
+                    const num = parseInt(e.target.value, 10);
+                    const clamped = isNaN(num) || num < 0 ? 0 : num;
+                    updateField("value", clamped);
+                  }}
                   placeholder="مثال: 1000"
                   className={inputClass}
                 />
@@ -259,29 +288,79 @@ export default function ProductForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>آدرس تصویر محصول</label>
-                <input
-                  type="text"
-                  value={String(formData.img ?? "")}
-                  onChange={(e) => updateField("img", e.target.value)}
-                  placeholder="مثال: https://example.com/image.jpg"
-                  className={inputClass}
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={String(formData.img ?? "")}
+                    onChange={(e) => updateField("img", e.target.value)}
+                    placeholder="URL یا آپلود فایل"
+                    className={`${inputClass} flex-1`}
+                  />
+                  <label className="shrink-0 inline-flex items-center gap-1 px-3 h-11 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg cursor-pointer text-sm font-medium text-gray-700 transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    آپلود
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const dataUrl = await readFileAsDataUrl(file);
+                            updateField("img", dataUrl);
+                          } catch {
+                            setError("خطا در خواندن فایل تصویر");
+                          }
+                          e.target.value = "";
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
               <div>
                 <label className={labelClass}>آدرس ویدیوی محصول</label>
-                <input
-                  type="text"
-                  value={String(formData.video ?? "")}
-                  onChange={(e) => updateField("video", e.target.value)}
-                  placeholder="مثال: https://example.com/video.mp4"
-                  className={inputClass}
-                />
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={String(formData.video ?? "")}
+                    onChange={(e) => updateField("video", e.target.value)}
+                    placeholder="URL یا آپلود فایل"
+                    className={`${inputClass} flex-1`}
+                  />
+                  <label className="shrink-0 inline-flex items-center gap-1 px-3 h-11 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg cursor-pointer text-sm font-medium text-gray-700 transition-colors">
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                    </svg>
+                    آپلود
+                    <input
+                      type="file"
+                      accept="video/*"
+                      className="hidden"
+                      onChange={async (e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          try {
+                            const dataUrl = await readFileAsDataUrl(file);
+                            updateField("video", dataUrl);
+                          } catch {
+                            setError("خطا در خواندن فایل ویدیو");
+                          }
+                          e.target.value = "";
+                        }
+                      }}
+                    />
+                  </label>
+                </div>
               </div>
             </div>
           </section>
 
           <section>
-            <h3 className={sectionTitle}>توضیحات و مشخصات فنی محصول</h3>
+            <h3 className={sectionTitle}>توضیحات محصول</h3>
             <div className="space-y-4">
               <div>
                 <label className={labelClass}>توضیحات محصول</label>
@@ -293,54 +372,6 @@ export default function ProductForm({
                   className={`${inputClass} h-auto py-2 min-h-[80px] resize-none`}
                 />
               </div>
-              <div>
-                <label className={labelClass}>مشخصات فنی محصول</label>
-                <textarea
-                  rows={2}
-                  value={String(formData.Specifications ?? "")}
-                  onChange={(e) => updateField("Specifications", e.target.value)}
-                  placeholder="مثال: ظرفیت، نوع، کشور سازنده"
-                  className={`${inputClass} h-auto py-2 min-h-[60px] resize-none`}
-                />
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <h3 className={sectionTitle}>امتیاز و نظرات کاربران</h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className={labelClass}>امتیاز محصول (از ۵)</label>
-                <input
-                  type="text"
-                  value={String(formData.Score ?? "")}
-                  onChange={(e) => updateField("Score", e.target.value)}
-                  placeholder="مثال: 4.7"
-                  className={inputClass}
-                />
-              </div>
-              <div>
-                <label className={labelClass}>تعداد نظرات کاربران</label>
-                <input
-                  type="number"
-                  value={formData.NumberOfComments === "" ? "" : Number(formData.NumberOfComments)}
-                  onChange={(e) =>
-                    updateField("NumberOfComments", parseInt(e.target.value) || 0)
-                  }
-                  placeholder="مثال: 101"
-                  className={inputClass}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className={labelClass}>متن نظرات کاربران</label>
-                <input
-                  type="text"
-                  value={String(formData.UserComments ?? "")}
-                  onChange={(e) => updateField("UserComments", e.target.value)}
-                  placeholder="خلاصه یا لیست نظرات کاربران درباره محصول"
-                  className={inputClass}
-                />
-              </div>
             </div>
           </section>
 
@@ -349,23 +380,97 @@ export default function ProductForm({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className={labelClass}>کلمات کلیدی جستجو</label>
-                <input
-                  type="text"
-                  value={String(formData.search ?? "")}
-                  onChange={(e) => updateField("search", e.target.value)}
-                  placeholder="کلمات کلیدی برای جستجوی محصول در سایت"
-                  className={inputClass}
-                />
+                <div className="flex flex-wrap gap-2 p-3 min-h-[44px] bg-gray-50 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-[#ff5538]/20 focus-within:border-[#ff5538] transition-all">
+                  {searchTags.map((tag, i) => (
+                    <span
+                      key={`search-${tag}-${i}`}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-[#ff5538]/10 text-[#ff5538] rounded-lg text-sm font-medium"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setSearchTags((prev) => prev.filter((_, idx) => idx !== i))
+                        }
+                        className="hover:bg-[#ff5538]/20 rounded p-0.5 transition-colors"
+                        aria-label={`حذف ${tag}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === "," || e.key === "،") {
+                        e.preventDefault();
+                        const val = searchInput.trim();
+                        if (val && !searchTags.includes(val)) {
+                          setSearchTags((prev) => [...prev, val]);
+                          setSearchInput("");
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      const val = searchInput.trim();
+                      if (val && !searchTags.includes(val)) {
+                        setSearchTags((prev) => [...prev, val]);
+                        setSearchInput("");
+                      }
+                    }}
+                    placeholder="کلمه کلیدی را وارد کنید و Enter بزنید"
+                    className="flex-1 min-w-[100px] bg-transparent border-none outline-none text-right text-gray-900 text-sm placeholder:text-gray-400"
+                  />
+                </div>
               </div>
-              <div>
-                <label className={labelClass}>محصولات مرتبط</label>
-                <input
-                  type="text"
-                  value={String(formData.RelatedProducts ?? "")}
-                  onChange={(e) => updateField("RelatedProducts", e.target.value)}
-                  placeholder="لیست یا شناسه محصولات پیشنهادی مرتبط"
-                  className={inputClass}
-                />
+              <div className="sm:col-span-2">
+                <label className={labelClass}>محصولات مرتبط (بر اساس عنوان)</label>
+                <div className="flex flex-wrap gap-2 p-3 min-h-[44px] bg-gray-50 border border-gray-200 rounded-lg focus-within:ring-2 focus-within:ring-[#ff5538]/20 focus-within:border-[#ff5538] transition-all">
+                  {relatedTags.map((tag, i) => (
+                    <span
+                      key={`${tag}-${i}`}
+                      className="inline-flex items-center gap-1 px-3 py-1 bg-[#ff5538]/10 text-[#ff5538] rounded-lg text-sm font-medium"
+                    >
+                      {tag}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setRelatedTags((prev) => prev.filter((_, idx) => idx !== i))
+                        }
+                        className="hover:bg-[#ff5538]/20 rounded p-0.5 transition-colors"
+                        aria-label={`حذف ${tag}`}
+                      >
+                        ×
+                      </button>
+                    </span>
+                  ))}
+                  <input
+                    type="text"
+                    value={relatedInput}
+                    onChange={(e) => setRelatedInput(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === "," || e.key === "،") {
+                        e.preventDefault();
+                        const val = relatedInput.trim();
+                        if (val && !relatedTags.includes(val)) {
+                          setRelatedTags((prev) => [...prev, val]);
+                          setRelatedInput("");
+                        }
+                      }
+                    }}
+                    onBlur={() => {
+                      const val = relatedInput.trim();
+                      if (val && !relatedTags.includes(val)) {
+                        setRelatedTags((prev) => [...prev, val]);
+                        setRelatedInput("");
+                      }
+                    }}
+                    placeholder="عنوان محصول را وارد کنید و Enter بزنید"
+                    className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-right text-gray-900 text-sm placeholder:text-gray-400"
+                  />
+                </div>
               </div>
               <div className="sm:col-span-2 flex items-center gap-2">
                 <input
