@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+<title>test mrprimium api</title>
+</head>
+<body >
+<div id="test1" ></div>
+<script>
+function PostData(url, data) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function GetData(url) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function PATCHData(url, data) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'PATCH',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function DELETEData(url) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+//تست api 
+
+/*PostData('Article',{
+  "title": "راهنمای کامل خرید گیفت کارت",
+  "slug": "راهنمای-کامل-خرید-گیفت-کارت",
+  "category": "آموزش",
+  "image": "/Images/gift-card-guide.jpg",
+  "date": "24 ژانویه 2026",
+  "comments": 0,
+  "content": [
+    "در این مقاله به بررسی کامل نحوه خرید گیفت کارت می‌پردازیم. گیفت کارت‌ها یکی از محبوب‌ترین روش‌های پرداخت آنلاین هستند.",
+    "گیفت کارت‌ها در انواع مختلفی از جمله گوگل پلی، آیتونز، استیم و پلی استیشن عرضه می‌شوند.",
+    "برای خرید گیفت کارت از مستر پریمیوم هاب کافیست محصول مورد نظر را انتخاب کرده و سفارش خود را ثبت کنید.",
+    "پس از پرداخت، کد گیفت کارت به صورت آنی برای شما ارسال می‌شود."
+  ],
+  "headings": [
+    "گیفت کارت چیست؟",
+    "انواع گیفت کارت",
+    "مزایای استفاده از گیفت کارت",
+    "نحوه خرید گیفت کارت",
+    "نکات مهم قبل از خرید"
+  ],
+  "relatedService": {
+    "title": "فروشگاه گیفت کارت",
+    "description": "خرید انواع گیفت کارت با قیمت مناسب و تحویل آنی",
+    "image": "/Images/shop-banner.jpg",
+    "link": "/shop"
+  }
+}).then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});// */
+
+
+//GetData('Article').then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});
+
+
+//PATCHData('Article',{"id":3,"title": "راهنمای کامل خرید گیفت کارت update"}).then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});
+
+
+//DELETEData('Article&id=1').then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});
+
+</script>
+
+</body>
+</html>

@@ -6,7 +6,7 @@ import {
   CarouselContent,
   CarouselItem,
 } from "@/components/ui/carousel";
-import { ArticleDetail } from "../../components/data";
+import { ArticleDetail } from "../../lib/articles-api";
 
 interface RelatedArticlesCarouselProps {
   articles: ArticleDetail[];

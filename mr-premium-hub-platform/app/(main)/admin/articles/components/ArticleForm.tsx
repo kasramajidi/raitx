@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { categories as shopCategories } from "@/app/(main)/shop/components/productsData";
 
 export interface RelatedServiceForm {
   title: string;
@@ -153,11 +154,11 @@ export default function ArticleForm({
               className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
             >
               <option value="">انتخاب کنید...</option>
-              <option value="آموزش">آموزش</option>
-              <option value="آموزش سئو">آموزش سئو</option>
-              <option value="بازاریابی دیجیتال">بازاریابی دیجیتال</option>
-              <option value="طراحی سایت">طراحی سایت</option>
-              <option value="برنامه‌نویسی">برنامه‌نویسی</option>
+              {shopCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
             </select>
           </div>
           <div>

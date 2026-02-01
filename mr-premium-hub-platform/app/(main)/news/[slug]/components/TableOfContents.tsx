@@ -1,7 +1,5 @@
-import { ArticleDetail } from "../../components/data";
-
 interface TableOfContentsProps {
-  headings: ArticleDetail["headings"];
+  headings: string[];
 }
 
 export default function TableOfContents({ headings }: TableOfContentsProps) {

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { getArticleBySlug, getAllArticleSlugs, getRelatedArticles } from "../components/data";
+import { getArticleBySlugFromApi, getRelatedArticlesFromApi } from "../lib/articles-api";
 import { HiLocationMarker, HiArrowLeft } from "react-icons/hi";
 import { FaTelegram, FaWhatsapp, FaTwitter, FaFacebook } from "react-icons/fa";
 import TableOfContents from "./components/TableOfContents";
@@ -14,17 +14,10 @@ interface PageProps {
   }>;
 }
 
-export async function generateStaticParams() {
-  const slugs = getAllArticleSlugs();
-  return slugs.map((slug) => ({
-    slug: slug,
-  }));
-}
-
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
-  
+  const article = await getArticleBySlugFromApi(slug);
+
   if (!article) {
     return {
       title: "مقاله یافت نشد",
@@ -43,13 +36,13 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
 export default async function ArticlePage({ params }: PageProps) {
   const { slug } = await params;
-  const article = getArticleBySlug(slug);
+  const article = await getArticleBySlugFromApi(slug);
 
   if (!article) {
     notFound();
   }
 
-  const relatedArticles = getRelatedArticles(slug, 10);
+  const relatedArticles = await getRelatedArticlesFromApi(slug, 10);
 
   return (
     <main className="min-h-screen bg-gray-50 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-4 sm:pb-6 md:pb-8 lg:pb-10">
@@ -112,7 +105,7 @@ export default async function ArticlePage({ params }: PageProps) {
             </div>
 
             <div className="space-y-3">
-              {article.content.slice(0, 3).map((paragraph, index) => (
+              {article.content.slice(0, 1).map((paragraph, index) => (
                 <p key={index} className="text-gray-500 leading-6 text-justify text-[13px]">
                   {paragraph}
                 </p>
@@ -120,17 +113,16 @@ export default async function ArticlePage({ params }: PageProps) {
             </div>
 
             {article.headings.map((heading, index) => {
-              const contentStartIndex = 3 + (index * 2);
-              const headingContent = article.content.slice(contentStartIndex, contentStartIndex + 2);
+              const paragraph = article.content[1 + index];
 
               return (
                 <div key={index} id={`heading-${index}`} className="mt-5">
                   <h3 className="text-[22px] my-5 font-bold">{heading}</h3>
-                  {headingContent.map((paragraph, pIndex) => (
-                    <p key={pIndex} className="text-gray-500 leading-6 text-justify text-[13px] mb-3">
+                  {paragraph ? (
+                    <p className="text-gray-500 leading-6 text-justify text-[13px] mb-3">
                       {paragraph}
                     </p>
-                  ))}
+                  ) : null}
                 </div>
               );
             })}

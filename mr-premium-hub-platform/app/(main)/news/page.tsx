@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import {
-  NewsBanner,
-  FeaturedArticles,
-  LatestArticlesSection,
-  NewsSidebar,
-} from "./components";
-import { featuredArticles, latestArticles } from "./components/data";
+import { Suspense } from "react";
+import { NewsPageClient } from "./components";
+import { getArticlesFromApi } from "./lib/articles-api";
+
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "اخبار و مقالات | مسترپریمیوم هاب",
@@ -25,24 +23,40 @@ export const metadata: Metadata = {
   },
 };
 
-export default function NewsPage() {
+export default async function NewsPage() {
+  const apiArticles = await getArticlesFromApi();
+  const articlesForClient = apiArticles.map((a) => ({
+    id: a.id,
+    title: a.title,
+    slug: a.slug,
+    category: a.category,
+    image: a.image || "/Images/gift-card-guide.jpg",
+    date: a.date ?? "",
+    comments: a.comments ?? 0,
+    content: a.content ?? [],
+  }));
+
+  // دسته‌بندی‌ها مستقیماً از مقالات API (داینامیک)
+  const categoriesFromArticles = Array.from(
+    new Set(
+      apiArticles
+        .map((a) => a.category)
+        .filter((c): c is string => c != null && String(c).trim() !== "")
+    )
+  ).sort((a, b) => a.localeCompare(b, "fa"));
+
   return (
     <main className="min-h-screen bg-gray-50 pt-4 sm:pt-8 md:pt-12 lg:pt-16 xl:pt-20 pb-4 sm:pb-6 md:pb-8 lg:pb-10">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
-          <div className="lg:col-span-3 order-2 lg:order-2">
-            <FeaturedArticles articles={featuredArticles} />
-          </div>
-          <aside className="lg:col-span-1 order-1 lg:order-1">
-            <NewsSidebar />
-          </aside>
-        </div>
-        <div className="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <LatestArticlesSection articles={latestArticles} />
-        </div>
-        <div className="w-full mt-4 sm:mt-6 md:mt-8 lg:mt-10">
-          <NewsBanner />
-        </div>
+        <Suspense
+          fallback={
+            <div className="flex items-center justify-center py-12">
+              <div className="w-8 h-8 border-2 border-[#ff5538] border-t-transparent rounded-full animate-spin" />
+            </div>
+          }
+        >
+          <NewsPageClient articles={articlesForClient} categories={categoriesFromArticles} />
+        </Suspense>
       </div>
     </main>
   );

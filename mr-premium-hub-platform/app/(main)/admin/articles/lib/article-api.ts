@@ -61,7 +61,8 @@ export async function createArticle(payload: {
     body: JSON.stringify({
       title: payload.title,
       slug: payload.slug,
-      category: payload.category || null,
+      category: payload.category?.trim() || null,
+      Category: payload.category?.trim() || null,
       image: payload.image ?? "/Images/gift-card-guide.jpg",
       date: payload.date ?? new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }),
       comments: payload.comments ?? 0,
@@ -84,24 +85,28 @@ export async function updateArticle(payload: {
   content?: string[];
   headings?: string[];
   relatedService?: ApiArticleRelatedService;
+  fullArticle?: ApiArticle;
 }): Promise<ApiArticle> {
-  const body: Record<string, unknown> = { Id: payload.id };
-  if (payload.title !== undefined) body.Title = payload.title;
-  if (payload.slug !== undefined) body.Slug = payload.slug;
-  if (payload.category !== undefined) body.Category = payload.category;
-  if (payload.image !== undefined) body.Image = payload.image;
-  if (payload.date !== undefined) body.Date = payload.date;
-  if (payload.comments !== undefined) body.Comments = payload.comments;
-  if (payload.content !== undefined) body.Content = payload.content;
-  if (payload.headings !== undefined) body.Headings = payload.headings;
-  if (payload.relatedService !== undefined) body.Relatedservice = payload.relatedService;
+  const full = payload.fullArticle;
+  if (!full) {
+    throw new Error("برای ویرایش، fullArticle الزامی است");
+  }
 
-  const res = await fetch(`${API_BASE}?action=Article`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
+  // بک‌اند آپدیت واقعی ندارد؛ اول مقالهٔ جدید می‌سازیم، بعد قدیمی را حذف می‌کنیم
+  const created = await createArticle({
+    title: full.title ?? "",
+    slug: full.slug ?? "",
+    category: full.category ?? "",
+    image: full.image || "/Images/gift-card-guide.jpg",
+    date: full.date ?? "",
+    comments: full.comments ?? 0,
+    content: full.content ?? [],
+    headings: full.headings ?? [],
+    relatedService: full.Relatedservice ?? undefined,
   });
-  return handleResponse<ApiArticle>(res);
+  await new Promise((r) => setTimeout(r, 300));
+  await deleteArticle(payload.id);
+  return created;
 }
 
 export async function deleteArticle(id: number): Promise<void> {
