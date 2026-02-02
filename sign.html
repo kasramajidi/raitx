@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" >
+<head>
+<title>test mrprimium api</title>
+</head>
+<body >
+<div id="test1" ></div>
+<script>
+function PostData(url, data) {
+    return fetch("http://localhost:22910/api.ashx?action=" + url,{
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function GetData(url) {
+    return fetch("http://localhost:22910/api.ashx?action=" + url,{
+    method: 'GET',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function PATCHData(url, data) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'PATCH',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+    body: JSON.stringify(data)
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+function DELETEData(url) {
+    return fetch("https://mrpremiumhub.org/api.ashx?action=" + url,{
+    method: 'DELETE',
+    headers: {
+        'Content-Type': 'application/json',
+        'Origin': '*'
+    },
+})
+.then(response => {
+    console.log('Response received:', response);
+    return response.json();
+})
+.then(data => {console.log('Data:', data);return data;})
+.catch(error => console.log('Error:', error));
+}
+
+//تست api 
+/* ثبت نام
+PostData('signup',{
+  "name": "علیرضا احمدی",
+  "email": "aaaaa@gmail.com",
+  "phone": "989121234567"
+}).then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});// */
+
+
+//دریافت اس ام اس
+//GetData('smspass&phone=989111234').then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});
+
+function setCookie(cname,cvalue,exdays) {
+        const d = new Date();
+        d.setTime(d.getTime() + (exdays*24*60*60*1000));
+        let expires = "expires=" + d.toGMTString();
+        document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+    }
+    function getCookie(cname) {
+        let name = cname + "=";
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            if (c.indexOf(name) == 0) {
+                return c.substring(name.length, c.length);
+            }
+        }
+        return "";
+    }
+    function delCookie(){
+        let decodedCookie = decodeURIComponent(document.cookie);
+        let ca = decodedCookie.split(';');
+        for(let i = 0; i < ca.length; i++){
+            let c = ca[i];
+            while (c.charAt(0) == ' ') {
+                c = c.substring(1);
+            }
+            setCookie(c,'',-100);
+        }
+    }
+
+//ورود با رمز اس ام اس شده مرحله قبل و نتیجه را بصورت رمز براتون ارسال  میکنه که داخل کوکی با هر تایمی میشه ذخیره کرد البته مرورگر کروم کوکی را برای فایل لوکال ذخیره نمیکنه که میتونید از localStorage استفاده کنید بصورت موقت، چون انقضا نداره
+//GetData('login&phone=989121234567&pass=452845').then(d=>{localStorage.setItem('loginval', d.cookie);setCookie("loginval",d.cookie,7);test1.innerHTML=(JSON.stringify(d));alert(localStorage.getItem('loginval'));}).catch(error=>{console.log(error)});
+//alert(localStorage.getItem('loginval'));
+
+
+//ورود با کوکی ذخیره شده
+//getCookie("loginval")
+//یا با لوکال استوریج
+//در نهایت مجددا اگر اطلاعات صحیح باشه، همون کوکی را برمیگردونه
+GetData('LoginCookie&Cookie='+localStorage.getItem('loginval')/*or getCookie("loginval")*/).then(d=>{test1.innerHTML=(JSON.stringify(d));}).catch(error=>{console.log(error)});
+
+
+
+</script>
+
+</body>
+</html>

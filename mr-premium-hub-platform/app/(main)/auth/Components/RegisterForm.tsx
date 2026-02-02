@@ -1,16 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
+import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
-import { useRegister } from "../../hooks/useRegister";
-import { useLogin } from "../../hooks/useLogin";
+import { signup } from "../lib/auth-api";
 
-interface RegisterFormData {
+type RegisterFormValues = {
   username: string;
   email: string;
   password: string;
-}
+};
 
 interface RegisterFormProps {
   onSwitchToLogin?: () => void;
@@ -18,60 +18,41 @@ interface RegisterFormProps {
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
 
-  const loginMutation = useLogin(
-    (data: { user: { id: string }; token: string }) => {
-      if (typeof window !== "undefined") {
-        localStorage.setItem("user", JSON.stringify(data.user));
-        localStorage.setItem("token", data.token);
-        window.dispatchEvent(
-          new CustomEvent("userLogin", { detail: { userId: data.user.id } })
-        );
-      }
-      router.push("/my-account");
-    },
-    (error: unknown) => {
-      console.error("Auto login error:", error);
-      router.push("/auth");
-    }
-  );
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormValues>({
+    defaultValues: { username: "", email: "", password: "" },
+  });
 
-  const mutation = useRegister(
-    (
-      data: { id: string; username: string; email: string },
-      variables: RegisterFormData
-    ) => {
-      // Store user data temporarily before auto-login
-      if (typeof window !== "undefined") {
-        const userData = {
-          id: data.id,
-          username: data.username,
-          email: data.email,
-        };
-        localStorage.setItem("user", JSON.stringify(userData));
-      }
-      
-      loginMutation.mutate({
-        email: variables.email,
-        password: variables.password,
+  const onSubmit = async (values: RegisterFormValues) => {
+    setFormError(null);
+    setLoading(true);
+    try {
+      await signup({
+        name: values.username.trim(),
+        email: values.email.trim(),
+        phone: values.email.trim(),
       });
-    },
-    (error: unknown) => {
-      console.error("Registration error:", error);
-      // TODO: Add toast notification
+      if (onSwitchToLogin) {
+        onSwitchToLogin();
+      } else {
+        router.push("/auth");
+      }
+    } catch (err) {
+      const message =
+        err instanceof Error
+          ? err.message
+          : "خطا در ارتباط با سرور. اتصال اینترنت را بررسی کنید.";
+      setFormError(message);
+    } finally {
+      setLoading(false);
     }
-  );
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const data: RegisterFormData = {
-      username: formData.get("username") as string,
-      email: formData.get("email") as string,
-      password: formData.get("password") as string,
-    };
-    mutation.mutate(data);
   };
 
   return (
@@ -79,7 +60,12 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
       <h2 className="text-2xl mb-8 text-center font-semibold text-gray-900">
         عضویت
       </h2>
-      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+        {formError && (
+          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg py-2.5 px-3 text-right">
+            {formError}
+          </p>
+        )}
         <div>
           <label
             className="block text-right text-gray-700 text-sm mb-1.5"
@@ -89,12 +75,19 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           </label>
           <input
             id="register-username"
-            name="username"
             type="text"
-            required
-            className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
             placeholder="نام کاربری را وارد کنید"
+            className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
+            {...register("username", {
+              required: "نام کاربری را وارد کنید.",
+              minLength: { value: 2, message: "نام کاربری باید حداقل ۲ کاراکتر باشد." },
+            })}
           />
+          {errors.username?.message && (
+            <p className="text-red-500 text-xs mt-1 text-right">
+              {errors.username.message}
+            </p>
+          )}
         </div>
         <div>
           <label
@@ -105,12 +98,22 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           </label>
           <input
             id="register-email"
-            name="email"
             type="email"
-            required
-            className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
             placeholder="ایمیل را وارد کنید"
+            className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
+            {...register("email", {
+              required: "آدرس ایمیل را وارد کنید.",
+              pattern: {
+                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                message: "یک آدرس ایمیل معتبر وارد کنید.",
+              },
+            })}
           />
+          {errors.email?.message && (
+            <p className="text-red-500 text-xs mt-1 text-right">
+              {errors.email.message}
+            </p>
+          )}
         </div>
         <div>
           <label
@@ -122,11 +125,13 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           <div className="relative">
             <input
               id="register-password"
-              name="password"
               type={showPassword ? "text" : "password"}
-              required
-              className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors pr-10"
               placeholder="گذرواژه را وارد کنید"
+              className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors pr-10"
+              {...register("password", {
+                required: "گذرواژه را وارد کنید.",
+                minLength: { value: 6, message: "گذرواژه باید حداقل ۶ کاراکتر باشد." },
+              })}
             />
             <button
               type="button"
@@ -138,6 +143,11 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
               {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
             </button>
           </div>
+          {errors.password?.message && (
+            <p className="text-red-500 text-xs mt-1 text-right">
+              {errors.password.message}
+            </p>
+          )}
         </div>
 
         <p className="text-xs text-gray-500 pt-2 text-center leading-relaxed">
@@ -161,9 +171,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
         <button
           type="submit"
           className="w-full cursor-pointer bg-[#ff5538] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-          disabled={mutation.isLoading || loginMutation.isLoading}
+          disabled={loading}
         >
-          {mutation.isLoading || loginMutation.isLoading ? (
+          {loading ? (
             <span className="flex items-center justify-center gap-2">
               <svg
                 className="animate-spin h-5 w-5 text-white"
@@ -185,7 +195,7 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
                   d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
                 ></path>
               </svg>
-              {mutation.isLoading ? "در حال ارسال..." : "در حال ورود..."}
+              در حال ارسال...
             </span>
           ) : (
             "عضویت"
