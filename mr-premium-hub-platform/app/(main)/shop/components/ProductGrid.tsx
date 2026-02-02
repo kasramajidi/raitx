@@ -4,9 +4,10 @@ import React, { useState, useMemo } from "react";
 import ProductHeader from "./ProductHeader";
 import ProductCard from "./CardProduct";
 import type { Product } from "./productsData";
+import type { ShopProduct } from "../lib/shop-api";
 
 interface ProductGridProps {
-  products: Product[];
+  products: (Product | ShopProduct)[];
   appliedFilters?: {
     categories: string[];
     brands: string[];
@@ -36,9 +37,7 @@ export default function ProductGrid({
     let list = products;
 
     if (appliedFilters.mainCategoryId) {
-      list = list.filter(
-        (p) => "mainCategoryId" in p && p.mainCategoryId === appliedFilters!.mainCategoryId
-      );
+      list = list.filter((p) => p.category === appliedFilters!.mainCategoryId);
     }
     if (
       appliedFilters.categories.length > 0 &&
@@ -102,8 +101,12 @@ export default function ProductGrid({
     <div className="space-y-8">
       <ProductHeader onSortChange={handleSortChange} />
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-3">
-        {currentProducts.map((product) => (
-          <ProductCard key={product.id} product={product} />
+        {currentProducts.map((product, index) => (
+          <ProductCard
+            key={product.id}
+            product={product}
+            priority={index < 6}
+          />
         ))}
       </div>
       {sortedProducts.length === 0 && (

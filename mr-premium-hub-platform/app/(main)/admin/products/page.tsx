@@ -7,7 +7,7 @@ import ProductForm, { ShopApiPayload } from "./components/ProductForm";
 import { useCart } from "../../context/CartContext";
 
 const API_URL = "https://mrpremiumhub.org/api.ashx?action=shop";
-const EXCHANGE_RATE_API = "https://mrpremiumhub.org/api.ashx?action=change";
+const PAGE_SIZE = 11;
 
 interface Product {
   id: string;
@@ -23,12 +23,12 @@ interface Product {
 
 type ApiProduct = Record<string, unknown>;
 
-function mapApiToProduct(item: ApiProduct, index: number, exchangeRate: number): Product {
+/** قیمت در API به‌صورت تومان ذخیره می‌شود — بدون ضرب در نرخ ارز */
+function mapApiToProduct(item: ApiProduct, index: number): Product {
   const id = String(item.id ?? item.ID ?? index + 1);
   const name = String(item.title ?? item.name ?? item.Name ?? "—");
   const category = String(item.groups ?? item.category ?? item.Category ?? "—");
-  const priceUSD = Number(item.price ?? item.Price ?? 0);
-  const priceIRR = priceUSD > 0 && exchangeRate > 0 ? Math.round(priceUSD * exchangeRate) : 0;
+  const priceIRR = Math.round(Number(item.price ?? item.Price ?? 0));
   const price =
     priceIRR > 0
       ? new Intl.NumberFormat("fa-IR").format(priceIRR) + " تومان"
@@ -42,7 +42,7 @@ function mapApiToProduct(item: ApiProduct, index: number, exchangeRate: number):
     name,
     category,
     price,
-    priceUSD,
+    priceUSD: priceIRR,
     stock,
     sales,
     status,
@@ -50,7 +50,7 @@ function mapApiToProduct(item: ApiProduct, index: number, exchangeRate: number):
   };
 }
 
-function parseApiProducts(data: unknown, exchangeRate: number): Product[] {
+function parseApiProducts(data: unknown): Product[] {
   if (!data || typeof data !== "object") return [];
   const obj = data as Record<string, unknown>;
   const raw =
@@ -59,33 +59,14 @@ function parseApiProducts(data: unknown, exchangeRate: number): Product[] {
     (obj.items as ApiProduct[] | undefined) ??
     (Array.isArray(data) ? data : []);
   if (!Array.isArray(raw)) return [];
-  return raw.map((item, i) => mapApiToProduct(item as ApiProduct, i, exchangeRate));
+  return raw.map((item, i) => mapApiToProduct(item as ApiProduct, i));
 }
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [fetchError, setFetchError] = useState<string | null>(null);
-  const [exchangeRate, setExchangeRate] = useState<number>(161390);
-
-  // دریافت نرخ ارز
-  useEffect(() => {
-    const fetchExchangeRate = async () => {
-      try {
-        const res = await fetch(EXCHANGE_RATE_API);
-        const data = await res.json();
-        if (data.buy) {
-          setExchangeRate(Number(data.buy));
-        }
-      } catch (error) {
-        console.error("خطا در دریافت نرخ ارز:", error);
-      }
-    };
-    fetchExchangeRate();
-  }, []);
-
   const fetchProducts = useCallback(async () => {
-    if (exchangeRate === 0) return; // منتظر دریافت نرخ ارز
     setLoading(true);
     setFetchError(null);
     try {
@@ -104,7 +85,7 @@ export default function ProductsPage() {
           `خطای سرور (کد: ${res.status})`;
         throw new Error(msg);
       }
-      const list = parseApiProducts(data, exchangeRate);
+      const list = parseApiProducts(data);
       setProducts(list);
     } catch (err) {
       const msg =
@@ -114,7 +95,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [exchangeRate]);
+  }, []);
 
   useEffect(() => {
     fetchProducts();
@@ -124,6 +105,8 @@ export default function ProductsPage() {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const handleAdd = () => {
     setEditingProduct(null);
@@ -229,15 +212,45 @@ export default function ProductsPage() {
     return map;
   }, [cartItems]);
 
-  const filteredProducts = products.map((p) => ({
-    ...p,
-    stock: Math.max(0, p.stock),
-    sales: Math.max(0, cartQuantityByProductId[p.id] ?? 0),
-  })).filter(
-    (product) =>
-      product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      product.category.toLowerCase().includes(searchTerm.toLowerCase())
+  /** دسته‌بندی‌های یکتا از محصولات (همان‌طور که ادمین اضافه کرده) */
+  const uniqueCategories = useMemo(() => {
+    const cats = products.map((p) => p.category).filter((c) => c && c !== "—");
+    return [...new Set(cats)].sort((a, b) => a.localeCompare(b, "fa"));
+  }, [products]);
+
+  const filteredProducts = useMemo(() => {
+    const withCart = products.map((p) => ({
+      ...p,
+      stock: Math.max(0, p.stock),
+      sales: Math.max(0, cartQuantityByProductId[p.id] ?? 0),
+    }));
+    const bySearch = searchTerm.trim()
+      ? withCart.filter(
+          (product) =>
+            product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.category.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : withCart;
+    const byCategory = categoryFilter.trim()
+      ? bySearch.filter((product) => product.category === categoryFilter)
+      : bySearch;
+    return byCategory;
+  }, [products, searchTerm, categoryFilter, cartQuantityByProductId]);
+
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
+  const safePage = Math.min(currentPage, totalPages);
+  const paginatedProducts = useMemo(
+    () =>
+      filteredProducts.slice(
+        (safePage - 1) * PAGE_SIZE,
+        safePage * PAGE_SIZE
+      ),
+    [filteredProducts, safePage]
   );
+
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages > 0) setCurrentPage(1);
+  }, [currentPage, totalPages]);
 
   return (
     <AdminLayout>
@@ -262,22 +275,48 @@ export default function ProductsPage() {
           </button>
         </div>
 
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="جستجو در لیست محصولات (نام یا دسته‌بندی)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-12 bg-white rounded-xl border border-gray-200 pl-4 pr-12 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
-          />
-          <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="جستجو در لیست محصولات (نام یا دسته‌بندی)..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full h-12 bg-white rounded-xl border border-gray-200 pl-12 pr-12 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
+            />
+            <svg
+              className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <div className="flex items-center gap-2 w-full sm:w-auto sm:min-w-0">
+            <label htmlFor="category-filter" className="text-sm font-medium text-gray-700 whitespace-nowrap shrink-0">
+              دسته‌بندی:
+            </label>
+            <select
+              id="category-filter"
+              value={categoryFilter}
+              onChange={(e) => {
+                setCategoryFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="h-12 w-full sm:w-[220px] bg-white rounded-xl border border-gray-200 px-4 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm cursor-pointer"
+            >
+              <option value="">همه دسته‌ها</option>
+              {uniqueCategories.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
 
         {editError && (
@@ -341,13 +380,43 @@ export default function ProductsPage() {
             </div>
           </div>
         ) : (
-        <ProductsTable
-          products={filteredProducts}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          deletingId={deletingId}
-          editLoading={editLoading}
-        />
+          <>
+            <ProductsTable
+              products={paginatedProducts}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              deletingId={deletingId}
+              editLoading={editLoading}
+            />
+            {filteredProducts.length > 0 && (
+              <div className="flex flex-wrap items-center justify-between gap-4 py-4 px-2">
+                <p className="text-sm text-gray-600">
+                  نمایش {(safePage - 1) * PAGE_SIZE + 1} تا {Math.min(safePage * PAGE_SIZE, filteredProducts.length)} از {filteredProducts.length} محصول
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={safePage <= 1}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    قبلی
+                  </button>
+                  <span className="text-sm text-gray-600 px-2">
+                    صفحه {safePage} از {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={safePage >= totalPages}
+                    className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                  >
+                    بعدی
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {showForm && (

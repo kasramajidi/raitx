@@ -20,7 +20,7 @@ const TabContent = React.memo<TabContentProps>(({ activeTab, product }) => {
     return <SpecificationsSection product={product} />;
   }
   if (activeTab === "reviews") {
-    return <ReviewsSection />;
+    return <ReviewsSection product={product} />;
   }
   return null;
 });
@@ -63,7 +63,7 @@ export default function ProductTabs({ product }: ProductTabsProps) {
         activeTab={activeTab}
         onTabChange={handleTabChange}
       />
-      <div className="bg-white rounded-br-2xl rounded-bl-2xl p-4 sm:p-6 border border-gray-200 border-t-0">
+      <div className="rounded-br-2xl rounded-bl-2xl px-4 py-6 sm:px-8 sm:py-10 border border-t-0 border-gray-200/80 shadow-sm min-h-[280px] bg-gradient-to-b from-gray-50/90 to-white">
         <TabContent activeTab={activeTab} product={product} />
       </div>
     </div>

@@ -4,8 +4,8 @@ export interface Denomination {
   price: number;
 }
 
-/** شناسه دسته‌بندی اصلی فروشگاه (مطابق shopCategoriesData) */
-export type MainCategoryId = "currency" | "exams" | "embassy" | "apply" | "giftcards";
+/** شناسه دسته‌بندی اصلی فروشگاه (مطابق shopCategoriesData یا از API) */
+export type MainCategoryId = "currency" | "exams" | "embassy" | "apply" | "giftcards" | "other";
 
 export interface Product {
   id: number;

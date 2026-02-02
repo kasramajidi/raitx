@@ -17,7 +17,7 @@ interface TabNavigationProps {
 const TabNavigation = React.memo<TabNavigationProps>(
   ({ tabs, activeTab, onTabChange }) => (
     <nav
-      className="w-full bg-white border border-gray-200 rounded-tr-2xl rounded-tl-2xl p-3 sm:p-4 mb-0 shadow-sm"
+      className="w-full bg-white border border-b-0 border-gray-200/80 rounded-tr-2xl rounded-tl-2xl p-3 sm:p-4 mb-0 shadow-sm"
       role="tablist"
       aria-label="تب های محصول"
     >

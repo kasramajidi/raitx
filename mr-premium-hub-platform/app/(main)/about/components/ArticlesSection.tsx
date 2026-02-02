@@ -70,7 +70,7 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
               </div>
               <div className="relative w-full h-[150px] sm:h-[180px] md:h-full overflow-hidden order-1 md:order-1 min-h-[150px]">
                 <Image
-                  src={article.image || "/Images/gift-card-guide.jpg"}
+                  src={article.image || "/Images/Shop/product-pic1.jpg"}
                   alt={article.title}
                   fill
                   className="object-cover object-center"

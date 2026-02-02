@@ -2,9 +2,21 @@
 
 import React from "react";
 import { useFilters } from "../../context/FilterContext";
-import { shopMainCategories, type MainCategory } from "./shopCategoriesData";
+import { useShopProducts } from "../context/ShopProductsContext";
 
-function CategoryIcon({ icon, active }: { icon: MainCategory["icon"]; active: boolean }) {
+type CategoryIconType = "currency" | "exams" | "embassy" | "apply" | "giftcards" | "other";
+
+function getIconForCategory(categoryName: string): CategoryIconType {
+  const s = categoryName || "";
+  if (/پرداخت|ارزی|ویزا|مستر|پی پال/.test(s)) return "currency";
+  if (/آزمون|تافل|آیلتس|جی آر ای|ثبت نام/.test(s)) return "exams";
+  if (/سفارت|ویزا|وقت مصاحبه/.test(s)) return "embassy";
+  if (/اپلای|دانشگاه|شهریه|اپلیکیشن/.test(s)) return "apply";
+  if (/گیفت|کارت/.test(s)) return "giftcards";
+  return "other";
+}
+
+function CategoryIcon({ icon, active }: { icon: CategoryIconType; active: boolean }) {
   const className = `w-5 h-5 shrink-0 ${active ? "text-[#ff5538]" : "text-gray-400"}`;
   switch (icon) {
     case "currency":
@@ -38,13 +50,19 @@ function CategoryIcon({ icon, active }: { icon: MainCategory["icon"]; active: bo
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7" />
         </svg>
       );
+    case "other":
     default:
-      return null;
+      return (
+        <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        </svg>
+      );
   }
 }
 
 export default function ShopCategoryMenu() {
   const { selectedMainCategoryId, setSelectedMainCategoryId } = useFilters();
+  const { categories } = useShopProducts();
 
   return (
     <div className="overflow-hidden">
@@ -52,13 +70,13 @@ export default function ShopCategoryMenu() {
         دسته‌بندی‌ها
       </p>
       <ul className="space-y-1" role="list" aria-label="انتخاب دسته">
-        {shopMainCategories.map((cat) => {
-          const isSelected = selectedMainCategoryId === cat.id;
+        {categories.map((cat) => {
+          const isSelected = selectedMainCategoryId === cat;
           return (
-            <li key={cat.id}>
+            <li key={cat}>
               <button
                 type="button"
-                onClick={() => setSelectedMainCategoryId(isSelected ? null : cat.id)}
+                onClick={() => setSelectedMainCategoryId(isSelected ? null : cat)}
                 aria-pressed={isSelected}
                 className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-right transition-colors border border-transparent cursor-pointer ${
                   isSelected
@@ -66,8 +84,8 @@ export default function ShopCategoryMenu() {
                     : "text-gray-700 hover:bg-gray-50"
                 }`}
               >
-                <CategoryIcon icon={cat.icon} active={isSelected} />
-                <span className="flex-1 text-sm font-medium">{cat.label}</span>
+                <CategoryIcon icon={getIconForCategory(cat)} active={isSelected} />
+                <span className="flex-1 text-sm font-medium">{cat}</span>
                 {isSelected && (
                   <span className="w-2 h-2 rounded-full bg-[#ff5538] shrink-0" aria-hidden />
                 )}

@@ -125,15 +125,31 @@ export default function ProductForm({
   useEffect(() => {
     setRelatedTags(parseTags(product?.RelatedProducts ?? ""));
   }, [product?.RelatedProducts]);
+  
+  // وقتی product یا exchangeRate تغییر کرد، قیمت تومانی رو به دلار تبدیل کن
+  useEffect(() => {
+    if (product && exchangeRate > 0) {
+      const priceIRR = product.price ?? 0;
+      const priceUSD = priceIRR > 0 ? priceIRR / exchangeRate : 0;
+      setFormData({
+        img: product.img ?? "",
+        video: product.video ?? "",
+        title: product.title ?? "",
+        groups: product.groups ?? "",
+        price: parseFloat(priceUSD.toFixed(2)),
+        value: product.value ?? 0,
+        text: product.text ?? "",
+      });
+    }
+  }, [product, exchangeRate]);
   const [formData, setFormData] = useState<Record<string, string | number | boolean>>({
-    img: product?.img ?? "",
-    video: product?.video ?? "",
-    title: product?.title ?? "",
-    groups: product?.groups ?? "",
-    price: product?.price ?? 0,
-    value: product?.value ?? 0,
-    text: product?.text ?? "",
-    inPersonDelivery: product?.inPersonDelivery ?? false,
+    img: "",
+    video: "",
+    title: "",
+    groups: "",
+    price: 0,
+    value: 0,
+    text: "",
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -152,22 +168,34 @@ export default function ProductForm({
     if (formData.video) payload.video = String(formData.video);
     if (formData.title) payload.title = String(formData.title);
     if (formData.groups) payload.groups = String(formData.groups);
-    if (formData.price !== "" && formData.price !== undefined)
-      payload.price = Math.max(0, Number(formData.price) ?? 0);
+    
+    // ارسال قیمت تومانی محاسبه‌شده (قیمت دلاری × نرخ ارز)
+    if (formData.price !== "" && formData.price !== undefined && exchangeRate > 0) {
+      const priceUSD = Number(formData.price) ?? 0;
+      const priceIRR = Math.round(priceUSD * exchangeRate);
+      payload.price = Math.max(0, priceIRR);
+    }
+    
     if (formData.value !== "" && formData.value !== undefined)
       payload.value = Math.max(0, Number(formData.value) ?? 0);
     if (searchTags.length > 0) payload.search = searchTags.join("، ");
     if (relatedTags.length > 0) payload.RelatedProducts = relatedTags.join("، ");
     if (formData.text) payload.text = String(formData.text);
-    payload.inPersonDelivery = Boolean(formData.inPersonDelivery);
     return payload;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
     setError(null);
     setSuccess(null);
+
+    const title = String(formData.title ?? "").trim();
+    if (!title) {
+      setError("عنوان محصول را وارد کنید.");
+      return;
+    }
+
+    setIsSubmitting(true);
     const payload = buildPayload();
 
     const isEdit = product?.id != null;
@@ -200,7 +228,8 @@ export default function ProductForm({
         data = {};
       }
 
-      const isFailed = !res.ok || data.statu === 0;
+      const serverRejected = data.statu === 0 || data.status === 0;
+      const isFailed = !res.ok || serverRejected;
 
       if (isFailed) {
         const errMsg =
@@ -209,11 +238,11 @@ export default function ProductForm({
           (typeof data.msg === "string" && data.msg) ||
           (typeof data.reason === "string" && data.reason) ||
           (typeof data.detail === "string" && data.detail) ||
-          (data.statu === 0 ? "سرور ثبت را رد کرد (statu: 0)" : `خطای سرور (کد: ${res.status})`);
+          (serverRejected ? "سرور ثبت را رد کرد." : `خطای سرور (کد: ${res.status})`);
         throw new Error(errMsg);
       }
 
-      setSuccess(isEdit ? "محصول با موفقیت ویرایش شد" : "محصول با موفقیت ثبت شد");
+      setSuccess(isEdit ? "محصول با موفقیت ویرایش شد." : "محصول با موفقیت ثبت شد.");
       onSave(payload);
       setTimeout(() => {
         onClose();
@@ -411,11 +440,11 @@ export default function ProductForm({
               <div>
                 <label className={labelClass}>توضیحات محصول</label>
                 <textarea
-                  rows={3}
+                  rows={10}
                   value={String(formData.text ?? "")}
                   onChange={(e) => updateField("text", e.target.value)}
                   placeholder="توضیح کامل درباره محصول برای نمایش به کاربر"
-                  className={`${inputClass} h-auto py-2 min-h-[80px] resize-none`}
+                  className={`${inputClass} h-auto py-3 min-h-[250px] resize-y`}
                 />
               </div>
             </div>
@@ -517,20 +546,6 @@ export default function ProductForm({
                     className="flex-1 min-w-[120px] bg-transparent border-none outline-none text-right text-gray-900 text-sm placeholder:text-gray-400"
                   />
                 </div>
-              </div>
-              <div className="sm:col-span-2 flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="inPersonDelivery"
-                  checked={Boolean(formData.inPersonDelivery)}
-                  onChange={(e) =>
-                    updateField("inPersonDelivery", e.target.checked)
-                  }
-                  className="w-4 h-4 rounded border-gray-300 text-[#ff5538] focus:ring-[#ff5538]"
-                />
-                <label htmlFor="inPersonDelivery" className={labelClass + " mb-0"}>
-                  امکان تحویل حضوری محصول
-                </label>
               </div>
             </div>
           </section>

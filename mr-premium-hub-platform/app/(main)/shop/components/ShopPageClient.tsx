@@ -1,15 +1,23 @@
 "use client";
 
 import { FilterProvider } from "../../context/FilterContext";
+import { ShopProductsProvider } from "../context/ShopProductsContext";
+import type { ShopProduct } from "../lib/shop-api";
 import ShopSection from "./ShopSection";
 
-export default function ShopPageClient() {
+interface ShopPageClientProps {
+  initialProducts?: ShopProduct[];
+}
+
+export default function ShopPageClient({ initialProducts = [] }: ShopPageClientProps) {
   return (
-    <FilterProvider>
-      <main className="min-h-screen bg-gray-50">
-        <ShopSection />
-      </main>
-    </FilterProvider>
+    <ShopProductsProvider initialProducts={initialProducts}>
+      <FilterProvider>
+        <main className="min-h-screen bg-gray-50">
+          <ShopSection />
+        </main>
+      </FilterProvider>
+    </ShopProductsProvider>
   );
 }
 

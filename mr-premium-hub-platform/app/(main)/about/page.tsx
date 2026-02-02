@@ -30,7 +30,7 @@ export default async function AboutPage() {
     title: a.title,
     slug: a.slug,
     date: a.date ?? "",
-    image: a.image || "/Images/gift-card-guide.jpg",
+    image: a.image || "/Images/Shop/product-pic1.jpg",
     description:
       (Array.isArray(a.content) && a.content[0]
         ? String(a.content[0]).substring(0, 120)

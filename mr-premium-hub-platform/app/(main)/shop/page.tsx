@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import ShopPageClient from "./components/ShopPageClient";
+import { fetchShopProducts } from "./lib/shop-api";
 
 export const metadata: Metadata = {
   title: "فروشگاه گیفت کارت و خدمات مالی دیجیتال",
@@ -28,7 +29,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function ShopPage() {
+export default async function ShopPage() {
+  let initialProducts: Awaited<ReturnType<typeof fetchShopProducts>> = [];
+  try {
+    initialProducts = await fetchShopProducts();
+  } catch {
+    // Client will show error/retry when user refetches
+  }
   const shopJsonLd = {
     "@context": "https://schema.org",
     "@type": "Store",
@@ -46,7 +53,7 @@ export default function ShopPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(shopJsonLd) }}
       />
-      <ShopPageClient />
+      <ShopPageClient initialProducts={initialProducts} />
     </>
   );
 }

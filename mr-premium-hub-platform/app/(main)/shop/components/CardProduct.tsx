@@ -6,6 +6,8 @@ import type { Product } from "./productsData";
 
 interface ProductCardProps {
   product: Product;
+  /** اولویت لود تصویر برای بهبود LCP (اولین کارت‌های صفحه) */
+  priority?: boolean;
 }
 
 const formatPrice = (price: number): string => {
@@ -62,7 +64,7 @@ function ServiceIcon({ mainCategoryId, useFlightTicketIntro }: { mainCategoryId:
   }
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, priority }: ProductCardProps) {
   const router = useRouter();
   const { name, price, originalPrice, image, discount, productType, mainCategoryId } = product;
   const isGiftCard = productType === "gift_card";
@@ -78,7 +80,8 @@ export default function ProductCard({ product }: ProductCardProps) {
     router.push(`/shop/product/${product.id}`);
   };
 
-  const showIcon = isService;
+  const hasImage = Boolean(image?.trim());
+  const showIcon = isService && !hasImage;
 
   return (
     <div
@@ -86,19 +89,20 @@ export default function ProductCard({ product }: ProductCardProps) {
       onClick={handleProductClick}
     >
       <div className="relative grow mb-4">
-        <div className="relative flex items-center justify-center w-full h-48 overflow-hidden bg-white md:h-64 rounded-xl border border-gray-100">
-          {showIcon ? (
-            <div className="flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-2xl bg-[#fef3f2]">
-              <ServiceIcon mainCategoryId={mainCategoryId} useFlightTicketIntro={product.useFlightTicketIntro} />
-            </div>
-          ) : image ? (
+        <div className="relative flex items-center justify-center w-full h-48 md:h-64 overflow-hidden rounded-xl bg-transparent">
+          {hasImage ? (
             <Image
               src={image}
               alt={name}
               fill
-              className="object-contain"
-              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover rounded-xl"
+              sizes="(max-width: 768px) 100vw, 33vw"
+              priority={priority}
             />
+          ) : showIcon ? (
+            <div className="flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-[#fef3f2]">
+              <ServiceIcon mainCategoryId={mainCategoryId} useFlightTicketIntro={product.useFlightTicketIntro} />
+            </div>
           ) : (
             <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-full md:w-16 md:h-16">
               <svg

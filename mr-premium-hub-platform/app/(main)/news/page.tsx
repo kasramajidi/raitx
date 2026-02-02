@@ -28,7 +28,7 @@ export default async function NewsPage() {
     title: a.title,
     slug: a.slug,
     category: a.category,
-    image: a.image || "/Images/gift-card-guide.jpg",
+    image: a.image || "/Images/Shop/product-pic1.jpg",
     date: a.date ?? "",
     comments: a.comments ?? 0,
     content: a.content ?? [],

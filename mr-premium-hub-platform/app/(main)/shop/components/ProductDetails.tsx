@@ -11,8 +11,16 @@ import ProductFeatures from "./ProductFeatures";
 import ProductTabs from "./ProductTabs";
 import RelatedProducts from "./RelatedProducts";
 import { products } from "./productsData";
+import type { ShopProduct } from "../lib/shop-api";
+import type { Product } from "./productsData";
 
-export default function ProductDetails() {
+type ProductLike = Product | ShopProduct;
+
+interface ProductDetailsProps {
+  initialProduct?: ProductLike | null;
+}
+
+export default function ProductDetails({ initialProduct }: ProductDetailsProps) {
   const params = useParams();
   const router = useRouter();
   const { addToCart } = useCart();
@@ -20,7 +28,10 @@ export default function ProductDetails() {
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedWarranty, setSelectedWarranty] = useState("");
 
-  const product = id ? products.find((p) => p.id === id) : null;
+  const product =
+    initialProduct ??
+    (id ? (products.find((p) => p.id === id) as ProductLike | undefined) : null) ??
+    null;
   const productImages = product && product.image ? [product.image] : [];
 
   const isGiftCard = product?.productType === "gift_card";
@@ -101,9 +112,9 @@ export default function ProductDetails() {
           </div>
         </nav>
 
-        <div className="w-full h-auto min-h-[400px] lg:h-[515px] bg-white rounded-2xl p-4 sm:p-6 mt-8 shadow-sm border border-gray-200">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 h-full">
-            <div className="order-1 lg:order-2">
+        <div className="w-full bg-white rounded-2xl p-4 sm:p-6 mt-8 shadow-sm border border-gray-200 overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 items-stretch">
+            <div className="order-1 lg:order-2 min-h-[280px] lg:min-h-[320px] flex items-center justify-center">
               <ProductImageGallery product={product} images={productImages} />
             </div>
             <div className="order-2 lg:order-1">

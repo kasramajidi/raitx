@@ -59,7 +59,7 @@ function toArticleDetail(a: ApiArticle): ArticleDetail {
     category: a.category ?? "—",
     comments: a.comments ?? 0,
     date: a.date ?? "",
-    image: a.image ?? "/Images/gift-card-guide.jpg",
+    image: a.image ?? "/Images/Shop/product-pic1.jpg",
     content: a.content ?? [],
     headings: a.headings ?? [],
     relatedService: a.Relatedservice,

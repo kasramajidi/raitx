@@ -150,7 +150,7 @@ export default function ProductsTable({
                       <button
                         onClick={() => onEdit(product)}
                         disabled={editLoading}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[#ff5538] bg-[#ff5538]/10 hover:bg-[#ff5538]/20 font-medium text-xs transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[#ff5538] bg-[#ff5538]/10 hover:bg-[#ff5538]/20 font-medium text-xs transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         <svg
                           className="w-3.5 h-3.5"
@@ -170,7 +170,7 @@ export default function ProductsTable({
                       <button
                         onClick={() => onDelete(product.id)}
                         disabled={deletingId === product.id}
-                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 font-medium text-xs transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+                        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-red-600 bg-red-50 hover:bg-red-100 font-medium text-xs transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-not-allowed"
                       >
                         {deletingId === product.id ? (
                           <span className="w-3.5 h-3.5 border-2 border-red-600 border-t-transparent rounded-full animate-spin" />

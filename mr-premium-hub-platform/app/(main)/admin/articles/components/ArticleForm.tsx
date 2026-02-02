@@ -52,7 +52,7 @@ export default function ArticleForm({
     content: article?.content || "",
     status: article?.status || "پیش‌نویس",
     slug: article?.slug ?? "",
-    image: article?.image ?? "/Images/gift-card-guide.jpg",
+    image: article?.image ?? "/Images/Shop/product-pic1.jpg",
     date: article?.date ?? "",
     headings: article?.headings ?? "",
     relatedService: article?.relatedService,
@@ -77,7 +77,7 @@ export default function ArticleForm({
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white w-full max-w-2xl max-h-[90vh] overflow-y-auto">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between sticky top-0 bg-white">
           <h2 className="text-xl font-medium text-gray-900">
@@ -128,7 +128,7 @@ export default function ArticleForm({
               onChange={(e) =>
                 setFormData({ ...formData, image: e.target.value })
               }
-              placeholder="/Images/gift-card-guide.jpg"
+              placeholder="/Images/Shop/product-pic1.jpg"
               className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
             />
           </div>
