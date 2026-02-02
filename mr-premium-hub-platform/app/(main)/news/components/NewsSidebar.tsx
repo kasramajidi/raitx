@@ -2,21 +2,23 @@
 
 import Link from "next/link";
 
-const defaultCategories = [
-  "طراحی گرافیک",
-  "طراحی سایت",
-  "برنامه نویسی",
-  "بازاریابی دیجیتال",
-  "آموزش سئو",
+/** وقتی از API دسته‌ای نیامده، این دسته‌ها نمایش داده می‌شوند (محور سایت) */
+const FALLBACK_CATEGORIES = [
+  "خدمات ارزی",
+  "پرداخت ارزی",
+  "ویزا و سفارت",
+  "آزمون‌های بین‌المللی",
+  "سفر و رزرو",
 ];
 
 interface NewsSidebarProps {
+  /** دسته‌بندی‌ها از مقالات API (همان ادمین) — داینامیک */
   categories?: string[];
   selectedCategory?: string;
 }
 
-export default function NewsSidebar({ categories = defaultCategories, selectedCategory }: NewsSidebarProps) {
-  const list = categories.length > 0 ? categories : defaultCategories;
+export default function NewsSidebar({ categories = [], selectedCategory }: NewsSidebarProps) {
+  const list = (categories && categories.length > 0) ? categories : FALLBACK_CATEGORIES;
   return (
     <aside className="lg:w-[190px] xl:w-[210px] w-full bg-white shadow-sm rounded-lg p-3 sm:p-4 md:p-5 h-fit border border-gray-200">
       <h3 className="text-sm sm:text-base md:text-lg font-bold text-gray-800 mb-3 sm:mb-4 text-right hidden sm:block">

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
 import ArticlesTable from "./components/ArticlesTable";
 import ArticleForm, { type ArticleFormData } from "./components/ArticleForm";
@@ -188,6 +188,15 @@ export default function ArticlesPage() {
     }
   };
 
+  /** دسته‌بندی‌های داینامیک از مقالات API — همان لیست صفحه سایت */
+  const categoriesFromArticles = useMemo(() => {
+    const set = new Set<string>();
+    articles.forEach((a) => {
+      if (a.category && String(a.category).trim()) set.add(String(a.category).trim());
+    });
+    return Array.from(set).sort((a, b) => a.localeCompare(b, "fa"));
+  }, [articles]);
+
   const rows: ArticleRow[] = articles.map(mapApiToRow);
   const filteredArticles = rows.filter(
     (row) =>
@@ -293,6 +302,7 @@ export default function ArticlesPage() {
         {showForm && (
           <ArticleForm
             key={editingArticle ? `edit-${editingArticle.id}` : "add"}
+            categories={categoriesFromArticles}
             article={
               editingArticle
                 ? {

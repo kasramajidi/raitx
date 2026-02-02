@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import { categories as shopCategories } from "@/app/(main)/shop/components/productsData";
 
 export interface RelatedServiceForm {
   title: string;
@@ -23,6 +22,8 @@ export interface ArticleFormData {
 }
 
 interface ArticleFormProps {
+  /** دسته‌بندی‌های داینامیک از مقالات API (همان صفحه سایت) */
+  categories?: string[];
   article?: {
     id: string;
     title: string;
@@ -40,6 +41,7 @@ interface ArticleFormProps {
 }
 
 export default function ArticleForm({
+  categories = [],
   article,
   onClose,
   onSave,
@@ -55,6 +57,7 @@ export default function ArticleForm({
     headings: article?.headings ?? "",
     relatedService: article?.relatedService,
   });
+  const [newCategoryText, setNewCategoryText] = useState("");
 
   const isAddMode = !article;
 
@@ -68,7 +71,9 @@ export default function ArticleForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSave(formData);
+    const categoryToSave = formData.category === "__new__" ? newCategoryText.trim() : formData.category;
+    if (!categoryToSave) return;
+    onSave({ ...formData, category: categoryToSave });
   };
 
   return (
@@ -145,21 +150,47 @@ export default function ArticleForm({
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               دسته‌بندی <span className="text-red-500">*</span>
             </label>
-            <select
-              required
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({ ...formData, category: e.target.value })
-              }
-              className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-            >
-              <option value="">انتخاب کنید...</option>
-              {shopCategories.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
-                </option>
-              ))}
-            </select>
+            {categories.length > 0 ? (
+              <>
+                <select
+                  required={formData.category !== "__new__"}
+                  value={formData.category}
+                  onChange={(e) =>
+                    setFormData({ ...formData, category: e.target.value })
+                  }
+                  className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
+                >
+                  <option value="">انتخاب کنید...</option>
+                  {categories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                  <option value="__new__">➕ دسته جدید</option>
+                </select>
+                {formData.category === "__new__" && (
+                  <input
+                    type="text"
+                    required
+                    value={newCategoryText}
+                    onChange={(e) => setNewCategoryText(e.target.value)}
+                    placeholder="نام دسته جدید را وارد کنید"
+                    className="mt-2 w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
+                  />
+                )}
+              </>
+            ) : (
+              <input
+                type="text"
+                required
+                value={formData.category}
+                onChange={(e) =>
+                  setFormData({ ...formData, category: e.target.value })
+                }
+                placeholder="نام دسته را وارد کنید (با افزودن مقاله در سایت هم ظاهر می‌شود)"
+                className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
+              />
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">

@@ -37,13 +37,17 @@ export interface ArticleDetail {
 }
 
 export async function getArticlesFromApi(): Promise<ApiArticle[]> {
-  const res = await fetch(`${API_BASE}?action=Article&_t=${Date.now()}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    cache: "no-store",
-  });
-  const data = await res.json();
-  if (Array.isArray(data)) return data;
+  try {
+    const res = await fetch(`${API_BASE}?action=Article&_t=${Date.now()}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+    const data = await res.json();
+    if (Array.isArray(data)) return data;
+  } catch {
+    // در صورت خطای شبکه یا API
+  }
   return [];
 }
 

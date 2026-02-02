@@ -34,13 +34,17 @@ function handleResponse<T>(res: Response): Promise<T> {
 }
 
 export async function getArticles(): Promise<ApiArticle[]> {
-  const res = await fetch(`${API_BASE}?action=Article&_t=${Date.now()}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    cache: "no-store",
-  });
-  const data = await handleResponse<ApiArticle[] | { error?: string }>(res);
-  if (Array.isArray(data)) return data;
+  try {
+    const res = await fetch(`${API_BASE}?action=Article&_t=${Date.now()}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      cache: "no-store",
+    });
+    const data = await handleResponse<ApiArticle[] | { error?: string }>(res);
+    if (Array.isArray(data)) return data;
+  } catch {
+    // در صورت خطا
+  }
   return [];
 }
 
