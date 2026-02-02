@@ -2,19 +2,18 @@
 
 import React from "react";
 
-interface User {
-  id: string;
+export interface RegistrationUserRow {
   name: string;
   email: string;
-  role: string;
-  status: string;
-  joinDate: string;
+  phone: string;
+  at: string;
+  index: number;
 }
 
 interface UsersTableProps {
-  users: User[];
-  onEdit: (user: User) => void;
-  onDelete: (id: string) => void;
+  users: RegistrationUserRow[];
+  onEdit: (index: number, user: RegistrationUserRow) => void;
+  onDelete: (index: number) => void;
 }
 
 export default function UsersTable({
@@ -29,16 +28,16 @@ export default function UsersTable({
           <thead>
             <tr className="border-b border-gray-200">
               <th className="text-right py-3 px-4 font-medium text-gray-700">
+                ردیف
+              </th>
+              <th className="text-right py-3 px-4 font-medium text-gray-700">
                 نام
               </th>
               <th className="text-right py-3 px-4 font-medium text-gray-700">
                 ایمیل
               </th>
               <th className="text-right py-3 px-4 font-medium text-gray-700">
-                نقش
-              </th>
-              <th className="text-right py-3 px-4 font-medium text-gray-700">
-                وضعیت
+                شماره تماس
               </th>
               <th className="text-right py-3 px-4 font-medium text-gray-700">
                 تاریخ عضویت
@@ -58,36 +57,36 @@ export default function UsersTable({
             ) : (
               users.map((user) => (
                 <tr
-                  key={user.id}
+                  key={user.index}
                   className="border-b border-gray-100 hover:bg-gray-50 transition-colors"
                 >
+                  <td className="py-3 px-4 text-gray-600">{user.index + 1}</td>
                   <td className="py-3 px-4 text-gray-900 font-medium">
                     {user.name}
                   </td>
                   <td className="py-3 px-4 text-gray-700">{user.email}</td>
-                  <td className="py-3 px-4 text-gray-700">{user.role}</td>
-                  <td className="py-3 px-4">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded ${
-                        user.status === "فعال"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-gray-100 text-gray-700"
-                      }`}
-                    >
-                      {user.status}
-                    </span>
+                  <td className="py-3 px-4 text-gray-700 font-mono">
+                    {user.phone}
                   </td>
-                  <td className="py-3 px-4 text-gray-600">{user.joinDate}</td>
+                  <td className="py-3 px-4 text-gray-600">
+                    {user.at
+                      ? new Date(user.at).toLocaleDateString("fa-IR", {
+                          year: "numeric",
+                          month: "2-digit",
+                          day: "2-digit",
+                        })
+                      : "—"}
+                  </td>
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       <button
-                        onClick={() => onEdit(user)}
+                        onClick={() => onEdit(user.index, user)}
                         className="text-[#ff5538] hover:underline text-xs"
                       >
                         ویرایش
                       </button>
                       <button
-                        onClick={() => onDelete(user.id)}
+                        onClick={() => onDelete(user.index)}
                         className="text-red-600 hover:underline text-xs"
                       >
                         حذف

@@ -4,22 +4,19 @@ import React, { useState } from "react";
 
 interface UserFormProps {
   user?: {
-    id: string;
     name: string;
     email: string;
-    role: string;
-    status: string;
+    phone: string;
   };
   onClose: () => void;
-  onSave: (user: any) => void;
+  onSave: (data: { name: string; email: string; phone: string }) => void;
 }
 
 export default function UserForm({ user, onClose, onSave }: UserFormProps) {
   const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    role: user?.role || "کاربر عادی",
-    status: user?.status || "فعال",
+    name: user?.name ?? "",
+    email: user?.email ?? "",
+    phone: user?.phone ?? "",
   });
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -32,7 +29,7 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
       <div className="bg-white w-full max-w-md">
         <div className="p-6 border-b border-gray-200 flex items-center justify-between">
           <h2 className="text-xl font-medium text-gray-900">
-            {user ? "ویرایش کاربر" : "افزودن کاربر جدید"}
+            ویرایش کاربر
           </h2>
           <button
             onClick={onClose}
@@ -72,33 +69,18 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              نقش
+              شماره تماس <span className="text-red-500">*</span>
             </label>
-            <select
-              value={formData.role}
+            <input
+              type="tel"
+              required
+              value={formData.phone}
               onChange={(e) =>
-                setFormData({ ...formData, role: e.target.value })
+                setFormData({ ...formData, phone: e.target.value })
               }
+              placeholder="۰۹۰۴۴۲۸۴۵۲۵"
               className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-            >
-              <option value="کاربر عادی">کاربر عادی</option>
-              <option value="ادمین">ادمین</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
-              وضعیت
-            </label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({ ...formData, status: e.target.value })
-              }
-              className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-            >
-              <option value="فعال">فعال</option>
-              <option value="غیرفعال">غیرفعال</option>
-            </select>
+            />
           </div>
           <div className="flex items-center justify-end gap-3 pt-4 border-t border-gray-200">
             <button
@@ -120,4 +102,3 @@ export default function UserForm({ user, onClose, onSave }: UserFormProps) {
     </div>
   );
 }
-

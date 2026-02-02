@@ -1,93 +1,113 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../components/AdminLayout";
 import UsersTable from "./components/UsersTable";
 import UserForm from "./components/UserForm";
 
-interface User {
-  id: string;
+export interface RegistrationUser {
   name: string;
   email: string;
-  role: string;
-  status: string;
-  joinDate: string;
+  phone: string;
+  at: string;
 }
 
-const initialUsers: User[] = [
-  {
-    id: "1",
-    name: "علی احمدی",
-    email: "ali@example.com",
-    role: "کاربر عادی",
-    status: "فعال",
-    joinDate: "1402/12/01",
-  },
-  {
-    id: "2",
-    name: "مریم رضایی",
-    email: "maryam@example.com",
-    role: "ادمین",
-    status: "فعال",
-    joinDate: "1402/11/15",
-  },
-  {
-    id: "3",
-    name: "حسین محمدی",
-    email: "hossein@example.com",
-    role: "کاربر عادی",
-    status: "غیرفعال",
-    joinDate: "1402/10/20",
-  },
-];
-
 export default function UsersPage() {
-  const [users, setUsers] = useState<User[]>(initialUsers);
+  const [users, setUsers] = useState<RegistrationUser[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [editingUser, setEditingUser] = useState<User | null>(null);
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const handleAdd = () => {
-    setEditingUser(null);
+  const fetchUsers = useCallback(async () => {
+    try {
+      const res = await fetch("/api/register-log");
+      const data = await res.json();
+      if (data.error) {
+        setUsers([]);
+        return;
+      }
+      setUsers(data.registrations ?? []);
+    } catch {
+      setUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
+
+  const handleEdit = (index: number, user: RegistrationUser) => {
+    setEditingIndex(index);
     setShowForm(true);
   };
 
-  const handleEdit = (user: User) => {
-    setEditingUser(user);
-    setShowForm(true);
-  };
-
-  const handleDelete = (id: string) => {
-    if (confirm("آیا از حذف این کاربر اطمینان دارید؟")) {
-      setUsers(users.filter((user) => user.id !== id));
+  const handleDelete = async (index: number) => {
+    if (!confirm("آیا از حذف این کاربر اطمینان دارید؟")) return;
+    try {
+      const res = await fetch(`/api/register-log?index=${index}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+      if (data.ok) {
+        await fetchUsers();
+      }
+    } catch {
+      // ignore
     }
   };
 
-  const handleSave = (formData: any) => {
-    if (editingUser) {
-      setUsers(
-        users.map((user) =>
-          user.id === editingUser.id
-            ? { ...user, ...formData }
-            : user
-        )
-      );
-    } else {
-      const newUser: User = {
-        id: Date.now().toString(),
-        ...formData,
-        joinDate: new Date().toLocaleDateString("fa-IR"),
-      };
-      setUsers([newUser, ...users]);
+  const handleClearAll = async () => {
+    if (!confirm("آیا می‌خواهید همهٔ کاربران پاک شوند؟")) return;
+    try {
+      const res = await fetch("/api/register-log", { method: "DELETE" });
+      const data = await res.json();
+      if (data.ok) {
+        setUsers([]);
+        setShowForm(false);
+        setEditingIndex(null);
+      }
+    } catch {
+      // ignore
     }
-    setShowForm(false);
-    setEditingUser(null);
   };
 
-  const filteredUsers = users.filter(
+  const handleSave = async (formData: {
+    name: string;
+    email: string;
+    phone: string;
+  }) => {
+    if (editingIndex === null) return;
+    try {
+      const res = await fetch("/api/register-log", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          index: editingIndex,
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+        }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        setUsers(data.registrations ?? []);
+        setShowForm(false);
+        setEditingIndex(null);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
+  const usersWithIndex = users.map((user, i) => ({ ...user, index: i }));
+  const filteredUsers = usersWithIndex.filter(
     (user) =>
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      user.email.toLowerCase().includes(searchTerm.toLowerCase())
+      user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.phone.includes(searchTerm)
   );
 
   return (
@@ -99,39 +119,47 @@ export default function UsersPage() {
               مدیریت کاربران
             </h1>
             <p className="text-sm text-gray-600">
-              مشاهده و مدیریت کاربران سایت
+              مشاهده و مدیریت کاربران ثبت‌نام‌شده ({users.length} نفر)
             </p>
           </div>
-          <button
-            onClick={handleAdd}
-            className="bg-[#ff5538] text-white px-6 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
-          >
-            افزودن کاربر جدید
-          </button>
+          <div className="flex items-center gap-2">
+            {users.length > 0 && (
+              <button
+                onClick={handleClearAll}
+                className="px-4 py-2.5 text-sm font-medium text-red-600 border border-red-300 rounded hover:bg-red-50 transition-colors"
+              >
+                پاک کردن همه
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="bg-white border-b border-gray-200 p-4">
           <input
             type="text"
-            placeholder="جستجو در کاربران..."
+            placeholder="جستجو در نام، ایمیل یا شماره..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
           />
         </div>
 
-        <UsersTable
-          users={filteredUsers}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-        />
+        {loading ? (
+          <p className="text-gray-500 py-8 text-center">در حال بارگذاری…</p>
+        ) : (
+          <UsersTable
+            users={filteredUsers}
+            onEdit={handleEdit}
+            onDelete={handleDelete}
+          />
+        )}
 
-        {showForm && (
+        {showForm && editingIndex !== null && users[editingIndex] && (
           <UserForm
-            user={editingUser || undefined}
+            user={users[editingIndex]}
             onClose={() => {
               setShowForm(false);
-              setEditingUser(null);
+              setEditingIndex(null);
             }}
             onSave={handleSave}
           />

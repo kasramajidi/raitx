@@ -1,55 +1,55 @@
 "use client";
 
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
-import { signup } from "../lib/auth-api";
-
-type RegisterFormValues = {
-  username: string;
-  email: string;
-  password: string;
-};
+import SubmitButton from "./SubmitButton";
+import { signup } from "@/app/(main)/auth/lib/auth-api";
 
 interface RegisterFormProps {
-  onSwitchToLogin?: () => void;
+  onSwitchToLogin?: (phone?: string) => void;
 }
 
 const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
-  const [showPassword, setShowPassword] = useState(false);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [loading, setLoading] = useState(false);
-  const [formError, setFormError] = useState<string | null>(null);
-  const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<RegisterFormValues>({
-    defaultValues: { username: "", email: "", password: "" },
-  });
-
-  const onSubmit = async (values: RegisterFormValues) => {
-    setFormError(null);
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setSuccess("");
+    const n = name.trim();
+    const em = email.trim();
+    const p = phone.trim();
+    if (!n || !em || !p) {
+      setError("نام، ایمیل و شماره تماس را وارد کنید.");
+      return;
+    }
     setLoading(true);
     try {
-      await signup({
-        name: values.username.trim(),
-        email: values.email.trim(),
-        phone: values.email.trim(),
-      });
-      if (onSwitchToLogin) {
-        onSwitchToLogin();
+      const data = await signup({ name: n, email: em, phone: p });
+      if ((data as { error?: string }).error) {
+        setError((data as { error?: string }).error);
       } else {
-        router.push("/auth");
+        try {
+          await fetch("/api/register-log", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name: n, email: em, phone: p }),
+          });
+        } catch {
+          // نادیده؛ فقط برای لاگ محلی
+        }
+        setSuccess("ثبت‌نام با موفقیت انجام شد. برای ورود از فرم ورود و رمز یکبار مصرف استفاده کنید.");
+        setName("");
+        setEmail("");
+        setPhone("");
+        onSwitchToLogin?.(p);
       }
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "خطا در ارتباط با سرور. اتصال اینترنت را بررسی کنید.";
-      setFormError(message);
+      setError(err instanceof Error ? err.message : "خطا در ارتباط با سرور.");
     } finally {
       setLoading(false);
     }
@@ -60,34 +60,33 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
       <h2 className="text-2xl mb-8 text-center font-semibold text-gray-900">
         عضویت
       </h2>
-      <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
-        {formError && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg py-2.5 px-3 text-right">
-            {formError}
+      <form onSubmit={handleSubmit} noValidate className="space-y-5">
+        {error && (
+          <p className="text-sm text-red-600 bg-red-50 py-2 px-3 rounded">
+            {error}
+          </p>
+        )}
+        {success && (
+          <p className="text-sm text-green-600 bg-green-50 py-2 px-3 rounded">
+            {success}
           </p>
         )}
         <div>
           <label
             className="block text-right text-gray-700 text-sm mb-1.5"
-            htmlFor="register-username"
+            htmlFor="register-name"
           >
-            نام کاربری
+            نام
           </label>
           <input
-            id="register-username"
+            id="register-name"
+            name="name"
             type="text"
-            placeholder="نام کاربری را وارد کنید"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="نام را وارد کنید"
             className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
-            {...register("username", {
-              required: "نام کاربری را وارد کنید.",
-              minLength: { value: 2, message: "نام کاربری باید حداقل ۲ کاراکتر باشد." },
-            })}
           />
-          {errors.username?.message && (
-            <p className="text-red-500 text-xs mt-1 text-right">
-              {errors.username.message}
-            </p>
-          )}
         </div>
         <div>
           <label
@@ -98,56 +97,30 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           </label>
           <input
             id="register-email"
+            name="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="ایمیل را وارد کنید"
             className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
-            {...register("email", {
-              required: "آدرس ایمیل را وارد کنید.",
-              pattern: {
-                value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                message: "یک آدرس ایمیل معتبر وارد کنید.",
-              },
-            })}
           />
-          {errors.email?.message && (
-            <p className="text-red-500 text-xs mt-1 text-right">
-              {errors.email.message}
-            </p>
-          )}
         </div>
         <div>
           <label
             className="block text-right text-gray-700 text-sm mb-1.5"
-            htmlFor="register-password"
+            htmlFor="register-phone"
           >
-            گذرواژه
+            شماره تماس
           </label>
-          <div className="relative">
-            <input
-              id="register-password"
-              type={showPassword ? "text" : "password"}
-              placeholder="گذرواژه را وارد کنید"
-              className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors pr-10"
-              {...register("password", {
-                required: "گذرواژه را وارد کنید.",
-                minLength: { value: 6, message: "گذرواژه باید حداقل ۶ کاراکتر باشد." },
-              })}
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute left-0 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
-              tabIndex={-1}
-              aria-label={showPassword ? "مخفی کردن گذرواژه" : "نمایش گذرواژه"}
-            >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
-            </button>
-          </div>
-          {errors.password?.message && (
-            <p className="text-red-500 text-xs mt-1 text-right">
-              {errors.password.message}
-            </p>
-          )}
+          <input
+            id="register-phone"
+            name="phone"
+            type="tel"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="مثال: ۰۹۰۴۴۲۸۴۵۲۵"
+            className="w-full bg-white border-b border-gray-300 py-2.5 focus:outline-none focus:border-[#ff5538] transition-colors"
+          />
         </div>
 
         <p className="text-xs text-gray-500 pt-2 text-center leading-relaxed">
@@ -168,39 +141,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
           را می‌پذیرید.
         </p>
 
-        <button
-          type="submit"
-          className="w-full cursor-pointer bg-[#ff5538] text-white py-3 rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed font-medium"
-          disabled={loading}
-        >
-          {loading ? (
-            <span className="flex items-center justify-center gap-2">
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                viewBox="0 0 24 24"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                ></circle>
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
-                ></path>
-              </svg>
-              در حال ارسال...
-            </span>
-          ) : (
-            "عضویت"
-          )}
-        </button>
+        <SubmitButton disabled={loading}>
+          {loading ? "در حال ثبت‌نام…" : "عضویت"}
+        </SubmitButton>
         {onSwitchToLogin && (
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
