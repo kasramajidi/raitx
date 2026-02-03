@@ -93,7 +93,7 @@ async function getShopCommentsFromApi(idshopFilter?: number | string): Promise<S
   return raw
     .filter((c: Record<string, unknown>) => c && typeof c === "object")
     .map((c: Record<string, unknown>) => {
-      const idshop = c.idshop ?? c.idShop ?? c.IDShop ?? 0;
+      const idshop = toId(c.idshop ?? c.idShop ?? c.IDShop ?? 0);
       return normalizeComment(c, idshop, undefined);
     });
 }
