@@ -14,7 +14,6 @@ interface Product {
   name: string;
   category: string;
   price: string;
-  priceUSD: number;
   stock: number;
   sales: number;
   status: string;
@@ -42,7 +41,6 @@ function mapApiToProduct(item: ApiProduct, index: number): Product {
     name,
     category,
     price,
-    priceUSD: priceIRR,
     stock,
     sales,
     status,

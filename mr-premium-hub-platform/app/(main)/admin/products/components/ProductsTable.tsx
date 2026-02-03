@@ -42,7 +42,7 @@ interface Product {
 
 interface ProductsTableProps {
   products: Product[];
-  onEdit: (product: Product) => void;
+  onEdit: (product: Product) => void | Promise<void>;
   onDelete: (id: string) => void;
   deletingId?: string | null;
   editLoading?: boolean;
