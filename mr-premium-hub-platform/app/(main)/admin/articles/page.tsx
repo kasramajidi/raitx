@@ -57,9 +57,13 @@ export default function ArticlesPage() {
   const [showForm, setShowForm] = useState(false);
   const [editingArticle, setEditingArticle] = useState<ApiArticle | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [currentPage, setCurrentPage] = useState(1);
   const [saving, setSaving] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  const ITEMS_PER_PAGE = 20;
 
   const fetchArticles = useCallback(async (silent = false) => {
     if (!silent) {
@@ -208,11 +212,32 @@ export default function ArticlesPage() {
   }, [articles]);
 
   const rows: ArticleRow[] = articles.map(mapApiToRow);
-  const filteredArticles = rows.filter(
+  const filteredBySearch = rows.filter(
     (row) =>
       (row.title ?? "").toLowerCase().includes(searchTerm.toLowerCase()) ||
       (row.category ?? "").toLowerCase().includes(searchTerm.toLowerCase())
   );
+  const filteredArticles = selectedCategory
+    ? filteredBySearch.filter((row) => (row.category ?? "").trim() === selectedCategory)
+    : filteredBySearch;
+
+  const totalPages = Math.max(1, Math.ceil(filteredArticles.length / ITEMS_PER_PAGE));
+  const paginatedArticles = filteredArticles.slice(
+    (currentPage - 1) * ITEMS_PER_PAGE,
+    currentPage * ITEMS_PER_PAGE
+  );
+
+  // وقتی جستجو یا دسته عوض شد به صفحهٔ اول برو
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedCategory]);
+
+  // اگر صفحهٔ فعلی از تعداد کل صفحات بیشتر شد (مثلاً بعد از فیلتر) به آخرین صفحه برو
+  useEffect(() => {
+    if (currentPage > totalPages && totalPages >= 1) {
+      setCurrentPage(totalPages);
+    }
+  }, [totalPages, currentPage]);
 
   return (
     <AdminLayout>
@@ -237,22 +262,36 @@ export default function ArticlesPage() {
           </button>
         </div>
 
-        <div className="relative">
-          <input
-            type="text"
-            placeholder="جستجو در لیست مقالات (عنوان یا دسته‌بندی)..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-12 bg-white rounded-xl border border-gray-200 pl-4 pr-12 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
-          />
-          <svg
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+        <div className="flex flex-col sm:flex-row gap-3">
+          <div className="relative flex-1">
+            <input
+              type="text"
+              placeholder="جستجو در لیست مقالات (عنوان یا دسته‌بندی)..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full h-12 bg-white rounded-xl border border-gray-200 pl-4 pr-12 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
+            />
+            <svg
+              className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+          <select
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+            className="h-12 min-w-[180px] bg-white rounded-xl border border-gray-200 pl-4 pr-10 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/20 focus:border-[#ff5538] transition-all text-sm shadow-sm"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+            <option value="">همه دسته‌ها</option>
+            {categoriesFromArticles.map((cat) => (
+              <option key={cat} value={cat}>
+                {cat}
+              </option>
+            ))}
+          </select>
         </div>
 
         {deleteError && (
@@ -300,13 +339,45 @@ export default function ArticlesPage() {
             </div>
           </div>
         ) : (
-          <ArticlesTable
-            articles={filteredArticles}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-            deletingId={deletingId}
-            editLoading={saving}
-          />
+          <>
+            <ArticlesTable
+              articles={paginatedArticles}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+              deletingId={deletingId}
+              editLoading={saving}
+            />
+            {filteredArticles.length > ITEMS_PER_PAGE && (
+              <div className="flex flex-wrap items-center justify-between gap-4 mt-4 py-3 px-4 bg-white rounded-xl border border-gray-100">
+                <p className="text-sm text-gray-600">
+                  نمایش {(currentPage - 1) * ITEMS_PER_PAGE + 1} تا{" "}
+                  {Math.min(currentPage * ITEMS_PER_PAGE, filteredArticles.length)} از{" "}
+                  {filteredArticles.length} مقاله
+                </p>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    disabled={currentPage <= 1}
+                    className="h-9 px-4 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    قبلی
+                  </button>
+                  <span className="text-sm text-gray-600 px-2">
+                    صفحه {currentPage} از {totalPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={currentPage >= totalPages}
+                    className="h-9 px-4 rounded-lg border border-gray-200 bg-white text-gray-700 text-sm font-medium hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  >
+                    بعدی
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {showForm && (
