@@ -30,8 +30,9 @@ const RegisterForm: React.FC<RegisterFormProps> = ({ onSwitchToLogin }) => {
     setLoading(true);
     try {
       const data = await signup({ name: n, email: em, phone: p });
-      if ((data as { error?: string }).error) {
-        setError((data as { error?: string }).error);
+      const apiError = (data as { error?: string }).error;
+      if (apiError) {
+        setError(apiError);
       } else {
         try {
           await fetch("/api/register-log", {
