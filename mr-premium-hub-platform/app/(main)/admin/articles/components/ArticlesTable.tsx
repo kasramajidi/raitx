@@ -6,7 +6,6 @@ export interface Article {
   id: string;
   title: string;
   category: string;
-  author: string;
   views: number;
   status: string;
   date: string;
@@ -40,9 +39,6 @@ export default function ArticlesTable({
                 دسته‌بندی
               </th>
               <th className="text-right py-4 px-5 font-semibold text-gray-700">
-                نویسنده
-              </th>
-              <th className="text-right py-4 px-5 font-semibold text-gray-700">
                 بازدید
               </th>
               <th className="text-right py-4 px-5 font-semibold text-gray-700">
@@ -60,7 +56,7 @@ export default function ArticlesTable({
             {articles.length === 0 ? (
               <tr>
                 <td
-                  colSpan={7}
+                  colSpan={6}
                   className="py-16 text-center text-gray-500 bg-gray-50/50"
                 >
                   <div className="flex flex-col items-center gap-2">
@@ -98,9 +94,6 @@ export default function ArticlesTable({
                     <span className="text-gray-600 truncate block max-w-[120px]">
                       {article.category}
                     </span>
-                  </td>
-                  <td className="py-4 px-5">
-                    <span className="text-gray-600">{article.author}</span>
                   </td>
                   <td className="py-4 px-5">
                     <span className="text-gray-600 tabular-nums">

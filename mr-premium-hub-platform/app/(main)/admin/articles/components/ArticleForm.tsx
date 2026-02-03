@@ -1,6 +1,15 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { getArticleCategories } from "../lib/article-api";
+
+const readFileAsDataUrl = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 
 export interface RelatedServiceForm {
   title: string;
@@ -57,7 +66,22 @@ export default function ArticleForm({
     headings: article?.headings ?? "",
     relatedService: article?.relatedService,
   });
-  const [newCategoryText, setNewCategoryText] = useState("");
+  const [apiCategories, setApiCategories] = useState<string[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    getArticleCategories()
+      .then((list) => {
+        if (!cancelled) setApiCategories(list);
+      })
+      .finally(() => {
+        if (!cancelled) setCategoriesLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const isAddMode = !article;
 
@@ -71,7 +95,7 @@ export default function ArticleForm({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const categoryToSave = formData.category === "__new__" ? newCategoryText.trim() : formData.category;
+    const categoryToSave = (formData.category ?? "").trim();
     if (!categoryToSave) return;
     onSave({ ...formData, category: categoryToSave });
   };
@@ -122,15 +146,49 @@ export default function ArticleForm({
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               مسیر تصویر
             </label>
-            <input
-              type="text"
-              value={formData.image ?? ""}
-              onChange={(e) =>
-                setFormData({ ...formData, image: e.target.value })
-              }
-              placeholder="/Images/Shop/product-pic1.jpg"
-              className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-            />
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={formData.image ?? ""}
+                onChange={(e) =>
+                  setFormData({ ...formData, image: e.target.value })
+                }
+                placeholder="/Images/Shop/product-pic1.jpg یا URL"
+                className="flex-1 w-full h-11 bg-gray-50 border border-gray-200 rounded-lg px-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/30 focus:border-[#ff5538] transition-all text-sm"
+              />
+              <label className="shrink-0 inline-flex items-center gap-1 px-3 h-11 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg cursor-pointer text-sm font-medium text-gray-700 transition-colors">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                آپلود
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      try {
+                        const dataUrl = await readFileAsDataUrl(file);
+                        setFormData((prev) => ({ ...prev, image: dataUrl }));
+                      } catch {
+                        // ignore
+                      }
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </label>
+            </div>
+            {(formData.image ?? "").startsWith("data:") && (
+              <div className="mt-2">
+                <img
+                  src={formData.image!}
+                  alt="پیش‌نمایش"
+                  className="h-20 w-20 object-cover rounded-lg border border-gray-200"
+                />
+              </div>
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
@@ -150,52 +208,99 @@ export default function ArticleForm({
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               دسته‌بندی <span className="text-red-500">*</span>
             </label>
-            {categories.length > 0 ? (
-              <>
-                <select
-                  required={formData.category !== "__new__"}
-                  value={formData.category}
-                  onChange={(e) =>
-                    setFormData({ ...formData, category: e.target.value })
-                  }
-                  className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-                >
-                  <option value="">انتخاب کنید...</option>
-                  {categories.map((cat) => (
-                    <option key={cat} value={cat}>
-                      {cat}
-                    </option>
-                  ))}
-                  <option value="__new__">➕ دسته جدید</option>
-                </select>
-                {formData.category === "__new__" && (
-                  <input
-                    type="text"
-                    required
-                    value={newCategoryText}
-                    onChange={(e) => setNewCategoryText(e.target.value)}
-                    placeholder="نام دسته جدید را وارد کنید"
-                    className="mt-2 w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-                  />
-                )}
-              </>
-            ) : (
-              <input
-                type="text"
-                required
-                value={formData.category}
-                onChange={(e) =>
-                  setFormData({ ...formData, category: e.target.value })
-                }
-                placeholder="نام دسته را وارد کنید (با افزودن مقاله در سایت هم ظاهر می‌شود)"
-                className="w-full h-11 bg-white border-b border-gray-300 px-3 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors text-sm"
-              />
+            <input
+              type="text"
+              required
+              list="article-categories-list"
+              value={formData.category ?? ""}
+              onChange={(e) =>
+                setFormData({ ...formData, category: e.target.value })
+              }
+              placeholder="نام دسته را وارد کنید (با افزودن مقاله در سایت هم ظاهر می‌شود)"
+              className="w-full h-11 bg-gray-50 border border-gray-200 rounded-lg px-3 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/30 focus:border-[#ff5538] transition-all text-sm"
+            />
+            {!categoriesLoading && apiCategories.length > 0 && (
+              <datalist id="article-categories-list">
+                {apiCategories.map((cat) => (
+                  <option key={cat} value={cat} />
+                ))}
+              </datalist>
             )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1.5">
               محتوا (هر پاراگراف در یک خط) <span className="text-red-500">*</span>
             </label>
+            <p className="text-xs text-gray-500 mb-2">
+              هر خط = یک پاراگراف. برای درج تصویر: از دکمهٔ زیر یا یک خط با آدرس تصویر. برای جدول: چند خط پشت‌سرهم با | بین ستون‌ها، مثلاً | عنوان۱ | عنوان۲ | و در خط بعد | مقدار | مقدار |
+            </p>
+            <div className="flex flex-wrap gap-2 mb-2">
+              <input
+                type="text"
+                id="content-image-url"
+                placeholder="آدرس تصویر (URL)"
+                className="flex-1 min-w-[140px] h-9 bg-gray-50 border border-gray-200 rounded-lg px-3 text-right text-sm focus:outline-none focus:ring-2 focus:ring-[#ff5538]/30"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const input = e.target as HTMLInputElement;
+                    const url = input.value?.trim();
+                    if (url) {
+                      setFormData((prev) => ({
+                        ...prev,
+                        content: (prev.content ?? "").trim() ? `${(prev.content ?? "").trim()}\n${url}` : url,
+                      }));
+                      input.value = "";
+                    }
+                  }
+                }}
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  const input = document.getElementById("content-image-url") as HTMLInputElement;
+                  const url = input?.value?.trim();
+                  if (url) {
+                    setFormData((prev) => ({
+                      ...prev,
+                      content: (prev.content ?? "").trim() ? `${(prev.content ?? "").trim()}\n${url}` : url,
+                    }));
+                    input.value = "";
+                  }
+                }}
+                className="shrink-0 h-9 px-3 bg-gray-100 hover:bg-gray-200 border border-gray-200 rounded-lg text-sm font-medium text-gray-700"
+              >
+                افزودن تصویر به محتوا
+              </button>
+              <label className="shrink-0 h-9 px-3 bg-[#ff5538]/10 hover:bg-[#ff5538]/20 border border-[#ff5538]/30 rounded-lg text-sm font-medium text-[#ff5538] cursor-pointer inline-flex items-center gap-1">
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+                </svg>
+                آپلود و درج تصویر
+                <input
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    if (file) {
+                      try {
+                        const dataUrl = await readFileAsDataUrl(file);
+                        setFormData((prev) => ({
+                          ...prev,
+                          content: (prev.content ?? "").trim()
+                            ? `${(prev.content ?? "").trim()}\n${dataUrl}`
+                            : dataUrl,
+                        }));
+                      } catch {
+                        // ignore
+                      }
+                      e.target.value = "";
+                    }
+                  }}
+                />
+              </label>
+            </div>
             <textarea
               required
               rows={10}
@@ -203,8 +308,8 @@ export default function ArticleForm({
               onChange={(e) =>
                 setFormData({ ...formData, content: e.target.value })
               }
-              placeholder="هر خط = یک پاراگراف در آرایه content"
-              className="w-full bg-white border-b border-gray-300 px-3 py-2 text-right text-gray-900 focus:outline-none focus:border-[#ff5538] transition-colors resize-none text-sm"
+              placeholder="هر خط = یک پاراگراف. تصویر: یک خط با URL. جدول: چند خط با | بین ستون‌ها، مثلاً | ستون۱ | ستون۲ |"
+              className="w-full bg-white border border-gray-200 rounded-lg px-3 py-2 text-right text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#ff5538]/30 focus:border-[#ff5538] transition-colors resize-none text-sm"
             />
           </div>
           <div>

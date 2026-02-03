@@ -33,6 +33,24 @@ function handleResponse<T>(res: Response): Promise<T> {
   });
 }
 
+/** نرمال‌سازی یک مقاله از API (برگرداندن Category با C بزرگ به category) */
+function normalizeArticle(raw: Record<string, unknown>): ApiArticle {
+  const cat = raw.category ?? raw.Category;
+  const category = cat != null && String(cat).trim() !== "" ? String(cat).trim() : null;
+  return {
+    id: Number(raw.id ?? raw.ID ?? 0),
+    title: String(raw.title ?? raw.Title ?? ""),
+    slug: String(raw.slug ?? raw.Slug ?? ""),
+    category,
+    image: String(raw.image ?? raw.Image ?? "").trim() || "/Images/Shop/product-pic1.jpg",
+    date: String(raw.date ?? raw.Date ?? ""),
+    comments: Number(raw.comments ?? raw.Comments ?? 0),
+    content: Array.isArray(raw.content) ? raw.content.map(String) : [],
+    headings: Array.isArray(raw.headings) ? raw.headings.map(String) : [],
+    Relatedservice: raw.Relatedservice as ApiArticle["Relatedservice"],
+  };
+}
+
 export async function getArticles(): Promise<ApiArticle[]> {
   try {
     const res = await fetch(`${API_BASE}?action=Article&_t=${Date.now()}`, {
@@ -40,12 +58,23 @@ export async function getArticles(): Promise<ApiArticle[]> {
       headers: { "Content-Type": "application/json" },
       cache: "no-store",
     });
-    const data = await handleResponse<ApiArticle[] | { error?: string }>(res);
-    if (Array.isArray(data)) return data;
+    const data = await handleResponse<unknown>(res);
+    if (!Array.isArray(data)) return [];
+    return data.map((item) => normalizeArticle(typeof item === "object" && item != null ? (item as Record<string, unknown>) : {}));
   } catch {
     // در صورت خطا
   }
   return [];
+}
+
+/** دسته‌بندی‌های یکتا از API مقالات (برای پر کردن فیلد دسته‌بندی در فرم) */
+export async function getArticleCategories(): Promise<string[]> {
+  const list = await getArticles();
+  const set = new Set<string>();
+  list.forEach((a) => {
+    if (a.category && String(a.category).trim()) set.add(String(a.category).trim());
+  });
+  return Array.from(set).sort((a, b) => a.localeCompare(b, "fa"));
 }
 
 export async function createArticle(payload: {
@@ -65,8 +94,8 @@ export async function createArticle(payload: {
     body: JSON.stringify({
       title: payload.title,
       slug: payload.slug,
-      category: payload.category?.trim() || null,
-      Category: payload.category?.trim() || null,
+      Category: payload.category?.trim() ?? "",
+      category: payload.category?.trim() ?? "",
       image: payload.image ?? "/Images/Shop/product-pic1.jpg",
       date: payload.date ?? new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "long", year: "numeric" }),
       comments: payload.comments ?? 0,
@@ -75,7 +104,8 @@ export async function createArticle(payload: {
       relatedService: payload.relatedService,
     }),
   });
-  return handleResponse<ApiArticle>(res);
+  const raw = await handleResponse<Record<string, unknown>>(res);
+  return normalizeArticle(raw ?? {});
 }
 
 export async function updateArticle(payload: {

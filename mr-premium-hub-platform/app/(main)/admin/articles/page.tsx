@@ -34,7 +34,6 @@ export interface ArticleRow {
   id: string;
   title: string;
   category: string;
-  author: string;
   views: number;
   status: string;
   date: string;
@@ -45,7 +44,6 @@ function mapApiToRow(a: ApiArticle): ArticleRow {
     id: String(a.id),
     title: a.title ?? "",
     category: a.category ?? "—",
-    author: "—",
     views: a.comments ?? 0,
     status: "منتشر شده",
     date: a.date ?? "",
