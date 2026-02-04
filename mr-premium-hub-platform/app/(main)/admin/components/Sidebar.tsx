@@ -18,6 +18,7 @@ const navItems: NavItem[] = [
   { name: "کاربران", href: "/admin/users", icon: "👥" },
   { name: "انتقادات و پیشنهادات", href: "/admin/comments", icon: "💬" },
   { name: "کامنت فروشگاه", href: "/admin/shop-comments", icon: "🛒" },
+  { name: "کامنت مقاله‌ها", href: "/admin/article-comments", icon: "📄" },
   { name: "پشتیبانی", href: "/admin/support", icon: "💬" },
   { name: "تنظیمات", href: "/admin/settings", icon: "⚙️" },
 ];

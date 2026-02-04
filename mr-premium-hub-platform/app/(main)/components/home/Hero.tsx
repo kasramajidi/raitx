@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 
-const HERO_IMAGE_SRC = "/ChatGPT%20Image%20Jan%2024,%202026,%2004_07_27%20PM.png";
+const HERO_IMAGE_SRC = "https://res.cloudinary.com/dkvbdk078/image/upload/v1770205224/ChatGPT_Image_Jan_24_2026_04_07_27_PM_a8mjdh.png";
 
 export default function Hero() {
   const [imageError, setImageError] = useState(false);

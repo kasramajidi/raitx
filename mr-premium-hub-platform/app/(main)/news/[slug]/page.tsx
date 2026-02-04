@@ -400,7 +400,7 @@ export default async function ArticlePage({ params }: PageProps) {
           </div>
         </section>
 
-        <CommentForm />
+        <CommentForm articleId={article.id} />
       </div>
     </main>
     </>

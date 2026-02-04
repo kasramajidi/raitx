@@ -38,6 +38,8 @@ const nextConfig: NextConfig = {
       { protocol: "http", hostname: "www.tehranpayment.com", pathname: "/**" },
       { protocol: "https", hostname: "tehranpayment.com", pathname: "/**" },
       { protocol: "http", hostname: "tehranpayment.com", pathname: "/**" },
+      { protocol: "https", hostname: "res.cloudinary.com", pathname: "/**" },
+      { protocol: "http", hostname: "res.cloudinary.com", pathname: "/**" },
     ],
     unoptimized: false,
     loader: "default",
