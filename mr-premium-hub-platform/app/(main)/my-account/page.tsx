@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import Sidebar from "./components/Sidebar";
 import WelcomeBox from "./components/WelcomeBox";
 import DashboardMain from "./components/DashboardMain";
@@ -21,8 +22,8 @@ export default function MyAccountPage() {
   useEffect(() => {
     setMounted(true);
     if (typeof window !== "undefined") {
-      const user = localStorage.getItem("user");
-      if (!user) {
+      const hasUser = localStorage.getItem("user") || getAuthCookie();
+      if (!hasUser) {
         router.push("/auth", { scroll: false });
       }
     }

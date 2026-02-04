@@ -1,4 +1,10 @@
-const SHOP_API = "https://mrpremiumhub.org/api.ashx?action=shop";
+/** منبع رسمی: https://mrpremiumhub.org/api.ashx?action=shop — در کلاینت از پروکسی استفاده می‌شود تا CORS نشود */
+const SHOP_API_EXTERNAL = "https://mrpremiumhub.org/api.ashx?action=shop";
+
+function getShopApiUrl(): string {
+  if (typeof window !== "undefined") return "/api/auth-proxy?action=shop";
+  return SHOP_API_EXTERNAL;
+}
 
 export type ApiShopItem = {
   id?: number | string;
@@ -39,10 +45,12 @@ function toCommentId(value: unknown): string | number | undefined {
 }
 
 function normalizeCommentForDisplay(c: Record<string, unknown>): UserCommentItem {
+  const contentRaw = c.content ?? c.commentText ?? c.CommentText ?? c.comment ?? "";
+  const authorRaw = c.author ?? c.userName ?? c.UserName ?? "";
   return {
     id: toCommentId(c.id ?? c.ID),
-    author: (c.author ?? c.userName ?? c.UserName ?? "") as string,
-    content: (c.content ?? c.commentText ?? c.comment ?? "") as string,
+    author: authorRaw != null ? String(authorRaw) : "",
+    content: contentRaw != null ? String(contentRaw) : "",
     date: (c.date ?? c.Date ?? c.createdAt) != null ? String(c.date ?? c.Date ?? c.createdAt) : undefined,
     rating: typeof c.rating === "number" ? c.rating : Number(c.Rating ?? c.rating ?? 0),
     status: (c.status ?? c.Status ?? "pending") as string,
@@ -51,6 +59,7 @@ function normalizeCommentForDisplay(c: Record<string, unknown>): UserCommentItem
   };
 }
 
+/** همهٔ آیتم‌های UserComments را برمی‌گرداند (هر تعداد، حتی با userName/userEmail تهی) */
 function parseUserComments(value: string | UserCommentItem[] | undefined): UserCommentItem[] {
   if (value == null) return [];
   const raw: Record<string, unknown>[] = Array.isArray(value)
@@ -66,9 +75,7 @@ function parseUserComments(value: string | UserCommentItem[] | undefined): UserC
           return [];
         }
       })();
-  return raw
-    .filter((c) => c && (c.content || c.author || c.commentText || c.userName || c.UserName))
-    .map(normalizeCommentForDisplay);
+  return raw.map(normalizeCommentForDisplay);
 }
 
 function mapGroupToMainCategoryId(groups: string): "currency" | "exams" | "embassy" | "apply" | "giftcards" | "other" {
@@ -144,7 +151,7 @@ export function mapApiItemToShopProduct(item: ApiShopItem, index: number): ShopP
 }
 
 export async function fetchShopProducts(): Promise<ShopProduct[]> {
-  const res = await fetch(SHOP_API, { method: "GET", cache: "no-store" });
+  const res = await fetch(getShopApiUrl(), { method: "GET", next: { revalidate: 120 } });
   const data = await res.json();
   if (!res.ok) throw new Error(typeof data?.message === "string" ? data.message : "خطا در دریافت محصولات");
   const raw = Array.isArray(data) ? data : data?.data ?? data?.list ?? data?.items ?? [];
@@ -157,7 +164,7 @@ export async function fetchProductById(id: number | string): Promise<ShopProduct
   const productId = typeof id === "string" ? parseInt(id, 10) : id;
   if (Number.isNaN(productId)) return null;
   try {
-    const res = await fetch(`${SHOP_API}&id=${productId}`, { method: "GET", cache: "no-store" });
+    const res = await fetch(`${getShopApiUrl()}&id=${productId}`, { method: "GET", next: { revalidate: 120 } });
     const data = await res.json();
     if (!res.ok) return null;
     const raw = data?.data ?? data?.item ?? data;

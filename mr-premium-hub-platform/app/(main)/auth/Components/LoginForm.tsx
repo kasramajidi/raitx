@@ -4,8 +4,9 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff } from "lucide-react";
 import SubmitButton from "./SubmitButton";
-import { login, requestSmsPass } from "@/app/(main)/auth/lib/auth-api";
+import { login, requestSmsPass, normalizePhoneForApi } from "@/app/(main)/auth/lib/auth-api";
 import { setAuthCookie } from "@/app/(main)/auth/lib/cookie";
+import { LOGIN_PHONE_KEY } from "@/app/(main)/my-account/lib/my-account-api";
 
 const AUTH_STORAGE_KEY = "loginval";
 
@@ -51,13 +52,17 @@ const LoginForm: React.FC<LoginFormProps> = ({
         setAuthCookie(data.cookie, rememberMe);
         if (typeof localStorage !== "undefined") {
           localStorage.setItem(AUTH_STORAGE_KEY, data.cookie);
+          const normalized = normalizePhoneForApi(p);
+          const displayPhone = normalized.startsWith("98") && normalized.length === 12
+            ? "0" + normalized.slice(2)
+            : p.trim();
+          localStorage.setItem(LOGIN_PHONE_KEY, displayPhone);
         }
         setSuccess("ورود با موفقیت انجام شد.");
         setPass("");
-        if (redirectNext && redirectNext.startsWith("/")) {
-          router.replace(redirectNext, { scroll: false });
-          return;
-        }
+        const nextUrl = redirectNext && redirectNext.startsWith("/") ? redirectNext : "/my-account";
+        router.replace(nextUrl, { scroll: false });
+        return;
       } else {
         setError((data as { error?: string }).error || "ورود ناموفق بود.");
       }

@@ -28,13 +28,16 @@ function toId(value: unknown): number | string {
 }
 
 function normalizeComment(raw: Record<string, unknown>, idshop: number | string, productTitle?: string): ShopCommentItem {
+  const commentRaw = raw.commentText ?? raw.CommentText ?? raw.comment ?? raw.content ?? "";
+  const nameRaw = raw.userName ?? raw.UserName ?? raw.author ?? "";
+  const emailRaw = raw.userEmail ?? raw.UserEmail ?? raw.email ?? "";
   return {
     id: toId(raw.id ?? raw.ID ?? 0),
     idshop,
     rating: Number(raw.rating ?? raw.Rating ?? 0),
-    commentText: String(raw.commentText ?? raw.comment ?? raw.content ?? ""),
-    userName: String(raw.userName ?? raw.UserName ?? raw.author ?? ""),
-    userEmail: String(raw.userEmail ?? raw.UserEmail ?? raw.email ?? ""),
+    commentText: commentRaw != null ? String(commentRaw) : "",
+    userName: nameRaw != null ? String(nameRaw) : "",
+    userEmail: emailRaw != null ? String(emailRaw) : "",
     status: String(raw.status ?? raw.Status ?? "pending"),
     reply: raw.reply != null ? String(raw.reply) : undefined,
     date: raw.date ?? raw.Date ? String(raw.date ?? raw.Date) : undefined,

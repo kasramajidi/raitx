@@ -321,3 +321,35 @@ body {
   transform-origin: center;
   animation: notfound-line-grow 0.5s ease-out forwards;
 }
+
+/* محتوای HTML مقاله — جلوگیری از به‌هم‌ریختگی متن فارسی با prose */
+.article-html-content {
+  direction: rtl;
+  text-align: right;
+  letter-spacing: 0;
+  word-spacing: normal;
+  line-height: 1.8;
+  font-family: var(--font-iransans), "IRANSans", "Tahoma", "Arial", sans-serif;
+}
+.article-html-content p,
+.article-html-content li,
+.article-html-content div {
+  letter-spacing: 0;
+  word-spacing: normal;
+  line-height: 1.8;
+}
+.article-html-content img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0.75rem 0;
+}
+.article-html-content h1,
+.article-html-content h2,
+.article-html-content h3,
+.article-html-content h4 {
+  letter-spacing: 0;
+  line-height: 1.5;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+}

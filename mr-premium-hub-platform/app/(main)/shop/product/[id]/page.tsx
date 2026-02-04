@@ -11,11 +11,12 @@ async function getProductById(id: string) {
   const productId = parseInt(id, 10);
   if (Number.isNaN(productId)) return null;
   try {
-    const fromApi = await fetchProductById(productId);
-    if (fromApi) return fromApi;
+    // اول از لیست کامل بگیر تا UserComments حتماً بیاید (مثل مقاله)
     const apiProducts = await fetchShopProducts();
     const fromList = apiProducts.find((p) => p.id === productId);
     if (fromList) return fromList;
+    const fromApi = await fetchProductById(productId);
+    if (fromApi) return fromApi;
   } catch {
     // fallback to static
   }

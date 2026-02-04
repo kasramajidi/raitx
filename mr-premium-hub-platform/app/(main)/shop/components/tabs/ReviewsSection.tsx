@@ -89,6 +89,12 @@ const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
   const productName = product?.name ?? "این محصول";
   const myEmails = product?.id != null ? getMyEmailsForProduct(product.id) : [];
 
+  const isMyComment = (c: UserCommentItem) => {
+    const email = (c.userEmail ?? "").trim().toLowerCase();
+    if (!email) return false;
+    return myEmails.some((e) => e === email);
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product?.id) return;
@@ -238,7 +244,7 @@ const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
             {comments.map((c, i) => {
               const isEditing = editingId === (c.id ?? null);
               const isDeleting = deleteId === c.id;
-              const canEditDelete = true;
+              const canEditDelete = isMyComment(c);
               return (
                 <li
                   key={String(c.id ?? i)}

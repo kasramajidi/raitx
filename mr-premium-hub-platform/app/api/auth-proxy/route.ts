@@ -18,10 +18,10 @@ export async function GET(request: Request) {
       );
     }
     const url = `${EXTERNAL_API}?${queryString}`;
-    const res = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    });
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    const cookie = request.headers.get("cookie");
+    if (cookie) headers["Cookie"] = cookie;
+    const res = await fetch(url, { method: "GET", headers });
     const data = await res.json().catch(() => ({}));
     return NextResponse.json(data);
   } catch (e) {

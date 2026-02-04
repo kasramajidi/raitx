@@ -48,6 +48,19 @@ function sanitizeArticleHtml(html: string): string {
     return allowedAttrs.length ? `<${tag} ${allowedAttrs.join(" ")}>` : `<${tag}>`;
   });
 
+  /* پاراگراف‌هایی که فقط لینک تصویر دارند را به تگ img تبدیل کن تا به‌صورت تصویر نمایش داده شوند (نه متن) */
+  const onlyImageUrlInTag = /<(p|div|span)\b[^>]*>\s*(https?:\/\/[^\s<>"']+\.(?:jpe?g|png|gif|webp)(?:\?[^<>"']*)?)\s*<\/\1>/gi;
+  out = out.replace(onlyImageUrlInTag, (_match, _tagName, url: string) => {
+    const escaped = url.replace(/"/g, "&quot;");
+    return `<figure class="my-4"><img src="${escaped}" alt="تصویر مقاله" class="w-full max-w-full h-auto rounded-xl object-cover" loading="lazy" /></figure>`;
+  });
+  /* لینک تصویر که به‌تنهایی بین دو تگ آمده (متن خالص) */
+  const bareImageUrl = />\s*(https?:\/\/[^\s<>"']+\.(?:jpe?g|png|gif|webp)(?:\?[^<>"']*)?)\s*</g;
+  out = out.replace(bareImageUrl, (_match, url: string) => {
+    const escaped = url.replace(/"/g, "&quot;");
+    return `><figure class="my-4"><img src="${escaped}" alt="تصویر مقاله" class="w-full max-w-full h-auto rounded-xl object-cover" loading="lazy" /></figure><`;
+  });
+
   return out;
 }
 
@@ -80,7 +93,7 @@ function renderContentBlock(
     return (
       <div
         key={key}
-        className={`${baseClass} article-html-content prose prose-sm max-w-none text-right`}
+        className={`${baseClass} article-html-content max-w-none text-right`}
         dir="rtl"
         dangerouslySetInnerHTML={{ __html: sanitizeArticleHtml(trimmed) }}
       />
@@ -333,7 +346,7 @@ export default async function ArticlePage({ params }: PageProps) {
     <main className="min-h-screen bg-gray-50 pt-8 sm:pt-12 md:pt-16 lg:pt-20 pb-4 sm:pb-6 md:pb-8 lg:pb-10">
       <div className="container mx-auto px-3 sm:px-4 md:px-6 lg:px-8 max-w-7xl">
         <section className="flex flex-col lg:flex-row justify-between gap-x-3">
-          <div className="bg-white rounded-xl w-full lg:w-[78%] shadow-cyan-100 p-4 sm:p-6 border border-gray-200">
+          <div className="bg-white rounded-xl w-full lg:w-[78%] shadow-cyan-100 p-4 sm:p-6 border border-gray-200" dir="rtl">
             <Image
               src={article.image}
               alt={article.title}
@@ -435,7 +448,7 @@ export default async function ArticlePage({ params }: PageProps) {
           </div>
         </section>
 
-        <CommentForm articleId={article.id} />
+        <CommentForm articleId={article.id} initialComments={article.userComments} />
       </div>
     </main>
     </>

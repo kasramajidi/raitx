@@ -32,14 +32,16 @@ function normalizeForDisplay(raw: Record<string, unknown>): ArticleCommentDispla
     const num = Number(dateRaw);
     dateStr = !Number.isNaN(num) ? String(dateRaw) : String(dateRaw);
   }
+  const contentRaw = raw.commentText ?? raw.CommentText ?? raw.comment ?? raw.content ?? "";
+  const authorRaw = raw.userName ?? raw.UserName ?? raw.author ?? "";
   return {
     id: toId(raw.id ?? raw.ID ?? 0),
-    author: String(raw.userName ?? raw.UserName ?? raw.author ?? ""),
-    content: String(raw.commentText ?? raw.comment ?? raw.content ?? ""),
+    author: authorRaw != null ? String(authorRaw) : "",
+    content: contentRaw != null ? String(contentRaw) : "",
     rating: Number(raw.rating ?? raw.Rating ?? 0),
     status: String(raw.status ?? raw.Status ?? "pending"),
     date: dateStr,
-    userEmail: String(raw.userEmail ?? raw.UserEmail ?? raw.email ?? ""),
+    userEmail: (raw.userEmail ?? raw.UserEmail ?? raw.email) != null ? String(raw.userEmail ?? raw.UserEmail ?? raw.email) : "",
   };
 }
 

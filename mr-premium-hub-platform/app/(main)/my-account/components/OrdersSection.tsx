@@ -1,9 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 import AccountEmptyState from "./AccountEmptyState";
+import { fetchRecentOrders, type OrderItem } from "../lib/my-account-api";
 
 export type OrderRow = {
   id: string;
@@ -14,25 +15,16 @@ export type OrderRow = {
   currencyAmount: string; // e.g. "۵۰ - یورو"
 };
 
-// وقتی API سفارش داشته باشید این آرایه را از سرور پر کنید
-const MOCK_ORDERS: OrderRow[] = [
-  {
-    id: "1",
-    orderNumber: "751788",
-    orderType: "لغو/تغییر زمان پروازهای خارجی",
-    lastUpdate: "۰۳:۰۶:۰۴ - ۱۴۰۴/۱۱/۱۵",
-    status: "پیش نویس",
-    currencyAmount: "۵۰ - یورو",
-  },
-  {
-    id: "2",
-    orderNumber: "751787",
-    orderType: "ثبت سایر سفارشها",
-    lastUpdate: "۰۱:۴۹:۴۳ - ۱۴۰۴/۱۱/۱۵",
-    status: "پیش نویس",
-    currencyAmount: "۴۵ - یورو",
-  },
-];
+function toOrderRow(o: OrderItem): OrderRow {
+  return {
+    id: o.id,
+    orderNumber: o.orderNumber,
+    orderType: o.orderType,
+    lastUpdate: o.lastUpdate,
+    status: o.status,
+    currencyAmount: o.currencyAmount ?? o.amount ?? "—",
+  };
+}
 
 const ITEMS_PER_PAGE = 10;
 
@@ -40,13 +32,29 @@ export default function OrdersSection() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilter, setShowFilter] = useState(false);
+  const [orders, setOrders] = useState<OrderRow[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // برای تست از MOCK_ORDERS استفاده می‌شود؛ بعداً از API بگیرید
-  const orders = MOCK_ORDERS;
+  useEffect(() => {
+    fetchRecentOrders(500).then((list) => {
+      setOrders(list.map(toOrderRow));
+      setLoading(false);
+    });
+  }, []);
+
   const totalCount = orders.length;
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
   const start = (currentPage - 1) * ITEMS_PER_PAGE;
   const pageOrders = orders.slice(start, start + ITEMS_PER_PAGE);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center py-16 text-gray-500">
+        <div className="w-10 h-10 border-2 border-[#ff5538]/30 border-t-[#ff5538] rounded-full animate-spin" />
+        <p className="mt-3 text-sm">در حال بارگذاری سفارش‌ها…</p>
+      </div>
+    );
+  }
 
   if (orders.length === 0) {
     return (

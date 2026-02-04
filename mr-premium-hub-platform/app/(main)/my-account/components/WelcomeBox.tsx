@@ -1,16 +1,38 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Sparkles } from "lucide-react";
+import { fetchUserProfileFallback } from "../lib/my-account-api";
 
 export default function WelcomeBox() {
-  let username = "کاربر";
-  if (typeof window !== "undefined") {
-    try {
-      const user = JSON.parse(localStorage.getItem("user") || "{}");
-      if (user?.username) username = user.username;
-    } catch {}
-  }
+  const [username, setUsername] = useState("کاربر");
+
+  useEffect(() => {
+    let mounted = true;
+    // اول از API اسم را بگیر (با کوکی لاگین)
+    fetchUserProfileFallback().then((profile) => {
+      if (!mounted) return;
+      if (profile?.name) {
+        setUsername(profile.name);
+        if (typeof localStorage !== "undefined") {
+          try {
+            const prev = JSON.parse(localStorage.getItem("user") || "{}");
+            localStorage.setItem("user", JSON.stringify({ ...prev, username: profile.name, name: profile.name }));
+          } catch {}
+        }
+        return;
+      }
+      // اگر API چیزی برنگرداند، از localStorage استفاده کن
+      try {
+        const stored = localStorage.getItem("user");
+        if (stored) {
+          const user = JSON.parse(stored);
+          if (user?.username || user?.name) setUsername(user.username || user.name || "کاربر");
+        }
+      } catch {}
+    });
+    return () => { mounted = false; };
+  }, []);
 
   const initial = username.charAt(0).toUpperCase();
 

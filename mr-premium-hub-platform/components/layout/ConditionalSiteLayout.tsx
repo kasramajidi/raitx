@@ -1,8 +1,10 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Header, Footer } from "@/components/layout";
 import { ChatWidgetWrapper } from "@/components/ChatWidget";
+import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 
 export default function ConditionalSiteLayout({
   children,
@@ -10,6 +12,12 @@ export default function ConditionalSiteLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    setIsAuthenticated(!!getAuthCookie());
+  }, [pathname]);
+
   const isAdmin = pathname?.startsWith("/admin");
 
   if (isAdmin) {
@@ -18,7 +26,7 @@ export default function ConditionalSiteLayout({
 
   return (
     <>
-      <Header />
+      <Header isAuthenticated={isAuthenticated} />
       {children}
       <Footer />
       <ChatWidgetWrapper adminAvatars={[]} />

@@ -8,6 +8,15 @@ import NewsSidebar from "./NewsSidebar";
 
 const LATEST_ARTICLES_PER_PAGE = 8;
 
+/** حذف تگ‌های HTML از متن تا در کارت به‌صورت متن ساده نمایش داده شود */
+function stripHtml(html: string): string {
+  if (!html || typeof html !== "string") return "";
+  return html
+    .replace(/<[^>]*>/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 export interface ArticleForList {
   id: number;
   title: string;
@@ -52,7 +61,7 @@ export default function NewsPageClient({ articles, categories }: NewsPageClientP
       filteredArticles.map((a) => ({
         id: a.id,
         title: a.title,
-        description: (a.content?.[0] ?? "").substring(0, 150) || a.title,
+        description: stripHtml(a.content?.[0] ?? "").substring(0, 150) || a.title,
         date: a.date ?? "",
         image: a.image || "/Images/Shop/product-pic1.jpg",
         link: `/news/${encodeURIComponent(a.slug)}`,

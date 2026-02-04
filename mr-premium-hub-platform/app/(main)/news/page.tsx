@@ -3,8 +3,6 @@ import { Suspense } from "react";
 import { NewsPageClient } from "./components";
 import { getArticlesFromApi } from "./lib/articles-api";
 
-export const dynamic = "force-dynamic";
-
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com";
 
 export const metadata: Metadata = {

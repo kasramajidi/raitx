@@ -3,14 +3,42 @@
 import React, { useState, useEffect } from "react";
 import { Pencil, Save, Check } from "lucide-react";
 
+const PROFILE_STORAGE_KEY = "user";
+const PROFILE_EXPIRY_KEY = "userProfileExpiry";
+const PROFILE_EXPIRY_DAYS = 30;
+
+/** فقط مقدار شبیه شماره تلفن را برمی‌گرداند؛ اگر ایمیل بود خالی برمی‌گرداند تا "—" نشان داده شود */
+function asPhoneOnly(value: string | undefined | null): string {
+  if (value == null || typeof value !== "string") return "";
+  const trimmed = value.trim();
+  return trimmed.includes("@") ? "" : trimmed;
+}
+
 interface UserData {
   id: string;
   email: string;
   userType: string;
-  firstName: string;
-  lastName: string;
-  mobile: string;
+  fullName: string;
   phone: string;
+}
+
+function getStoredProfile(): Record<string, unknown> | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const expiry = localStorage.getItem(PROFILE_EXPIRY_KEY);
+    if (expiry && Date.now() > Number(expiry)) return null;
+    const raw = localStorage.getItem(PROFILE_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as Record<string, unknown>) : null;
+  } catch {
+    return null;
+  }
+}
+
+function saveProfileFor30Days(data: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+  const expiry = Date.now() + PROFILE_EXPIRY_DAYS * 24 * 60 * 60 * 1000;
+  localStorage.setItem(PROFILE_STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(PROFILE_EXPIRY_KEY, String(expiry));
 }
 
 export default function AccountDetailsSection() {
@@ -18,9 +46,7 @@ export default function AccountDetailsSection() {
     id: "",
     email: "",
     userType: "عادی",
-    firstName: "",
-    lastName: "",
-    mobile: "",
+    fullName: "",
     phone: "",
   });
   const [isEditing, setIsEditing] = useState(false);
@@ -28,33 +54,73 @@ export default function AccountDetailsSection() {
   const [saveSuccess, setSaveSuccess] = useState(false);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      try {
-        const user = JSON.parse(localStorage.getItem("user") || "{}");
-        if (user) {
-          setUserData({
-            id: user.id?.toString() || "",
-            email: user.email || "",
-            userType: user.userType || "عادی",
-            firstName: user.firstName || user.username?.split(" ")[0] || "",
-            lastName: user.lastName || user.username?.split(" ").slice(1).join(" ") || "",
-            mobile: user.mobile || "",
-            phone: user.phone || "",
-          });
+    let mounted = true;
+    const applyFromApi = (profile: { name?: string; username?: string; email?: string; phone?: string }) => {
+      if (!mounted) return;
+      const name = (profile.name ?? profile.username ?? "").trim();
+      const phoneValue = asPhoneOnly(profile.phone);
+      setUserData((prev) => ({
+        ...prev,
+        fullName: prev.fullName || name,
+        email: prev.email || profile.email || "",
+        phone: prev.phone || phoneValue || "",
+      }));
+    };
+    const applyFromStorage = (user: Record<string, unknown>) => {
+      if (!mounted) return;
+      const fullName =
+        (user.fullName as string) ||
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        (user.name as string) ||
+        (user.username as string) ||
+        "";
+      const storedPhone = asPhoneOnly((user.phone as string) || (user.mobile as string));
+      setUserData((prev) => ({
+        ...prev,
+        id: (user.id as string)?.toString() || prev.id,
+        email: (user.email as string) || prev.email,
+        userType: (user.userType as string) || prev.userType,
+        fullName: fullName || prev.fullName,
+        phone: prev.phone || storedPhone || "",
+      }));
+    };
+
+    import("../lib/my-account-api").then(({ fetchUserProfileFallback, LOGIN_PHONE_KEY }) => {
+      fetchUserProfileFallback().then((profile) => {
+        if (!mounted) return;
+        if (profile) applyFromApi(profile);
+        const stored = getStoredProfile();
+        if (stored && (stored.email || stored.fullName || stored.name || stored.username))
+          applyFromStorage(stored);
+        if (!mounted) return;
+        const loginPhone = typeof localStorage !== "undefined" ? localStorage.getItem(LOGIN_PHONE_KEY) : null;
+        if (loginPhone && asPhoneOnly(loginPhone)) {
+          setUserData((prev) => ({
+            ...prev,
+            phone: prev.phone || asPhoneOnly(loginPhone) || "",
+          }));
         }
-      } catch {}
-    }
+      });
+    });
+    return () => { mounted = false; };
   }, []);
 
   const handleSaveProfile = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setSaveSuccess(false);
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 500));
     if (typeof window !== "undefined") {
-      const stored = JSON.parse(localStorage.getItem("user") || "{}");
-      const updatedUser = { ...stored, ...userData };
-      localStorage.setItem("user", JSON.stringify(updatedUser));
+      const toStore = {
+        id: userData.id,
+        email: userData.email,
+        userType: userData.userType,
+        fullName: userData.fullName,
+        name: userData.fullName,
+        username: userData.fullName,
+        phone: asPhoneOnly(userData.phone),
+      };
+      saveProfileFor30Days(toStore);
     }
     setIsSaving(false);
     setSaveSuccess(true);
@@ -63,16 +129,18 @@ export default function AccountDetailsSection() {
   };
 
   const cancelEdit = () => {
-    const user = JSON.parse(localStorage.getItem("user") || "{}");
-    setUserData({
-      id: user.id?.toString() || "",
-      email: user.email || "",
-      userType: user.userType || "عادی",
-      firstName: user.firstName || "",
-      lastName: user.lastName || "",
-      mobile: user.mobile || "",
-      phone: user.phone || "",
-    });
+    const stored = getStoredProfile();
+    if (stored) {
+      const fullName = ((stored.fullName as string) || (stored.name as string) || (stored.username as string) || "").trim();
+      setUserData((prev) => ({
+        ...prev,
+        email: (stored.email as string) ?? prev.email,
+        fullName: fullName || prev.fullName,
+        userType: (stored.userType as string) ?? prev.userType,
+        id: (stored.id as string)?.toString() ?? prev.id,
+        // شماره تماس از API می‌آید و قابل ویرایش نیست — مقدار فعلی را نگه می‌داریم
+      }));
+    }
     setIsEditing(false);
   };
 
@@ -122,7 +190,6 @@ export default function AccountDetailsSection() {
                   onChange={(e) => setUserData({ ...userData, email: e.target.value })}
                   className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                   placeholder="ایمیل"
-                  required
                 />
               </div>
               <div>
@@ -131,45 +198,22 @@ export default function AccountDetailsSection() {
                   {userData.userType}
                 </div>
               </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">نام</label>
+              <div className="sm:col-span-2 md:col-span-1">
+                <label className="block text-sm font-medium text-gray-700">نام و نام خانوادگی</label>
                 <input
                   type="text"
-                  value={userData.firstName}
-                  onChange={(e) => setUserData({ ...userData, firstName: e.target.value })}
+                  value={userData.fullName}
+                  onChange={(e) => setUserData({ ...userData, fullName: e.target.value })}
                   className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                  placeholder="نام"
+                  placeholder="نام و نام خانوادگی"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700">نام خانوادگی</label>
-                <input
-                  type="text"
-                  value={userData.lastName}
-                  onChange={(e) => setUserData({ ...userData, lastName: e.target.value })}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                  placeholder="نام خانوادگی"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">شماره همراه</label>
-                <input
-                  type="tel"
-                  value={userData.mobile}
-                  onChange={(e) => setUserData({ ...userData, mobile: e.target.value })}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                  placeholder="شماره همراه"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700">شماره ثابت</label>
-                <input
-                  type="tel"
-                  value={userData.phone}
-                  onChange={(e) => setUserData({ ...userData, phone: e.target.value })}
-                  className="mt-1 w-full rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm text-gray-900 focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
-                  placeholder="شماره ثابت"
-                />
+                <label className="block text-sm font-medium text-gray-700">شماره تلفن</label>
+                <div className="mt-1 rounded-lg border border-gray-200 bg-gray-50 px-4 py-2.5 text-sm text-gray-500">
+                  {asPhoneOnly(userData.phone) || "—"}
+                </div>
+                <p className="mt-0.5 text-xs text-gray-400">شماره تماس قابل ویرایش نیست</p>
               </div>
             </div>
             <div className="flex flex-wrap items-center gap-3 border-t border-gray-100 pt-4">
@@ -200,10 +244,8 @@ export default function AccountDetailsSection() {
               { label: "شماره کاربری", value: userData.id || "-" },
               { label: "ایمیل", value: userData.email || "-" },
               { label: "نوع کاربری", value: userData.userType },
-              { label: "نام", value: userData.firstName || "-" },
-              { label: "نام خانوادگی", value: userData.lastName || "-" },
-              { label: "شماره همراه", value: userData.mobile || "-" },
-              { label: "شماره ثابت", value: userData.phone || "-" },
+              { label: "نام و نام خانوادگی", value: userData.fullName || "-" },
+              { label: "شماره تلفن", value: asPhoneOnly(userData.phone) || "—" },
             ].map(({ label, value }) => (
               <div key={label}>
                 <label className="block text-xs font-medium text-gray-500">{label}</label>

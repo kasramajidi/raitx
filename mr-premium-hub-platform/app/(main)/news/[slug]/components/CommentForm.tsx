@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { HiArrowLeft } from "react-icons/hi";
 import {
   submitArticleComment,
@@ -9,6 +9,7 @@ import {
   getArticleComments,
   type ArticleCommentDisplayItem,
 } from "../../lib/article-comments-api";
+import type { ArticleCommentItem } from "../../lib/articles-api";
 
 const STORAGE_KEY = "article_my_comment_emails";
 
@@ -54,9 +55,26 @@ function formatCommentDate(dateStr: string | undefined): string {
 
 interface CommentFormProps {
   articleId: number;
+  /** نظراتی که با خود مقاله از API آمده (UserComments) — اگر action=articlecomments خالی بود، این‌ها نمایش داده می‌شوند */
+  initialComments?: ArticleCommentItem[] | ArticleCommentDisplayItem[];
 }
 
-export default function CommentForm({ articleId }: CommentFormProps) {
+function toDisplayItem(c: ArticleCommentItem | ArticleCommentDisplayItem): ArticleCommentDisplayItem {
+  return {
+    id: c.id,
+    author: c.author ?? "",
+    content: c.content ?? "",
+    rating: c.rating ?? 1,
+    status: c.status ?? "pending",
+    date: c.date,
+    userEmail: c.userEmail ?? "",
+  };
+}
+
+export default function CommentForm({ articleId, initialComments }: CommentFormProps) {
+  const initialCommentsRef = useRef(initialComments);
+  initialCommentsRef.current = initialComments ?? [];
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -65,7 +83,9 @@ export default function CommentForm({ articleId }: CommentFormProps) {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
 
-  const [comments, setComments] = useState<ArticleCommentDisplayItem[]>([]);
+  const [comments, setComments] = useState<ArticleCommentDisplayItem[]>(() =>
+    (initialComments ?? []).map(toDisplayItem)
+  );
   const [commentsLoading, setCommentsLoading] = useState(true);
   const [justSubmitted, setJustSubmitted] = useState<ArticleCommentDisplayItem[]>([]);
   const [editingId, setEditingId] = useState<string | number | null>(null);
@@ -79,9 +99,10 @@ export default function CommentForm({ articleId }: CommentFormProps) {
     setCommentsLoading(true);
     try {
       const list = await getArticleComments(articleId);
-      setComments(list);
+      const fallback = (initialCommentsRef.current ?? []).map(toDisplayItem);
+      setComments(list.length > 0 ? list : fallback);
     } catch {
-      setComments([]);
+      setComments((initialCommentsRef.current ?? []).map(toDisplayItem));
     } finally {
       setCommentsLoading(false);
     }
