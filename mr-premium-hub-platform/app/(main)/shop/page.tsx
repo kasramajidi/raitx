@@ -23,6 +23,22 @@ export const metadata: Metadata = {
     description:
       "خرید گیفت کارت‌های معتبر بین‌المللی با تحویل فوری و پشتیبانی ۲۴/۷",
     type: "website",
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com"}/shop`,
+    siteName: "مسترپریمیوم هاب",
+    locale: "fa_IR",
+    images: [
+      {
+        url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com"}/Images/Baner/Layer 5.png`,
+        width: 1200,
+        height: 630,
+        alt: "فروشگاه گیفت کارت مستر پریمیوم هاب",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "فروشگاه گیفت کارت | مستر پریمیوم هاب",
+    description: "خرید گیفت کارت‌های معتبر بین‌المللی با تحویل فوری و پشتیبانی ۲۴/۷",
   },
   alternates: {
     canonical: "/shop",

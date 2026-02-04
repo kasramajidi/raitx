@@ -237,13 +237,48 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     };
   }
 
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com";
+  const articleUrl = `${baseUrl}/news/${encodeURIComponent(article.slug)}`;
+  const articleImage = article.image?.startsWith("http")
+    ? article.image
+    : article.image?.startsWith("/")
+      ? `${baseUrl}${article.image}`
+      : article.image
+        ? `${baseUrl}/${article.image.replace(/^\//, "")}`
+        : `${baseUrl}/Images/Shop/product-pic1.jpg`;
+
   const firstText = article.content?.find((b) => b && !/^(https?:\/\/|data:image\/)/i.test(String(b).trim()));
+  const description = (firstText ? String(firstText).substring(0, 160) : "") || article.title;
+
   return {
     title: article.title,
-    description: (firstText ? String(firstText).substring(0, 160) : "") || article.title,
-    keywords: [article.category, article.title],
+    description,
+    keywords: [article.category, article.title].filter(Boolean),
     alternates: {
       canonical: `/news/${encodeURIComponent(article.slug)}`,
+    },
+    openGraph: {
+      type: "article",
+      title: article.title,
+      description,
+      url: articleUrl,
+      siteName: "مسترپریمیوم هاب",
+      locale: "fa_IR",
+      images: [
+        {
+          url: articleImage,
+          width: 1200,
+          height: 630,
+          alt: article.title,
+        },
+      ],
+      publishedTime: article.date ?? undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: article.title,
+      description,
+      images: [articleImage],
     },
   };
 }

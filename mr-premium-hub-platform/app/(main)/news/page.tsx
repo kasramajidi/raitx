@@ -5,6 +5,8 @@ import { getArticlesFromApi } from "./lib/articles-api";
 
 export const dynamic = "force-dynamic";
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com";
+
 export const metadata: Metadata = {
   title: "اخبار و مقالات | مستر پریمیوم هاب",
   description:
@@ -18,6 +20,28 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "/news",
+  },
+  openGraph: {
+    type: "website",
+    locale: "fa_IR",
+    url: `${siteUrl}/news`,
+    siteName: "مسترپریمیوم هاب",
+    title: "اخبار و مقالات | مستر پریمیوم هاب",
+    description:
+      "آخرین اخبار و مقالات مستر پریمیوم هاب در زمینه خدمات ارزی، پرداخت ارزی، پی‌پال، مسترکارت و ویزا",
+    images: [
+      {
+        url: `${siteUrl}/Images/Baner/Layer 5.png`,
+        width: 1200,
+        height: 630,
+        alt: "اخبار و مقالات مستر پریمیوم هاب",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "اخبار و مقالات | مستر پریمیوم هاب",
+    description: "آخرین اخبار و مقالات مستر پریمیوم هاب در زمینه خدمات ارزی و پرداخت ارزی",
   },
 };
 
