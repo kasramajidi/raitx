@@ -263,25 +263,56 @@ export async function fetchUserProfileFallback(): Promise<UserProfile | null> {
   return null;
 }
 
-/** موجودی کیف پول — اول از action=users، بعد action=Wallet */
+function pickNumber(obj: Record<string, unknown>, ...keys: string[]): number | undefined {
+  for (const k of keys) {
+    const v = obj[k];
+    if (typeof v === "number" && !Number.isNaN(v)) return v;
+    if (typeof v === "string") {
+      const n = Number(v);
+      if (!Number.isNaN(n)) return n;
+    }
+  }
+  return undefined;
+}
+
+/** موجودی کیف پول — اول از action=users، بعد action=Wallet. total=کل، available=در دسترس، blocked=بلوکه‌شده */
 export async function fetchWalletBalance(): Promise<WalletBalance> {
   const fromUsers = await fetchCurrentUserFromUsersApi();
-  if (fromUsers && (fromUsers.totalBalance != null || fromUsers.availableBalance != null || fromUsers.blockedBalance != null)) {
-    return {
-      total: typeof fromUsers.totalBalance === "number" ? fromUsers.totalBalance : undefined,
-      available: typeof fromUsers.availableBalance === "number" ? fromUsers.availableBalance : fromUsers.totalBalance,
-      blocked: typeof fromUsers.blockedBalance === "number" ? fromUsers.blockedBalance : 0,
-    };
+  const u = fromUsers as Record<string, unknown> | null | undefined;
+  if (u && typeof u === "object") {
+    const total = pickNumber(u, "totalBalance", "TotalBalance", "total_balance", "total");
+    const available = pickNumber(u, "availableBalance", "AvailableBalance", "available_balance", "available");
+    const blocked = pickNumber(u, "blockedBalance", "BlockedBalance", "blocked_balance", "blocked");
+    if (total != null || available != null || blocked != null) {
+      return {
+        total: total ?? undefined,
+        available: available ?? total ?? undefined,
+        blocked: blocked ?? 0,
+      };
+    }
   }
   try {
     const res = await fetch(`${PROXY}?action=Wallet`, fetchOpts);
     if (!res.ok) return {};
-    const data = await res.json().catch(() => ({}));
+    const data = (await res.json().catch(() => ({}))) as Record<string, unknown>;
     if (data?.error) return {};
-    const total = typeof data.total === "number" ? data.total : typeof data.wallet === "number" ? data.wallet : undefined;
-    const available = typeof data.available === "number" ? data.available : total;
-    const blocked = typeof data.blocked === "number" ? data.blocked : 0;
-    return { total, available, blocked };
+    const obj = data;
+    const nested = [obj, obj.data, obj.wallet, obj.balance].filter(
+      (x): x is Record<string, unknown> => x != null && typeof x === "object"
+    );
+    for (const d of nested) {
+      const total = pickNumber(d, "totalBalance", "TotalBalance", "total", "Total", "wallet", "Wallet");
+      const available = pickNumber(d, "availableBalance", "AvailableBalance", "available", "Available");
+      const blocked = pickNumber(d, "blockedBalance", "BlockedBalance", "blocked", "Blocked");
+      if (total != null || available != null || blocked != null) {
+        return {
+          total: total ?? undefined,
+          available: available ?? total ?? undefined,
+          blocked: blocked ?? 0,
+        };
+      }
+    }
+    return {};
   } catch {
     return {};
   }
@@ -321,4 +352,81 @@ export async function fetchRecentSupportTickets(): Promise<SupportTicket[]> {
   } catch {
     return [];
   }
+}
+
+/**
+ * درخواست لینک پرداخت برای افزایش اعتبار کیف پول.
+ * API: action=pay&phone=98...&money=...&cardNumber=...&Name=...
+ * در صورت موفقیت آدرس درگاه پرداخت برمی‌گردد.
+ */
+export async function requestWalletPaymentLink(params: {
+  phone: string;
+  money: number;
+  cardNumber: string;
+  name: string;
+}): Promise<string> {
+  const phoneNorm = normalizePhoneForComparison(asPhoneOnly(params.phone));
+  if (!phoneNorm) throw new Error("شماره تماس معتبر نیست.");
+  if (!params.money || params.money <= 0) throw new Error("مبلغ را وارد کنید.");
+  const card = params.cardNumber.replace(/\D/g, "");
+  if (card.length < 16) throw new Error("شماره کارت باید ۱۶ رقم باشد.");
+  const nameTrim = params.name.trim();
+  if (!nameTrim) throw new Error("نام و نام خانوادگی را وارد کنید.");
+
+  const qs = new URLSearchParams({
+    action: "pay",
+    phone: phoneNorm,
+    money: String(params.money),
+    cardNumber: card.slice(-16),
+    Name: nameTrim,
+  });
+  const res = await fetch(`${PROXY}?${qs.toString()}`, { ...fetchOpts, method: "GET" });
+  const contentType = res.headers.get("content-type") ?? "";
+  const text = await res.text();
+
+  if (!res.ok) {
+    let errMsg = "دریافت لینک پرداخت ناموفق بود.";
+    try {
+      const data = JSON.parse(text) as { error?: string };
+      if (data?.error) errMsg = data.error;
+    } catch {
+      if (text) errMsg = text.slice(0, 200);
+    }
+    throw new Error(errMsg);
+  }
+
+  const DIRECTPAY_BASE = "https://api.directpay.finance/api/pardakht/payment";
+
+  const trimmed = text.trim();
+
+  if (contentType.includes("application/json")) {
+    try {
+      const data = JSON.parse(text) as Record<string, unknown>;
+      const url =
+        typeof data.url === "string"
+          ? data.url
+          : typeof data.paymentUrl === "string"
+            ? data.paymentUrl
+            : typeof data.link === "string"
+              ? data.link
+              : typeof data.redirect === "string"
+                ? data.redirect
+                : typeof (data as { data?: string }).data === "string"
+                  ? (data as { data: string }).data
+                  : null;
+      if (url && url.startsWith("http")) return url;
+      const token = typeof data.token === "string" ? data.token.trim() : null;
+      if (token) return `${DIRECTPAY_BASE}?token=${encodeURIComponent(token)}`;
+    } catch {
+      // fallback
+    }
+  }
+
+  if (trimmed.startsWith("http")) return trimmed;
+  if (/^[a-zA-Z0-9_-]+$/.test(trimmed)) {
+    return `${DIRECTPAY_BASE}?token=${encodeURIComponent(trimmed)}`;
+  }
+  const match = trimmed.match(/https?:\/\/[^\s"']+/);
+  if (match) return match[0];
+  throw new Error("لینک پرداخت از سرور دریافت نشد. پاسخ: " + trimmed.slice(0, 80));
 }
