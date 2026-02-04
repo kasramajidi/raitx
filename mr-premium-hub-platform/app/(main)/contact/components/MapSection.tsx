@@ -48,18 +48,36 @@ export default function MapSection() {
         </div>
       </div>
 
-        <div className="bg-white rounded-lg md:rounded-xl overflow-hidden shadow-sm flex-1 min-h-[200px] sm:min-h-[250px] md:min-h-0">
-        <iframe
-          title="نقشه آدرس مستر پریمیوم هاب - تهران، کارگر شمالی، جلال آل احمد"
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3239.178!2d51.387!3d35.732!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMzXCsDQzJzU1LjIiTiA1McKwMjInMTIuMCJF!5e0!3m2!1sfa!2sir!4v1700000000000!5m2!1sfa!2sir"
-          width="100%"
-          height="100%"
-          style={{ border: 0 }}
-          allowFullScreen
-          loading="lazy"
-          referrerPolicy="no-referrer-when-downgrade"
-          className="w-full h-full min-h-[200px] sm:min-h-[250px] md:min-h-0"
-        />
+        <div className="bg-white rounded-lg md:rounded-xl overflow-hidden shadow-sm flex-1 min-h-[200px] sm:min-h-[250px] md:min-h-0 flex flex-col">
+        {/* آدرس و لینک نقشه — اگر iframe لود نشد، این بخش همیشه قابل استفاده است */}
+        <div className="p-4 border-b border-gray-100 bg-gray-50/50">
+          <p className="text-sm font-medium text-gray-800 text-right mb-1">آدرس</p>
+          <p className="text-xs text-gray-600 text-right leading-relaxed">
+            تهران، خیابان کارگر شمالی، نبش بزرگراه جلال آل احمد، کوچه چهارم، پلاک ۴۰، طبقه سوم
+          </p>
+        </div>
+        {/* نقشه: تهران، کارگر شمالی، نبش جلال آل احمد، کوچه چهارم، پلاک ۴۰ */}
+        <div className="relative flex-1 min-h-[200px] sm:min-h-[220px] md:min-h-[240px]">
+          <iframe
+            title="نقشه آدرس مستر پریمیوم هاب - تهران، خیابان کارگر شمالی، نبش بزرگراه جلال آل احمد، کوچه چهارم، پلاک ۴۰"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=51.382%2C35.728%2C51.392%2C35.736&layer=mapnik&marker=35.732%2C51.387"
+            width="100%"
+            height="100%"
+            style={{ border: 0, position: "absolute", inset: 0 }}
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="no-referrer-when-downgrade"
+            className="w-full h-full min-h-[200px]"
+          />
+        </div>
+        <a
+          href="https://www.google.com/maps/search/?api=1&query=35.732%2C51.387"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="block text-center py-3 text-sm font-medium text-white bg-[#ff5538] hover:bg-[#ff5538]/90 transition-colors"
+        >
+          باز کردن در نقشه و مسیریابی
+        </a>
       </div>
     </div>
   );

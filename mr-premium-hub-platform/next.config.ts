@@ -15,7 +15,7 @@ const nextConfig: NextConfig = {
               "img-src 'self' data: https: http: blob:",
               "font-src 'self' data:",
               "connect-src 'self' https: http: ws: wss:",
-              "frame-src 'self'",
+              "frame-src 'self' https://www.openstreetmap.org https://www.google.com https://maps.google.com",
             ].join("; "),
           },
         ],
