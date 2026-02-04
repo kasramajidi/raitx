@@ -14,6 +14,7 @@ export interface CommentItem {
   phone: string;
   comment: string;
   date?: string;
+  status?: string;
 }
 
 /** تبدیل تاریخ ISO، timestamp، /Date(ms)/ یا رشته به فرمت نمایش شمسی */
@@ -65,6 +66,7 @@ function normalizeItem(raw: Record<string, unknown>): CommentItem {
     raw.insertDate ??
     raw.InsertDate;
   const date = dateRaw != null ? formatDate(dateRaw) : "";
+  const status = String(raw.status ?? raw.Status ?? "").trim() || undefined;
   return {
     id,
     title,
@@ -73,6 +75,7 @@ function normalizeItem(raw: Record<string, unknown>): CommentItem {
     phone,
     comment,
     date: date || undefined,
+    status,
   };
 }
 
