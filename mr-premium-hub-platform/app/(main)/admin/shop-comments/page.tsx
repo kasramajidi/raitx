@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import ShopCommentsTable from "./components/ShopCommentsTable";
 import {
   getShopCommentsFromProducts,
@@ -52,6 +53,13 @@ export default function ShopCommentsPage() {
     fetchComments();
   }, [idshopFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const uniqueProducts = new Set(comments.map((c) => String(c.idshop))).size;
+  const shopCommentStats = [
+    { title: "کل نظرات فروشگاه", value: comments.length, icon: "🛒", color: "bg-blue-50 text-blue-600" },
+    { title: "محصولات دارای نظر", value: uniqueProducts, icon: "📦", color: "bg-emerald-50 text-emerald-600" },
+    { title: "محصولات در فیلتر", value: products.length, icon: "📋", color: "bg-violet-50 text-violet-600" },
+  ];
+
   const handleDelete = async (idshop: number | string, id: number | string) => {
     setDeletingId(`${idshop}-${id}`);
     setError(null);
@@ -79,6 +87,9 @@ export default function ShopCommentsPage() {
             نمایش UserComments محصولات؛ حذف نظر از اینجا
           </p>
         </div>
+
+        <AdminStatsCards items={shopCommentStats} />
+
         <div className="flex flex-wrap items-center gap-3">
           <label className="text-sm font-medium text-gray-700">محصول (idshop):</label>
           <select

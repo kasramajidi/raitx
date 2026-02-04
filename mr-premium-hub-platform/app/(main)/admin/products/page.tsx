@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import ProductsTable from "./components/ProductsTable";
 import ProductForm, { ShopApiPayload } from "./components/ProductForm";
 import { useCart } from "../../context/CartContext";
@@ -237,6 +238,13 @@ export default function ProductsPage() {
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
+  const inStockCount = products.filter((p) => p.stock > 0).length;
+  const outOfStockCount = products.length - inStockCount;
+  const productStats = [
+    { title: "تعداد محصولات", value: products.length, icon: "🛍️", color: "bg-emerald-50 text-emerald-600" },
+    { title: "موجود در انبار", value: inStockCount, icon: "✅", color: "bg-green-50 text-green-600" },
+    { title: "ناموجود", value: outOfStockCount, icon: "⏳", color: "bg-amber-50 text-amber-600" },
+  ];
   const paginatedProducts = useMemo(
     () =>
       filteredProducts.slice(
@@ -272,6 +280,8 @@ export default function ProductsPage() {
             افزودن محصول جدید
           </button>
         </div>
+
+        <AdminStatsCards items={productStats} />
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">

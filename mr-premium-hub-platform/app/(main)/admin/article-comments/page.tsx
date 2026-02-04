@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import ArticleCommentsTable from "./components/ArticleCommentsTable";
 import {
   getArticleComments,
@@ -52,6 +53,13 @@ export default function ArticleCommentsPage() {
     fetchComments();
   }, [idarticleFilter]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const uniqueArticles = new Set(comments.map((c) => String(c.idarticle))).size;
+  const articleCommentStats = [
+    { title: "کل نظرات مقالات", value: comments.length, icon: "📄", color: "bg-blue-50 text-blue-600" },
+    { title: "مقالات دارای نظر", value: uniqueArticles, icon: "📝", color: "bg-emerald-50 text-emerald-600" },
+    { title: "مقالات در فیلتر", value: articles.length, icon: "📋", color: "bg-violet-50 text-violet-600" },
+  ];
+
   const handleDelete = async (
     idarticle: number | string,
     id: number | string
@@ -88,6 +96,9 @@ export default function ArticleCommentsPage() {
             نمایش نظرات مقالات؛ حذف نظر از اینجا
           </p>
         </div>
+
+        <AdminStatsCards items={articleCommentStats} />
+
         <div className="flex flex-wrap items-center gap-3">
           <label className="text-sm font-medium text-gray-700">
             مقاله (idarticle):

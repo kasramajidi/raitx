@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 
 const inputBase =
   "w-full rounded-xl border border-gray-200 bg-gray-50/50 px-4 py-3 text-sm text-gray-900 placeholder-gray-400 transition-all duration-200 text-right focus:bg-white focus:border-[#ff5538] focus:outline-none focus:ring-2 focus:ring-[#ff5538]/10";
@@ -34,6 +35,12 @@ const quickLinks = [
   { label: "سفارشات", href: "/admin/orders" },
 ];
 
+const settingsStats = [
+  { title: "تنظیمات سایت", value: "فعال", icon: "⚙️", color: "bg-gray-100 text-gray-700" },
+  { title: "لینک‌های سریع", value: quickLinks.length, icon: "🔗", color: "bg-blue-50 text-blue-600" },
+  { title: "بخش‌های پنل", value: "۱۰", icon: "📋", color: "bg-violet-50 text-violet-600" },
+];
+
 export default function SettingsPage() {
   const [settings, setSettings] = useState({
     siteName: "مستر پریمیوم هاب",
@@ -59,6 +66,9 @@ export default function SettingsPage() {
           <p className="mt-1 text-sm text-gray-500">
             تنظیمات عمومی و ارتباطی سایت را مدیریت کنید.
           </p>
+          <div className="mt-4">
+            <AdminStatsCards items={settingsStats} />
+          </div>
         </div>
 
         <div className="space-y-6">

@@ -44,8 +44,8 @@ export default function StatsCards() {
 
   if (loading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {[1, 2, 3, 4].map((i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+        {[1, 2, 3].map((i) => (
           <div
             key={i}
             className="bg-white rounded-xl border border-gray-200/80 p-4 sm:p-5 shadow-sm animate-pulse"
@@ -78,9 +78,11 @@ export default function StatsCards() {
     );
   }
 
+  const displayEntries = entries.slice(0, 3);
+
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-      {entries.map(({ key, title, icon, color, value }) => (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+      {displayEntries.map(({ key, title, icon, color, value }) => (
         <div
           key={key}
           className="bg-white rounded-xl border border-gray-200/80 p-4 sm:p-5 shadow-sm hover:shadow transition-shadow"

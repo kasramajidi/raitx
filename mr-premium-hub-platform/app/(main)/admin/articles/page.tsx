@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import ArticlesTable from "./components/ArticlesTable";
 import ArticleForm, { type ArticleFormData } from "./components/ArticleForm";
 import { revalidateNews } from "./actions";
@@ -261,6 +262,8 @@ export default function ArticlesPage() {
             افزودن مقاله جدید
           </button>
         </div>
+
+        <AdminStatsCards items={articleStats} />
 
         <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex shrink-0 sm:order-2 sm:min-w-[200px] w-full sm:w-auto">

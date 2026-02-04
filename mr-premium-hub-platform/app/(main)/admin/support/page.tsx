@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import {
   fetchConversations,
   fetchMessages,
@@ -118,6 +119,13 @@ export default function AdminSupportPage() {
 
   const selectedConv = conversations.find((c) => c.id === selectedId);
 
+  const totalMessages = conversations.reduce((sum, c) => sum + (c.messageCount ?? 0), 0);
+  const supportStats = [
+    { title: "کل مکالمات", value: conversations.length, icon: "💬", color: "bg-blue-50 text-blue-600" },
+    { title: "مکالمه انتخاب‌شده", value: selectedId ? 1 : 0, icon: "📩", color: "bg-emerald-50 text-emerald-600" },
+    { title: "مجموع پیام‌ها", value: totalMessages, icon: "📨", color: "bg-violet-50 text-violet-600" },
+  ];
+
   const handleSendReply = async () => {
     if (!selectedId || !replyText.trim() || sending) return;
     const textToSend = replyText.trim();
@@ -156,6 +164,8 @@ export default function AdminSupportPage() {
             مکالمات ارسال‌شده از ویجت چت سایت را اینجا ببینید و پاسخ دهید.
           </p>
         </div>
+
+        <AdminStatsCards items={supportStats} />
 
         {error && (
           <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-700">

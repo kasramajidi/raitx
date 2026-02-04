@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import UsersTable from "./components/UsersTable";
 import UserForm from "./components/UserForm";
 
@@ -110,6 +111,12 @@ export default function UsersPage() {
       user.phone.includes(searchTerm)
   );
 
+  const userStats = [
+    { title: "کل کاربران", value: users.length, icon: "👥", color: "bg-blue-50 text-blue-600" },
+    { title: "دارای ایمیل", value: users.filter((u) => u.email?.trim()).length, icon: "📧", color: "bg-emerald-50 text-emerald-600" },
+    { title: "دارای تلفن", value: users.filter((u) => u.phone?.trim()).length, icon: "📱", color: "bg-violet-50 text-violet-600" },
+  ];
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -133,6 +140,8 @@ export default function UsersPage() {
             )}
           </div>
         </div>
+
+        <AdminStatsCards items={userStats} />
 
         <div className="bg-white border-b border-gray-200 p-4">
           <input

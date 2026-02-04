@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import AdminLayout from "../components/AdminLayout";
+import AdminStatsCards from "../components/AdminStatsCards";
 import OrdersTable from "./components/OrdersTable";
 
 interface Order {
@@ -58,6 +59,17 @@ export default function OrdersPage() {
       order.customer.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const orderStats = useMemo(() => {
+    const total = orders.length;
+    const inProgress = orders.filter((o) => o.status === "در حال پردازش").length;
+    const delivered = orders.filter((o) => o.status === "تحویل داده شده").length;
+    return [
+      { title: "کل سفارشات", value: total, icon: "📦", color: "bg-brand-muted text-brand" },
+      { title: "در حال پردازش", value: inProgress, icon: "⏳", color: "bg-amber-50 text-amber-600" },
+      { title: "تحویل داده شده", value: delivered, icon: "✅", color: "bg-emerald-50 text-emerald-600" },
+    ];
+  }, [orders]);
+
   return (
     <AdminLayout>
       <div className="space-y-6">
@@ -69,6 +81,8 @@ export default function OrdersPage() {
             مشاهده و مدیریت تمام سفارشات
           </p>
         </div>
+
+        <AdminStatsCards items={orderStats} />
 
         <div className="bg-white border-b border-gray-200 p-4">
           <input
