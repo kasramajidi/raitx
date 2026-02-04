@@ -1,27 +1,37 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
+
+const HERO_IMAGE_SRC = "/ChatGPT%20Image%20Jan%2024,%202026,%2004_07_27%20PM.png";
 
 export default function Hero() {
+  const [imageError, setImageError] = useState(false);
+
   return (
     <section className="relative min-h-[600px] md:min-h-[700px] lg:min-h-[800px] flex items-center justify-center overflow-hidden">
       <div className="absolute inset-0 z-0">
-        <Image
-          src="/ChatGPT%20Image%20Jan%2024,%202026,%2004_07_27%20PM.png"
-          alt="نقد کردن درآمدهای ارزی - مسترپریمیوم هاب"
-          fill
-          className="object-cover object-center"
-          priority
-          quality={100}
-          sizes="100vw"
-        />
+        {/* Fallback: پس‌زمینه تیره تا روی هاست اگر تصویر لود نشد متن خوانا بماند */}
+        <div className="absolute inset-0 bg-gray-700" aria-hidden />
+        {!imageError && (
+          <Image
+            src={HERO_IMAGE_SRC}
+            alt="نقد کردن درآمدهای ارزی - مسترپریمیوم هاب"
+            fill
+            className="object-cover object-center"
+            priority
+            quality={100}
+            sizes="100vw"
+            onError={() => setImageError(true)}
+          />
+        )}
         <div
           className="absolute inset-0"
           style={{
             background:
               "linear-gradient(to bottom, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.5))",
           }}
-        ></div>
+        />
       </div>
 
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16 md:py-20">

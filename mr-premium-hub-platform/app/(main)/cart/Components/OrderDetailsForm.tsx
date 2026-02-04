@@ -8,6 +8,11 @@ export interface ProductSummary {
   quantity: number;
 }
 
+export interface ContactInfo {
+  name: string;
+  phone: string;
+}
+
 export interface OrderDetailsData {
   amount: string;
   currencyType: string;
@@ -32,15 +37,38 @@ interface OrderDetailsFormProps {
   data: OrderDetailsData;
   onChange: (data: OrderDetailsData) => void;
   productSummary?: ProductSummary;
+  /** اطلاعات تماس کاربر (از سبد خرید) برای نمایش در همین فرم */
+  contact?: ContactInfo;
 }
 
-export default function OrderDetailsForm({ data, onChange, productSummary }: OrderDetailsFormProps) {
+export default function OrderDetailsForm({ data, onChange, productSummary, contact }: OrderDetailsFormProps) {
   const update = (part: Partial<OrderDetailsData>) => {
     onChange({ ...data, ...part });
   };
 
   return (
     <div className="space-y-6 text-right">
+      {/* اطلاعات تماس کاربر */}
+      {(contact?.name || contact?.phone) && (
+        <section className="border border-gray-100 rounded-xl p-4 bg-sky-50/50">
+          <h4 className="font-medium text-gray-900 mb-3">اطلاعات تماس</h4>
+          <div className="space-y-2 text-sm">
+            {contact.name && (
+              <div className="flex justify-between gap-2">
+                <span className="text-gray-600">نام و نام خانوادگی:</span>
+                <span className="font-medium text-gray-900">{contact.name}</span>
+              </div>
+            )}
+            {contact.phone && (
+              <div className="flex justify-between gap-2">
+                <span className="text-gray-600">شماره تماس:</span>
+                <span className="font-medium text-gray-900" dir="ltr">{contact.phone}</span>
+              </div>
+            )}
+          </div>
+        </section>
+      )}
+
       {/* خلاصه محصول */}
       {productSummary && (
         <section className="border border-gray-100 rounded-xl p-4 bg-gray-50/50">

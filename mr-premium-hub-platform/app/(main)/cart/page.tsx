@@ -3,7 +3,6 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useCart, type CartItem } from "../context/CartContext";
-import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import MainContainer from "./Components/ui/MainContainer";
 import BreadcrumbBox from "./Components/ui/BreadcrumbBox";
 import OrderDetailsForm, {
@@ -55,11 +54,6 @@ export default function Cart() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     setMounted(true);
-    if (!getAuthCookie()) {
-      const next = "/cart";
-      router.replace(`/auth?next=${encodeURIComponent(next)}`, { scroll: false });
-      return;
-    }
     try {
       const raw = localStorage.getItem(CART_ORDER_DETAILS_STORAGE_KEY);
       if (!raw) return;
@@ -335,6 +329,7 @@ export default function Cart() {
                                       price: item.finalPrice,
                                       quantity: item.quantity,
                                     }}
+                                    contact={contact.name || contact.phone ? contact : undefined}
                                   />
                                 </td>
                               </tr>
@@ -467,6 +462,7 @@ export default function Cart() {
                                   price: item.finalPrice,
                                   quantity: item.quantity,
                                 }}
+                                contact={contact.name || contact.phone ? contact : undefined}
                               />
                             </div>
                           )}
