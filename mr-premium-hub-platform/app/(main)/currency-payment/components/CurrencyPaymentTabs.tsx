@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   HiSparkles,
   HiChevronRight,
@@ -318,9 +319,10 @@ export default function CurrencyPaymentTabs() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {currentPageCards.map((card) => (
-                <div
+                <Link
                   key={card.id}
-                  className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm text-center border border-gray-100"
+                  href={card.href}
+                  className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm text-center border border-gray-100 block hover:border-[#ff5538]/30 hover:shadow-md transition-all"
                 >
                   <div className="mb-4 sm:mb-5 flex items-center justify-center">
                     <div className="p-3 sm:p-4 rounded-xl bg-gray-50">
@@ -338,7 +340,7 @@ export default function CurrencyPaymentTabs() {
                   <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
                     {card.description}
                   </p>
-                </div>
+                </Link>
               ))}
             </div>
 
@@ -397,9 +399,10 @@ export default function CurrencyPaymentTabs() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {filteredCategories.map((category) => {
                 return category.items.map((item) => (
-                  <div
+                  <Link
                     key={item.href}
-                    className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm text-center border border-gray-100"
+                    href={item.href}
+                    className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm text-center border border-gray-100 block hover:border-[#ff5538]/30 hover:shadow-md transition-all"
                   >
                     <div className="mb-4 sm:mb-5 flex items-center justify-center">
                       <div className="p-3 sm:p-4 rounded-xl bg-gray-50">
@@ -412,7 +415,7 @@ export default function CurrencyPaymentTabs() {
                     <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
                       {category.description}
                     </p>
-                  </div>
+                  </Link>
                 ));
               })}
             </div>
