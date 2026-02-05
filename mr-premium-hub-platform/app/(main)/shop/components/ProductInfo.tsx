@@ -34,6 +34,7 @@ interface ProductInfoProps {
   setSelectedWarranty: (warranty: string) => void;
   finalPrice: number;
   handleAddToCart: () => void;
+  isSubmitting?: boolean;
 }
 
 export default function ProductInfo({
@@ -43,6 +44,7 @@ export default function ProductInfo({
   selectedWarranty,
   setSelectedWarranty,
   handleAddToCart,
+  isSubmitting = false,
 }: ProductInfoProps) {
   const isGiftCard = product.productType === "gift_card";
   const isService = product.productType === "service";
@@ -215,15 +217,15 @@ export default function ProductInfo({
         </div>
       )}
       <button
-        disabled={!canAddToCart}
+        disabled={!canAddToCart || isSubmitting}
         onClick={handleAddToCart}
         className={`w-full py-3 px-4 rounded-xl font-bold text-sm sm:text-base transition-opacity shadow-sm ${
-          canAddToCart
+          canAddToCart && !isSubmitting
             ? "bg-[#ff5538] text-white hover:opacity-90 cursor-pointer"
             : "bg-gray-300 text-gray-500 cursor-not-allowed"
         }`}
       >
-        ثبت سفارش
+        {isSubmitting ? "در حال ثبت…" : "ثبت سفارش"}
       </button>
     </div>
   );

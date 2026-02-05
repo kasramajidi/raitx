@@ -43,11 +43,14 @@ export async function POST(request: Request) {
       );
     }
     const body = await request.json().catch(() => ({}));
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    const cookie = request.headers.get("cookie");
+    if (cookie) headers["Cookie"] = cookie;
     const res = await fetch(
       `${EXTERNAL_API}?action=${encodeURIComponent(action)}`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers,
         body: JSON.stringify(body),
       }
     );
@@ -61,26 +64,26 @@ export async function POST(request: Request) {
   }
 }
 
-/** پروکسی PATCH مطابق تست API */
+/** پروکسی PATCH (مثلاً action=invoice&id=3) */
 export async function PATCH(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
-    const action = searchParams.get("action");
-    if (!action) {
+    const queryString = searchParams.toString();
+    if (!queryString) {
       return NextResponse.json(
         { error: "پارامتر action لازم است" },
         { status: 400 }
       );
     }
     const body = await request.json().catch(() => ({}));
-    const res = await fetch(
-      `${EXTERNAL_API}?action=${encodeURIComponent(action)}`,
-      {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      }
-    );
+    const headers: HeadersInit = { "Content-Type": "application/json" };
+    const cookie = request.headers.get("cookie");
+    if (cookie) headers["Cookie"] = cookie;
+    const res = await fetch(`${EXTERNAL_API}?${queryString}`, {
+      method: "PATCH",
+      headers,
+      body: JSON.stringify(body),
+    });
     const data = await res.json().catch(() => ({}));
     return NextResponse.json(data);
   } catch (e) {

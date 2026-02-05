@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart, type CartItem } from "../../context/CartContext";
 import { WARRANTIES } from "../../cart/Components/constants/productConstants";
+import { createInvoice, getLoginPhoneFromStorage, normalizePhoneForComparison } from "@/app/(main)/my-account/lib/my-account-api";
 import ProductImageGallery from "./ProductImageGallery";
 import ProductInfo from "./ProductInfo";
 import ProductFeatures from "./ProductFeatures";
@@ -27,6 +28,8 @@ export default function ProductDetails({ initialProduct }: ProductDetailsProps) 
   const id = params?.id ? parseInt(params.id as string, 10) : null;
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedWarranty, setSelectedWarranty] = useState("");
+  const [orderError, setOrderError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const product =
     initialProduct ??
@@ -58,17 +61,48 @@ export default function ProductDetails({ initialProduct }: ProductDetailsProps) 
         : !!selectedColor && !!selectedWarranty
   );
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
     if (!product || !canAddToCart) return;
-    const cartItem: CartItem = {
-      product: product,
-      quantity: 1,
-      selectedColor: selectedColor,
-      selectedWarranty: selectedWarranty,
-      finalPrice: finalPrice,
-    };
-    addToCart(cartItem);
-    router.push("/cart");
+    setOrderError(null);
+    setIsSubmitting(true);
+    try {
+      const loginPhone = getLoginPhoneFromStorage();
+      if (!loginPhone?.trim()) {
+        setOrderError("برای ثبت سفارش ابتدا وارد حساب کاربری شوید.");
+        router.push("/my-account");
+        return;
+      }
+      const userid = normalizePhoneForComparison(loginPhone);
+      if (!userid) {
+        setOrderError("شماره تماس معتبر برای ثبت سفارش یافت نشد.");
+        return;
+      }
+      const ok = await createInvoice([
+        {
+          shopid: product.id,
+          userid,
+          quantity: 1,
+          isPaid: false,
+          paymentStatus: "not payed",
+          price: finalPrice,
+        },
+      ]);
+      if (!ok) {
+        setOrderError("ثبت سفارش در سامانه انجام نشد. لطفاً دوباره تلاش کنید.");
+        return;
+      }
+      const cartItem: CartItem = {
+        product: product,
+        quantity: 1,
+        selectedColor: selectedColor,
+        selectedWarranty: selectedWarranty,
+        finalPrice: finalPrice,
+      };
+      addToCart(cartItem);
+      router.push("/cart");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   if (!product) {
@@ -118,6 +152,11 @@ export default function ProductDetails({ initialProduct }: ProductDetailsProps) 
               <ProductImageGallery product={product} images={productImages} />
             </div>
             <div className="order-2 lg:order-1">
+              {orderError && (
+                <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm text-right">
+                  {orderError}
+                </div>
+              )}
               <ProductInfo
                 product={product}
                 selectedColor={selectedColor}
@@ -126,6 +165,7 @@ export default function ProductDetails({ initialProduct }: ProductDetailsProps) 
                 setSelectedWarranty={setSelectedWarranty}
                 finalPrice={finalPrice}
                 handleAddToCart={handleAddToCart}
+                isSubmitting={isSubmitting}
               />
             </div>
             <div className="order-3 lg:order-3">

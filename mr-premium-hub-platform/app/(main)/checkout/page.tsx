@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useCart } from "@/app/(main)/context/CartContext";
 import { getCartOrderDetailsFromStorage, type StoredOrderDetailItem } from "@/app/(main)/lib/cart-storage";
+import { createInvoice, getLoginPhoneFromStorage, normalizePhoneForComparison, fetchInvoicesForUser, updateInvoice, requestWalletPaymentLink, validateWalletBalance, payFromWallet } from "@/app/(main)/my-account/lib/my-account-api";
 import MainContainer from "./ui/MainContainer";
 import BreadcrumbBox from "./ui/BreadcrumbBox";
 import OrderSummary from "./Components/OrderSummary";
@@ -33,7 +34,7 @@ export default function CheckoutPage() {
   };
 
   const handleConfirmOrder = useCallback(
-    async (paymentGateway: string) => {
+    async (paymentGateway: string, paymentDetails?: { amount: number; cardNumber: string; name: string }) => {
       setSubmitError(null);
       setSubmitSuccess(null);
       const name = (document.getElementById("first-name") as HTMLInputElement | null)?.value?.trim();
@@ -55,6 +56,31 @@ export default function CheckoutPage() {
             }, 0)
           : 0;
       const total = subtotal + fastOrderFee;
+      const userid = normalizePhoneForComparison(getLoginPhoneFromStorage() || phone || "");
+      if (!userid) {
+        setSubmitError("شماره تماس معتبر برای ثبت فاکتور نیست.");
+        return;
+      }
+      if (paymentGateway === "wallet") {
+        const balanceCheck = await validateWalletBalance(total);
+        if (!balanceCheck.ok) {
+          setSubmitError(balanceCheck.message ?? "موجودی کیف پول کافی نیست.");
+          return;
+        }
+      }
+      const invoiceItems = items.map((item) => ({
+        shopid: item.product.id,
+        userid,
+        quantity: item.quantity,
+        isPaid: false,
+        paymentStatus: "not payed",
+        ...(item.finalPrice != null && { price: item.finalPrice }),
+      }));
+      const invoiceOk = await createInvoice(invoiceItems);
+      if (!invoiceOk) {
+        setSubmitError("ثبت فاکتور در سامانه انجام نشد. لطفاً دوباره تلاش کنید.");
+        return;
+      }
       const payload = {
         contact: { name, phone },
         company: company || undefined,
@@ -91,9 +117,57 @@ export default function CheckoutPage() {
         setSubmitError(data.error || "خطا در ثبت سفارش.");
         return;
       }
-      setSubmitSuccess(data.message || "سفارش با موفقیت ثبت شد.");
+      if (paymentDetails) {
+        try {
+          const phone = (document.getElementById("billing-phone") as HTMLInputElement | null)?.value?.trim() || getLoginPhoneFromStorage() || "";
+          const url = await requestWalletPaymentLink({
+            phone,
+            money: paymentDetails.amount,
+            cardNumber: paymentDetails.cardNumber,
+            name: paymentDetails.name,
+          });
+          clearCart();
+          window.location.href = url;
+          return;
+        } catch (err) {
+          setSubmitError(err instanceof Error ? err.message : "خطا در دریافت لینک درگاه پرداخت.");
+          return;
+        }
+      }
+      if (paymentGateway === "wallet") {
+        const payResult = await payFromWallet(total);
+        if (!payResult.success) {
+          setSubmitError(payResult.error ?? "پرداخت از کیف پول انجام نشد.");
+          return;
+        }
+        try {
+          const list = await fetchInvoicesForUser();
+          const unpaid = list.filter((item) => item.id != null && !item.isPaid);
+          for (const item of unpaid) await updateInvoice(item.id!, { isPaid: true, paymentStatus: "پرداخت شده" });
+        } catch {
+          // نادیده
+        }
+        clearCart();
+        const q = new URLSearchParams();
+        q.set("wallet", "1");
+        q.set("deducted", String(total));
+        if (payResult.availableBalance != null) q.set("available", String(payResult.availableBalance));
+        if (payResult.blockedBalance != null) q.set("blocked", String(payResult.blockedBalance));
+        router.push(`/checkout/success?${q.toString()}`);
+        return;
+      }
+      setSubmitSuccess("پرداخت با موفقیت انجام شد.");
       clearCart();
-      setTimeout(() => router.push("/"), 2000);
+      (async () => {
+        try {
+          const list = await fetchInvoicesForUser();
+          const unpaid = list.filter((item) => item.id != null && !item.isPaid);
+          for (const item of unpaid) await updateInvoice(item.id!, { isPaid: true, paymentStatus: "پرداخت شده" });
+        } catch {
+          // نادیده
+        }
+      })();
+      setTimeout(() => router.push("/checkout/success"), 1500);
     },
     [items, getTotalPrice, orderDetails, clearCart, router]
   );
@@ -152,21 +226,6 @@ export default function CheckoutPage() {
                 </span>
               </div>
             </div>
-            {/* مراحل */}
-            <ol className="mt-6 flex flex-wrap gap-4 sm:gap-6 text-sm text-gray-600" aria-label="مراحل تسویه حساب">
-              <li className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#ff5538] text-white font-bold text-xs">۱</span>
-                <span>تکمیل اطلاعات تماس</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold text-xs">۲</span>
-                <span>بررسی خلاصه سفارش و مبلغ</span>
-              </li>
-              <li className="flex items-center gap-2">
-                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-200 text-gray-700 font-bold text-xs">۳</span>
-                <span>ثبت سفارش و هماهنگی پرداخت ارزی</span>
-              </li>
-            </ol>
           </header>
 
           {(submitError || submitSuccess) && (

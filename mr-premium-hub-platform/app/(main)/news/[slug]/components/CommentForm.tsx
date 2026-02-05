@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { HiArrowLeft } from "react-icons/hi";
 import {
   submitArticleComment,
@@ -9,6 +11,7 @@ import {
   getArticleComments,
   type ArticleCommentDisplayItem,
 } from "../../lib/article-comments-api";
+import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import type { ArticleCommentItem } from "../../lib/articles-api";
 
 const STORAGE_KEY = "article_my_comment_emails";
@@ -72,8 +75,26 @@ function toDisplayItem(c: ArticleCommentItem | ArticleCommentDisplayItem): Artic
 }
 
 export default function CommentForm({ articleId, initialComments }: CommentFormProps) {
+  const pathname = usePathname();
   const initialCommentsRef = useRef(initialComments);
   initialCommentsRef.current = initialComments ?? [];
+
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cookie = (getAuthCookie() ?? "").trim();
+    let hasStoredUser = false;
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw) {
+        const o = JSON.parse(raw);
+        hasStoredUser = !!o && typeof o === "object" && (o.phone ?? o.token ?? o.username ?? o.name);
+      }
+    } catch {
+      // ignore
+    }
+    setIsLoggedIn(cookie !== "" || hasStoredUser);
+  }, []);
 
   const [formData, setFormData] = useState({
     name: "",
@@ -226,6 +247,8 @@ export default function CommentForm({ articleId, initialComments }: CommentFormP
     }
   };
 
+  const authNext = pathname ? `/auth?next=${encodeURIComponent(pathname)}` : "/auth";
+
   return (
     <div className="mt-10 space-y-8">
       {/* فرم ارسال دیدگاه */}
@@ -234,6 +257,20 @@ export default function CommentForm({ articleId, initialComments }: CommentFormP
           دیدگاه خود را بنویسید
         </h3>
 
+        {!isLoggedIn ? (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 sm:p-5 text-right">
+            <p className="text-sm text-amber-800 mb-3">
+              برای ثبت دیدگاه باید وارد حساب کاربری شوید یا ثبت‌نام کنید.
+            </p>
+            <Link
+              href={authNext}
+              className="inline-flex items-center justify-center rounded-lg bg-[#ff5538] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              ورود / ثبت‌نام
+            </Link>
+          </div>
+        ) : (
+          <>
         {message && (
           <div
             className={`rounded-lg border p-4 text-sm mb-4 ${
@@ -308,6 +345,8 @@ export default function CommentForm({ articleId, initialComments }: CommentFormP
             )}
           </button>
         </form>
+        </>
+        )}
       </div>
 
       {/* لیست دیدگاه‌ها */}

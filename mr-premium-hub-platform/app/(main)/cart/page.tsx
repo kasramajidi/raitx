@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import { useCart, type CartItem } from "../context/CartContext";
 import MainContainer from "./Components/ui/MainContainer";
 import BreadcrumbBox from "./Components/ui/BreadcrumbBox";
@@ -54,6 +55,19 @@ export default function Cart() {
   useEffect(() => {
     if (typeof window === "undefined") return;
     setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+    const hasUser = typeof window !== "undefined" && (localStorage.getItem("user") || getAuthCookie());
+    if (!hasUser) {
+      router.replace("/auth?next=/cart");
+      return;
+    }
+  }, [mounted, router]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
     try {
       const raw = localStorage.getItem(CART_ORDER_DETAILS_STORAGE_KEY);
       if (!raw) return;
@@ -156,6 +170,15 @@ export default function Cart() {
     return (
       <div className="bg-gray-50 py-8 min-h-screen flex items-center justify-center">
         <p className="text-gray-500 text-sm">در حال بارگذاری…</p>
+      </div>
+    );
+  }
+
+  const hasUser = typeof window !== "undefined" && (localStorage.getItem("user") || getAuthCookie());
+  if (!hasUser) {
+    return (
+      <div className="bg-gray-50 py-8 min-h-screen flex items-center justify-center">
+        <p className="text-gray-500 text-sm">در حال انتقال به صفحهٔ ورود…</p>
       </div>
     );
   }

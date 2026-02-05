@@ -3,6 +3,7 @@
 import React from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import type { Product } from "./productsData";
 
 interface WhiteProductCardProps {
@@ -41,6 +42,7 @@ export default function WhiteProductCard({ product }: WhiteProductCardProps) {
               fill
               className="object-contain"
               sizes="(max-width: 768px) 100vw, 50vw"
+              unoptimized={shouldUnoptimizeImage(image)}
             />
           ) : (
             <div className="flex items-center justify-center w-12 h-12 bg-gray-300 rounded-full md:w-16 md:h-16">

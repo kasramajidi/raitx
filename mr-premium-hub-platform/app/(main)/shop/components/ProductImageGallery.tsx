@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import type { Product } from "./productsData";
 
 interface ProductImageGalleryProps {
@@ -69,6 +70,7 @@ const ProductImageGallery = React.memo<ProductImageGalleryProps>(
               priority
               sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 600px"
               className="object-cover rounded-xl transition-transform duration-300 group-hover:scale-105"
+              unoptimized={shouldUnoptimizeImage(imageSrc)}
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center bg-gray-50 rounded-xl">

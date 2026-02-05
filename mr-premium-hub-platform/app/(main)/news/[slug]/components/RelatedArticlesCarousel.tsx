@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import { HiLocationMarker } from "react-icons/hi";
 import {
   Carousel,
@@ -42,6 +43,7 @@ export default function RelatedArticlesCarousel({ articles }: RelatedArticlesCar
                       fill
                       sizes="(max-width: 768px) 100vw, 22vw"
                       className="object-cover group-hover:scale-105 transition-transform duration-300"
+                      unoptimized={shouldUnoptimizeImage(article.image)}
                     />
                   </div>
                   <div className="p-3">

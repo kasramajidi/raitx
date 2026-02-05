@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { deleteAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import {
   LayoutDashboard,
   FolderOpen,
@@ -65,9 +66,12 @@ export default function Sidebar({ active, onSectionChange }: SidebarProps) {
   const handleClick = (value: string) => {
     if (value === "logout") {
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("userLogout"));
+        deleteAuthCookie();
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+        localStorage.removeItem("loginPhone");
+        localStorage.removeItem("loginval");
+        window.dispatchEvent(new CustomEvent("userLogout"));
         router.push("/auth", { scroll: false });
       }
     } else if (value === "cryptocurrency") {

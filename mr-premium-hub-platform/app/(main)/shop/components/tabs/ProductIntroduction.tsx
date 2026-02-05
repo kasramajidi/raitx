@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import type { Product } from "../productsData";
 import FlightTicketContent from "../FlightTicketContent";
 
@@ -163,7 +164,7 @@ function ProductIntroduction({ product }: ProductIntroductionProps) {
                   fill
                   className="object-cover"
                   sizes="(max-width: 640px) 100vw, 50vw"
-                  unoptimized={src.startsWith("data:") || src.includes("?")}
+                  unoptimized={src.startsWith("data:") || src.includes("?") || shouldUnoptimizeImage(src)}
                 />
               </div>
             ))}

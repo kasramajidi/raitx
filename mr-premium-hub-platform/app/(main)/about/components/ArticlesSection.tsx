@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import { HiArrowLeft } from "react-icons/hi";
 
 export interface AboutArticle {
@@ -76,6 +77,7 @@ export default function ArticlesSection({ articles }: ArticlesSectionProps) {
                   className="object-cover object-center"
                   quality={90}
                   sizes="(max-width: 640px) 100vw, (max-width: 768px) 50vw, 35vw"
+                  unoptimized={shouldUnoptimizeImage(article.image || "")}
                 />
               </div>
             </div>

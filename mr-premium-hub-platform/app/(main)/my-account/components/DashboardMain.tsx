@@ -5,16 +5,21 @@ import { useRouter } from "next/navigation";
 import { Info, Plus } from "lucide-react";
 import {
   fetchWalletBalance,
-  fetchRecentOrders,
+  fetchInvoicesForUser,
   fetchRecentSupportTickets,
-  type OrderItem,
+  type InvoiceItem,
   type SupportTicket,
 } from "../lib/my-account-api";
+
+function shopTitle(item: InvoiceItem): string {
+  const t = (item.shop as { title?: string } | undefined)?.title;
+  return typeof t === "string" ? t : "—";
+}
 
 export default function DashboardMain() {
   const router = useRouter();
   const [wallet, setWallet] = useState<{ total?: number; available?: number; blocked?: number }>({});
-  const [orders, setOrders] = useState<OrderItem[]>([]);
+  const [invoices, setInvoices] = useState<InvoiceItem[]>([]);
   const [supportTickets, setSupportTickets] = useState<SupportTicket[]>([]);
   const [loadingWallet, setLoadingWallet] = useState(true);
   const [loadingOrders, setLoadingOrders] = useState(true);
@@ -27,8 +32,8 @@ export default function DashboardMain() {
     });
   }, []);
   useEffect(() => {
-    fetchRecentOrders(10).then((list) => {
-      setOrders(list);
+    fetchInvoicesForUser().then((list) => {
+      setInvoices(list.slice(0, 10));
       setLoadingOrders(false);
     });
   }, []);
@@ -165,23 +170,27 @@ export default function DashboardMain() {
                       در حال بارگذاری…
                     </td>
                   </tr>
-                ) : orders.length === 0 ? (
+                ) : invoices.length === 0 ? (
                   <tr>
                     <td colSpan={4} className="px-4 py-10 text-center text-sm text-gray-500">
                       سفارشی ثبت نشده است
                     </td>
                   </tr>
                 ) : (
-                  orders.map((o) => (
+                  invoices.map((item) => (
                     <tr
-                      key={o.id}
+                      key={String(item.id ?? item.shopid ?? Math.random())}
                       className="border-b border-gray-50 cursor-pointer hover:bg-gray-50/50"
                       onClick={() => router.push("/my-account/orders")}
                     >
-                      <td className="px-4 py-3">{o.orderNumber}</td>
-                      <td className="px-4 py-3">{o.orderType}</td>
-                      <td className="px-4 py-3">{o.lastUpdate}</td>
-                      <td className="px-4 py-3">{o.status}</td>
+                      <td className="px-4 py-3 text-gray-700">{item.id ?? "—"}</td>
+                      <td className="px-4 py-3 font-medium text-gray-900">{shopTitle(item)}</td>
+                      <td className="px-4 py-3 text-gray-500">—</td>
+                      <td className="px-4 py-3">
+                        <span className={item.isPaid ? "text-emerald-600 font-medium" : "text-amber-600"}>
+                          {item.isPaid ? "پرداخت شده" : "پرداخت نشده"}
+                        </span>
+                      </td>
                     </tr>
                   ))
                 )}

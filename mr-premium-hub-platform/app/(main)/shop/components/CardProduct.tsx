@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import { useRouter } from "next/navigation";
 import type { Product } from "./productsData";
 
@@ -98,6 +99,7 @@ export default function ProductCard({ product, priority }: ProductCardProps) {
               className="object-cover rounded-xl"
               sizes="(max-width: 768px) 100vw, 33vw"
               priority={priority}
+              unoptimized={shouldUnoptimizeImage(image)}
             />
           ) : showIcon ? (
             <div className="flex items-center justify-center w-24 h-24 sm:w-28 sm:h-28 rounded-xl bg-[#fef3f2]">

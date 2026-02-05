@@ -3,6 +3,7 @@
 import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { deleteAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import {
   Package,
   Download,
@@ -60,9 +61,12 @@ export default function DashboardCards() {
   const handleCardClick = (section: string) => {
     if (section === "logout") {
       if (typeof window !== "undefined") {
-        window.dispatchEvent(new CustomEvent("userLogout"));
+        deleteAuthCookie();
         localStorage.removeItem("user");
         localStorage.removeItem("token");
+        localStorage.removeItem("loginPhone");
+        localStorage.removeItem("loginval");
+        window.dispatchEvent(new CustomEvent("userLogout"));
         router.push("/auth", { scroll: false });
       }
     } else if (section === "favorites") {

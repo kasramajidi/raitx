@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import React from "react";
 import Image from "next/image";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 import { notFound } from "next/navigation";
 import { getArticleBySlugFromApi, getRelatedArticlesFromApi } from "../lib/articles-api";
 import { HiLocationMarker, HiArrowLeft } from "react-icons/hi";
@@ -353,6 +354,7 @@ export default async function ArticlePage({ params }: PageProps) {
               width={10000}
               height={1000}
               className="w-full h-[250px] sm:h-[300px] md:h-[350px] rounded-xl object-cover"
+              unoptimized={shouldUnoptimizeImage(article.image)}
             />
             
             <h4 className="mt-3 bg-gradient-to-b from-purple-500 to-blue-500 text-[19px] block text-transparent bg-clip-text font-bold">

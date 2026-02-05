@@ -18,6 +18,12 @@ export default function ConditionalSiteLayout({
     setIsAuthenticated(!!getAuthCookie());
   }, [pathname]);
 
+  useEffect(() => {
+    const onLogout = () => setIsAuthenticated(false);
+    window.addEventListener("userLogout", onLogout);
+    return () => window.removeEventListener("userLogout", onLogout);
+  }, []);
+
   const isAdmin = pathname?.startsWith("/admin");
 
   if (isAdmin) {

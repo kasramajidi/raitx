@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import type { CartItem } from "@/app/(main)/context/CartContext";
 import type { StoredOrderDetailItem } from "@/app/(main)/lib/cart-storage";
 
@@ -10,15 +10,9 @@ interface OrderSummaryProps {
   formatPrice: (price: number) => string;
   /** جزئیات سفارش ذخیره‌شده از سبد (ایندکس به صورت رشته "0", "1", ...) */
   orderDetailsFromStorage?: Record<string, StoredOrderDetailItem> | null;
-  /** با کلیک روی «ثبت سفارش و ادامه» فراخوانی می‌شود؛ روش پرداخت انتخاب‌شده را می‌گیرد و سفارش را به API می‌فرستد */
-  onConfirmOrder?: (paymentGateway: string) => void | Promise<void>;
+  /** با کلیک روی «انتقال به درگاه پرداخت» فراخوانی می‌شود؛ مبلغ، شماره کارت و نام صاحب کارت را می‌گیرد */
+  onConfirmOrder?: (paymentGateway: string, paymentDetails?: { amount: number; cardNumber: string; name: string }) => void | Promise<void>;
 }
-
-const PAYMENT_GATEWAYS = [
-  { id: "card-to-card", label: "کارت به کارت", description: "انتقال مستقیم به کارت ما" },
-  { id: "bank-transfer", label: "واریز بانکی", description: "واریز به شماره حساب اعلام‌شده" },
-  { id: "coordinate", label: "هماهنگی با کارشناس", description: "تماس کارشناس برای تعیین روش پرداخت" },
-] as const;
 
 export default function OrderSummary({
   items,
@@ -28,8 +22,12 @@ export default function OrderSummary({
   onConfirmOrder,
 }: OrderSummaryProps) {
   const [showDiscountInput, setShowDiscountInput] = useState(false);
-  const [selectedGateway, setSelectedGateway] = useState<string>(PAYMENT_GATEWAYS[0].id);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [paymentError, setPaymentError] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<"card" | "wallet">("card");
+  const [money, setMoney] = useState<string>("");
+  const [cardNumber, setCardNumber] = useState("");
+  const [cardholderName, setCardholderName] = useState("");
 
   const toggleDiscountInput = () => {
     setShowDiscountInput(!showDiscountInput);
@@ -69,6 +67,14 @@ export default function OrderSummary({
       }, 0)
     : 0;
   const total = subtotal + fastOrderFee;
+  /** مبلغ مجموع به ریال برای درگاه (۱ تومان = ۱۰ ریال) */
+  const totalRial = total * 10;
+
+  useEffect(() => {
+    if (paymentMethod === "card" && totalRial > 0 && !money) {
+      setMoney(String(totalRial).replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+    }
+  }, [paymentMethod, totalRial, money]);
 
   return (
     <div className="lg:col-span-2">
@@ -155,7 +161,7 @@ export default function OrderSummary({
           )}
         </div>
 
-        {/* بخش پرداخت ارزی و ثبت سفارش */}
+        {/* بخش پرداخت و انتقال به درگاه */}
         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
           <h3 className="text-lg font-medium text-gray-900 text-right mb-4 flex items-center gap-2 justify-end">
             <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-emerald-100 text-emerald-700">
@@ -165,56 +171,117 @@ export default function OrderSummary({
             </span>
             پرداخت ارزی و ثبت سفارش
           </h3>
-          {/* انتخاب درگاه پرداخت */}
           <div className="mb-4">
             <h4 className="text-sm font-medium text-gray-800 text-right mb-3">انتخاب روش پرداخت</h4>
-            <div className="space-y-2 border border-gray-200 rounded-xl overflow-hidden bg-gray-50/50">
-              {PAYMENT_GATEWAYS.map((gateway) => (
-                <label
-                  key={gateway.id}
-                  className={`flex items-center gap-3 p-3 cursor-pointer border-b border-gray-100 last:border-b-0 transition-colors ${
-                    selectedGateway === gateway.id ? "bg-[#ff5538]/10 border-r-4 border-r-[#ff5538]" : "hover:bg-gray-100/80"
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="payment-gateway"
-                    value={gateway.id}
-                    checked={selectedGateway === gateway.id}
-                    onChange={() => setSelectedGateway(gateway.id)}
-                    className="w-4 h-4 text-[#ff5538] border-gray-300 focus:ring-[#ff5538]"
-                  />
-                  <div className="flex-1 text-right">
-                    <span className="font-medium text-gray-900 text-sm block">{gateway.label}</span>
-                    <span className="text-xs text-gray-500">{gateway.description}</span>
-                  </div>
-                </label>
-              ))}
+            <div className="flex gap-3">
+              <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === "card" ? "border-[#ff5538] bg-[#ff5538]/5" : "border-gray-200 hover:border-gray-300"}`}>
+                <input type="radio" name="pay-method" value="card" checked={paymentMethod === "card"} onChange={() => setPaymentMethod("card")} className="sr-only" />
+                <span className="text-sm font-medium">پرداخت با کارت</span>
+              </label>
+              <label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-xl border-2 cursor-pointer transition-colors ${paymentMethod === "wallet" ? "border-[#ff5538] bg-[#ff5538]/5" : "border-gray-200 hover:border-gray-300"}`}>
+                <input type="radio" name="pay-method" value="wallet" checked={paymentMethod === "wallet"} onChange={() => setPaymentMethod("wallet")} className="sr-only" />
+                <span className="text-sm font-medium">پرداخت از کیف پول</span>
+              </label>
             </div>
           </div>
-          <div className="bg-amber-50/80 border border-amber-200/60 rounded-xl px-4 py-3 mb-4">
-            <p className="text-xs text-amber-900 text-right leading-relaxed">
-              پس از ثبت سفارش، کارشناسان ما برای هماهنگی روش پرداخت ارزی با شما تماس خواهند گرفت.
-            </p>
-          </div>
-          <p className="text-xs text-gray-500 text-right mb-5 leading-relaxed">
-            اطلاعات شما صرفاً برای پردازش سفارش و پشتیبانی استفاده می‌شود.
-          </p>
+          {paymentError && (
+            <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-800 text-right">
+              {paymentError}
+            </div>
+          )}
+          {paymentMethod === "card" && (
+            <>
+              <p className="text-sm text-gray-600 text-right mb-4">مبلغ و اطلاعات کارت را وارد کنید تا به درگاه پرداخت منتقل شوید.</p>
+              <div className="space-y-4 mb-5">
+                <div>
+                  <label htmlFor="checkout-amount" className="block text-sm font-medium text-gray-700 text-right mb-1">مبلغ (ریال)</label>
+                  <input
+                    id="checkout-amount"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder={String(totalRial).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " ریال"}
+                    value={money}
+                    onChange={(e) => setMoney(e.target.value.replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, ","))}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-right"
+                  />
+                  <p className="text-xs text-gray-500 mt-1 text-right">معادل {formatPrice(total)} (۱ تومان = ۱۰ ریال)</p>
+                </div>
+                <div>
+                  <label htmlFor="checkout-card" className="block text-sm font-medium text-gray-700 text-right mb-1">شماره کارت</label>
+                  <input
+                    id="checkout-card"
+                    type="text"
+                    inputMode="numeric"
+                    maxLength={19}
+                    placeholder="۱۶ رقم شماره کارت"
+                    value={cardNumber}
+                    onChange={(e) => setCardNumber(e.target.value.replace(/\D/g, "").slice(0, 16))}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-right font-mono"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="checkout-name" className="block text-sm font-medium text-gray-700 text-right mb-1">نام و نام خانوادگی صاحب کارت</label>
+                  <input
+                    id="checkout-name"
+                    type="text"
+                    placeholder="نام و نام خانوادگی"
+                    value={cardholderName}
+                    onChange={(e) => setCardholderName(e.target.value)}
+                    className="w-full rounded-lg border border-gray-200 px-4 py-2.5 text-right"
+                  />
+                </div>
+              </div>
+            </>
+          )}
+          {paymentMethod === "wallet" && (
+            <p className="text-sm text-gray-600 text-right mb-5">مبلغ <span className="font-semibold text-gray-900">{formatPrice(total)}</span> از موجودی کیف پول شما کسر می‌شود.</p>
+          )}
           <button
             type="button"
             disabled={isSubmitting || !onConfirmOrder}
             onClick={async () => {
               if (!onConfirmOrder || isSubmitting) return;
+              setPaymentError(null);
+              if (paymentMethod === "wallet") {
+                setIsSubmitting(true);
+                try {
+                  await onConfirmOrder("wallet");
+                } catch {
+                  setPaymentError("خطا در پرداخت. لطفاً دوباره تلاش کنید.");
+                } finally {
+                  setIsSubmitting(false);
+                }
+                return;
+              }
+              const amount = Number(money?.replace(/,/g, "") || 0);
+              if (amount <= 0) {
+                setPaymentError("مبلغ را وارد کنید.");
+                return;
+              }
+              if (cardNumber.replace(/\D/g, "").length < 16) {
+                setPaymentError("شماره کارت باید ۱۶ رقم باشد.");
+                return;
+              }
+              if (!cardholderName.trim()) {
+                setPaymentError("نام و نام خانوادگی صاحب کارت را وارد کنید.");
+                return;
+              }
               setIsSubmitting(true);
               try {
-                await onConfirmOrder(selectedGateway);
+                await onConfirmOrder("card-to-card", {
+                  amount,
+                  cardNumber,
+                  name: cardholderName.trim(),
+                });
+              } catch {
+                setPaymentError("خطا در ارسال. لطفاً دوباره تلاش کنید.");
               } finally {
                 setIsSubmitting(false);
               }
             }}
             className="w-full bg-[#ff5538] text-white py-3.5 px-6 rounded-xl font-medium text-base hover:opacity-90 transition-opacity shadow-md shadow-[#ff5538]/25 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "در حال ثبت…" : "ثبت سفارش و ادامه"}
+            {isSubmitting ? "در حال پردازش…" : paymentMethod === "wallet" ? "پرداخت از کیف پول" : "انتقال به درگاه پرداخت"}
           </button>
         </div>
       </div>

@@ -1,8 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import StarRating from "../ui/StarRating";
 import type { ShopProduct, UserCommentItem } from "../../lib/shop-api";
+import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import {
   submitProductComment,
   updateProductComment,
@@ -61,6 +64,7 @@ interface ReviewsSectionProps {
 }
 
 const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
+  const pathname = usePathname();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [name, setName] = useState("");
@@ -77,6 +81,23 @@ const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
   const [actionMessage, setActionMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
   const [deletedIds, setDeletedIds] = useState<Set<string>>(new Set());
   const [localEdits, setLocalEdits] = useState<Record<string, { content: string; rating: number }>>({});
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const cookie = (getAuthCookie() ?? "").trim();
+    let hasStoredUser = false;
+    try {
+      const raw = localStorage.getItem("user");
+      if (raw) {
+        const o = JSON.parse(raw);
+        hasStoredUser = !!o && typeof o === "object" && (o.phone ?? o.token ?? o.username ?? o.name);
+      }
+    } catch {
+      // ignore
+    }
+    setIsLoggedIn(cookie !== "" || hasStoredUser);
+  }, []);
 
   const fromProduct: UserCommentItem[] = hasUserComments(product) ? product.userComments! : [];
   const allComments = [...fromProduct, ...justSubmitted];
@@ -348,6 +369,20 @@ const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
         <p className="text-sm sm:text-base text-gray-600 mb-3 sm:mb-4 text-right">
           &quot;{productName}&quot;
         </p>
+        {!isLoggedIn ? (
+          <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 sm:p-5 text-right">
+            <p className="text-sm text-amber-800 mb-3">
+              برای ثبت نظر در فروشگاه باید وارد حساب کاربری شوید یا ثبت‌نام کنید.
+            </p>
+            <Link
+              href={pathname ? `/auth?next=${encodeURIComponent(pathname)}` : "/auth"}
+              className="inline-flex items-center justify-center rounded-lg bg-[#ff5538] text-white px-4 py-2.5 text-sm font-medium hover:opacity-90 transition-opacity"
+            >
+              ورود / ثبت‌نام
+            </Link>
+          </div>
+        ) : (
+          <>
         <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-6 text-right">
           آدرس ایمیل شما منتشر نخواهد شد. فیلدهای الزامی با علامت * مشخص شده‌اند.
         </p>
@@ -436,6 +471,8 @@ const ReviewsSection = React.memo<ReviewsSectionProps>(({ product }) => {
             {submitting ? "در حال ثبت..." : "ثبت"}
           </button>
         </form>
+        </>
+        )}
       </section>
     </div>
   );

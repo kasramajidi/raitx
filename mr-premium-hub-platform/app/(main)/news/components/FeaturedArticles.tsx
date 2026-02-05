@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { shouldUnoptimizeImage } from "@/app/(main)/lib/image-utils";
 
 interface FeaturedArticle {
   id: number;
@@ -32,6 +33,7 @@ export default function FeaturedArticles({ articles }: FeaturedArticlesProps) {
                 fill
                 className="object-cover"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                unoptimized={shouldUnoptimizeImage(article.image)}
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none rounded-xl" />
@@ -63,6 +65,7 @@ export default function FeaturedArticles({ articles }: FeaturedArticlesProps) {
                 fill
                 className="object-cover"
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                unoptimized={shouldUnoptimizeImage(article.image)}
               />
             </div>
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none rounded-xl" />
