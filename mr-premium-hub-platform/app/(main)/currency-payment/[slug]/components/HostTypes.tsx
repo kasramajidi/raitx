@@ -19,7 +19,7 @@ const hostTypes: HostType[] = [
     title: "هاست ابری",
     description: "هاست ابری با قابلیت مقیاس‌پذیری",
     titleEn: "Cloud Hosting",
-    href: "/currency-payment/cloud-host",
+    href: "/shop",
     icon: <MdCloud className="text-white text-2xl sm:text-3xl" />,
   },
   {
@@ -27,7 +27,7 @@ const hostTypes: HostType[] = [
     title: "هاست اختصاصی",
     description: "سرور اختصاصی با منابع کامل",
     titleEn: "Dedicated Hosting",
-    href: "/currency-payment/dedicated-host",
+    href: "/shop",
     icon: <HiServer className="text-white text-2xl sm:text-3xl" />,
   },
   {
@@ -35,7 +35,7 @@ const hostTypes: HostType[] = [
     title: "هاست اشتراکی",
     description: "مناسب برای وب‌سایت‌های کوچک و متوسط",
     titleEn: "Shared Hosting",
-    href: "/currency-payment/shared-host",
+    href: "/shop",
     icon: <MdStorage className="text-white text-2xl sm:text-3xl" />,
   },
   {
@@ -43,7 +43,7 @@ const hostTypes: HostType[] = [
     title: "هاست Hetzner",
     description: "هاست آلمانی Hetzner با کیفیت بالا",
     titleEn: "Hetzner Hosting",
-    href: "/currency-payment/hetzner-host",
+    href: "/shop",
     icon: <MdComputer className="text-white text-2xl sm:text-3xl" />,
   },
   {
@@ -51,7 +51,7 @@ const hostTypes: HostType[] = [
     title: "هاست GoDaddy",
     description: "هاست معتبر GoDaddy با پشتیبانی کامل",
     titleEn: "GoDaddy Hosting",
-    href: "/currency-payment/godaddy-host",
+    href: "/shop",
     icon: <HiGlobe className="text-white text-2xl sm:text-3xl" />,
   },
   {
@@ -59,7 +59,7 @@ const hostTypes: HostType[] = [
     title: "سرور مجازی VPS",
     description: "سرور مجازی با کنترل کامل",
     titleEn: "VPS Hosting",
-    href: "/currency-payment/vps-host",
+    href: "/shop",
     icon: <MdPublic className="text-white text-2xl sm:text-3xl" />,
   },
 ];

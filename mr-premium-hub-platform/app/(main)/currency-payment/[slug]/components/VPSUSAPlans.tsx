@@ -91,7 +91,7 @@ export default function VPSUSAPlans() {
               ))}
             </ul>
             <Link
-              href="/currency-payment/vps-usa"
+              href="/shop"
               className="block w-full bg-[#ff5538] hover:bg-[#e54d32] text-white text-center font-semibold py-3 px-4 rounded-lg transition-colors duration-200"
             >
               {plan.buttonText}

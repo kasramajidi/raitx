@@ -23,7 +23,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی OpenAI",
     subtitle: "شماره مجازی برای ثبت نام در OpenAI",
     titleEn: "OpenAI Virtual Number",
-    href: "/currency-payment/openai-virtual-number",
+    href: "/shop",
     icon: <SiOpenai className="text-white text-3xl sm:text-4xl" />,
     iconColor: "bg-green-600",
   },
@@ -32,7 +32,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی آمریکا",
     subtitle: "شماره مجازی آمریکا برای سرویسهای مختلف",
     titleEn: "USA Virtual Number",
-    href: "/currency-payment/usa-virtual-number",
+    href: "/shop",
     icon: (
       <ReactCountryFlag
         countryCode="US"
@@ -52,7 +52,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی PayPal",
     subtitle: "شماره مجازی برای تایید حساب PayPal",
     titleEn: "PayPal Virtual Number",
-    href: "/currency-payment/paypal-virtual-number",
+    href: "/shop",
     icon: <SiPaypal className="text-white text-3xl sm:text-4xl" />,
     iconColor: "bg-blue-600",
   },
@@ -61,7 +61,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی شبکه های اجتماعی",
     subtitle: "شماره مجازی برای ثبت نام در شبکه های اجتماعی",
     titleEn: "Social Media Virtual Number",
-    href: "/currency-payment/social-media-virtual-number",
+    href: "/shop",
     icon: <MdShare className="text-white text-3xl sm:text-4xl" />,
     iconColor: "bg-purple-600",
   },
@@ -70,7 +70,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی WhatsApp",
     subtitle: "شماره مجازی برای ایجاد حساب WhatsApp",
     titleEn: "WhatsApp Virtual Number",
-    href: "/currency-payment/whatsapp-virtual-number",
+    href: "/shop",
     icon: <FaWhatsapp className="text-white text-3xl sm:text-4xl" />,
     iconColor: "bg-green-500",
   },
@@ -79,7 +79,7 @@ const virtualNumberTypes: VirtualNumberType[] = [
     title: "شماره مجازی Google Voice",
     subtitle: "شماره مجازی Google Voice با قیمت ۹ دلار",
     titleEn: "Google Voice Number",
-    href: "/currency-payment/google-voice-number",
+    href: "/shop",
     icon: (
       <div className="flex items-center justify-center gap-1">
         <SiGoogle className="text-white text-2xl sm:text-3xl" />

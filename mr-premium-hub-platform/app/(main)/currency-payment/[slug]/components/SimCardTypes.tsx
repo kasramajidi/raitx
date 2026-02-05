@@ -19,7 +19,7 @@ const simCardTypes: SimCardType[] = [
     title: "خرید سیم کارتهای اتریش",
     subtitle: "سیم کارتهای اتریش با کیفیت بالا",
     titleEn: "Austria SIM Cards",
-    href: "/currency-payment/austria-sim",
+    href: "/shop",
     flagCode: "AT",
   },
   {
@@ -27,7 +27,7 @@ const simCardTypes: SimCardType[] = [
     title: "سیم کارت EE انگلستان",
     subtitle: "سیم کارت اختصاصی انگلستان",
     titleEn: "EE UK SIM Card",
-    href: "/currency-payment/ee-uk-sim",
+    href: "/shop",
     flagCode: "GB",
   },
   {
@@ -35,7 +35,7 @@ const simCardTypes: SimCardType[] = [
     title: "سیم کارت بین المللی World Sim",
     subtitle: "سیم کارت جهانی با پوشش گسترده",
     titleEn: "World Sim International",
-    href: "/currency-payment/world-sim",
+    href: "/shop",
     icon: (
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-blue-600 flex items-center justify-center">
         <span className="text-white text-2xl sm:text-3xl">🌍</span>
@@ -47,7 +47,7 @@ const simCardTypes: SimCardType[] = [
     title: "سیم کارت فیزیکی ASDA",
     subtitle: "سیم کارت ASDA با قیمت مناسب",
     titleEn: "ASDA Physical SIM",
-    href: "/currency-payment/asda-sim",
+    href: "/shop",
     icon: (
       <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-green-600 flex items-center justify-center">
         <span className="text-white text-lg sm:text-xl font-bold">ASDA</span>
@@ -59,7 +59,7 @@ const simCardTypes: SimCardType[] = [
     title: "سیم کارت فیزیکی گرجستان",
     subtitle: "سیم کارت فیزیکی گرجستان",
     titleEn: "Georgia Physical SIM",
-    href: "/currency-payment/georgia-sim",
+    href: "/shop",
     flagCode: "GE",
   },
   {
@@ -67,7 +67,7 @@ const simCardTypes: SimCardType[] = [
     title: "سیم کارت بین المللی استونی",
     subtitle: "سیم کارت استونی برای اروپا",
     titleEn: "Estonia International SIM",
-    href: "/currency-payment/estonia-sim",
+    href: "/shop",
     flagCode: "EE",
   },
 ];
