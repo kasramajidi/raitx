@@ -42,8 +42,8 @@ export const metadata: Metadata = {
   description:
     "مسترپریمیوم هاب ارائه‌دهنده خدمات پرداخت ارزی، نقد کردن درآمد پی پال، پرداخت هزینه ویزا و سفارت، ثبت نام آزمون‌های بین‌المللی، خرید بلیت هواپیما و هتل",
   icons: {
-    icon: "/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png",
-    apple: "/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png",
+    icon: "/Images/Logo/logo.png",
+    apple: "/Images/Logo/logo.png",
   },
   keywords: [
     "مسترپریمیوم هاب",
@@ -123,7 +123,7 @@ export default function RootLayout({
     url: process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com",
     logo: `${
       process.env.NEXT_PUBLIC_SITE_URL || "https://mrpremiumhub.com"
-    }/Images/Logo/logo stock copy 2.png`,
+    }/Images/Logo/logo.png`,
     description:
       "مسترپریمیوم هاب ارائه‌دهنده خدمات پرداخت ارزی، نقد کردن درآمد پی پال، پرداخت هزینه ویزا و سفارت، ثبت نام آزمون‌های بین‌المللی، خرید بلیت هواپیما و هتل",
     address: {

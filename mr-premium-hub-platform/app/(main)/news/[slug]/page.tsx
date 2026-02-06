@@ -331,7 +331,7 @@ export default async function ArticlePage({ params }: PageProps) {
     publisher: {
       "@type": "Organization",
       name: "مسترپریمیوم هاب",
-      logo: { "@type": "ImageObject", url: `${baseUrl}/Images/Logo/logo stock copy 2.png` },
+      logo: { "@type": "ImageObject", url: `${baseUrl}/Images/Logo/logo.png` },
     },
     mainEntityOfPage: { "@type": "WebPage", "@id": articleUrl },
     url: articleUrl,

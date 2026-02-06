@@ -5,13 +5,13 @@ import Image from "next/image";
 export default function FooterRight() {
   return (
     <div className="flex flex-col items-center space-y-4">
-      <div className="relative w-56 h-24 sm:w-64 sm:h-28 md:w-72 md:h-32 lg:w-80 lg:h-36">
+      <div className="relative w-64 h-28 sm:w-72 sm:h-32 md:w-80 md:h-36 lg:w-96 lg:h-44">
         <Image
-          src="/Images/Logo/acee0043-fe87-4b79-bab2-de8e09a1ebd0 (1).png"
+          src="/Images/Logo/logo.png"
           alt="لوگو شرکت"
           fill
-          className="object-contain"
-          sizes="(max-width: 640px) 224px, (max-width: 768px) 256px, (max-width: 1024px) 288px, 320px"
+          className="object-contain object-center"
+          sizes="(max-width: 640px) 256px, (max-width: 768px) 288px, (max-width: 1024px) 320px, 384px"
         />
       </div>
 
