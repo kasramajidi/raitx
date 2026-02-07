@@ -37,7 +37,7 @@ export default function EmptyCartState() {
               برای ادامه تسویه حساب، ابتدا محصولی به سبد خرید اضافه کنید
             </p>
             <button
-              onClick={() => router.push("/shop")}
+              onClick={() => router.push("/services")}
               className="bg-[#ff5538] text-white px-8 py-3 font-medium hover:opacity-90 transition-opacity text-sm"
             >
               بازگشت به فروشگاه

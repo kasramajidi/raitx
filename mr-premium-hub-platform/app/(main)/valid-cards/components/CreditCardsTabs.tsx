@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   HiSparkles,
   HiCreditCard,
@@ -26,6 +27,9 @@ import {
 import { FaGamepad, FaXbox } from "react-icons/fa";
 import { MdCreditCard, MdCardGiftcard } from "react-icons/md";
 import React from "react";
+import { useCart, type CartItem } from "@/app/(main)/context/CartContext";
+import { createInvoice, getLoginPhoneFromStorage, normalizePhoneForComparison } from "@/app/(main)/my-account/lib/my-account-api";
+import type { ShopProduct } from "@/app/(main)/shop/lib/shop-api";
 
 interface CategoryItem {
   label: string;
@@ -228,6 +232,15 @@ const serviceCategories = [
   { id: "GiftCards", label: "گیفت کارت ها", value: "gift" },
 ];
 
+/** نگاشت slug خدمت (مثلاً playstation) به value تب */
+const serviceSlugToCategory: Record<string, string> = {};
+creditCardCategories.forEach((cat) => {
+  cat.items.forEach((item) => {
+    const slug = item.href.replace(/^\/valid-cards\/?/, "").split("/")[0] || "";
+    if (slug) serviceSlugToCategory[slug] = cat.category;
+  });
+});
+
 interface CardItem {
   id: string;
   label: string;
@@ -237,10 +250,74 @@ interface CardItem {
   href: string;
 }
 
-export default function CreditCardsTabs() {
+function formatPrice(price: number): string {
+  return new Intl.NumberFormat("fa-IR").format(price) + " تومان";
+}
+
+/** محصول API را با نام کارت استاتیک تطبیق می‌دهد (ادمین محصول را با همین نام یا نام مشابه ثبت می‌کند) */
+function findProductForCard(cardLabel: string, products: ShopProduct[]): ShopProduct | undefined {
+  const n = (s: string) => s.trim().replace(/\s+/g, " ");
+  const a = n(cardLabel);
+  if (!a) return undefined;
+  const exact = products.find((p) => n(p.name) === a);
+  if (exact) return exact;
+  return products.find(
+    (p) => n(p.name).includes(a) || a.includes(n(p.name))
+  );
+}
+
+export default function CreditCardsTabs({ initialProducts = [] }: { initialProducts?: ShopProduct[] }) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const { addToCart } = useCart();
   const [selectedCategory, setSelectedCategory] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [submittingId, setSubmittingId] = useState<number | null>(null);
+  const [orderError, setOrderError] = useState<string | null>(null);
   const itemsPerPage = 8;
+
+  useEffect(() => {
+    const serviceSlug = searchParams.get("service");
+    if (serviceSlug) {
+      const category = serviceSlugToCategory[serviceSlug];
+      if (category) setSelectedCategory(category);
+    }
+  }, [searchParams]);
+
+  const handleRegisterOrder = async (product: ShopProduct) => {
+    setOrderError(null);
+    setSubmittingId(product.id);
+    try {
+      const loginPhone = getLoginPhoneFromStorage();
+      if (!loginPhone?.trim()) {
+        router.push("/auth?next=/valid-cards");
+        return;
+      }
+      const userid = normalizePhoneForComparison(loginPhone);
+      if (!userid) {
+        setOrderError("شماره تماس معتبر برای ثبت سفارش یافت نشد.");
+        return;
+      }
+      const ok = await createInvoice([
+        { shopid: product.id, userid, quantity: 1, isPaid: false, paymentStatus: "not payed", price: product.price },
+      ]);
+      if (!ok) {
+        setOrderError("ثبت سفارش در سامانه انجام نشد. لطفاً دوباره تلاش کنید.");
+        return;
+      }
+      const cartItem: CartItem = {
+        product: { ...product },
+        quantity: 1,
+        selectedColor: "",
+        selectedWarranty: "",
+        finalPrice: product.price,
+      };
+      addToCart(cartItem);
+      router.push("/cart");
+    } finally {
+      setSubmittingId(null);
+    }
+  };
 
   const filteredCategories: Category[] =
     selectedCategory === "all"
@@ -283,6 +360,8 @@ export default function CreditCardsTabs() {
     return allCards;
   };
 
+  /** تب «همه خدمات» همیشه کارت‌های استاتیک را نشان می‌دهد؛ قیمت/ثبت سفارش از API با تطبیق نام اعمال می‌شود */
+  const useApiProducts = false;
   const allCards = selectedCategory === "all" ? getAllCards() : [];
   const totalPages = Math.ceil(allCards.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -339,8 +418,58 @@ export default function CreditCardsTabs() {
 
         {selectedCategory === "all" ? (
           <>
+            {orderError && (
+              <div className="mb-4 bg-red-50 border border-red-200 rounded-xl p-4 text-red-700 text-sm">
+                {orderError}
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-              {currentPageCards.map((card) => (
+              {currentPageCards.map((card) => {
+                const matchedProduct = findProductForCard(card.label, initialProducts);
+                if (matchedProduct) {
+                  return (
+                    <Link
+                      key={card.id}
+                      href={card.href}
+                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1 flex flex-col cursor-pointer"
+                    >
+                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
+                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
+                          {card.icon}
+                        </div>
+                      </div>
+                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
+                        {card.label}
+                      </h3>
+                      {card.labelEn && (
+                        <p className="text-[10px] sm:text-xs text-gray-400 mb-2 font-medium">
+                          {card.labelEn}
+                        </p>
+                      )}
+                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 mb-4 flex-1">
+                        {card.description}
+                      </p>
+                      <div className="mt-auto flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100">
+                        <span className="text-base font-bold text-[#ff5538] tabular-nums">
+                          {formatPrice(matchedProduct.price)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            handleRegisterOrder(matchedProduct);
+                          }}
+                          disabled={submittingId === matchedProduct.id}
+                          className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                        >
+                          {submittingId === matchedProduct.id ? "در حال ثبت…" : "ثبت سفارش"}
+                        </button>
+                      </div>
+                    </Link>
+                  );
+                }
+                return (
                 <Link
                   key={card.id}
                   href={card.href}
@@ -363,7 +492,7 @@ export default function CreditCardsTabs() {
                     {card.description}
                   </p>
                 </Link>
-              ))}
+              );})}
             </div>
 
             {totalPages > 1 && (
@@ -420,92 +549,77 @@ export default function CreditCardsTabs() {
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
               {filteredCategories.map((category) => {
+                const renderItemCard = (item: CategoryItem) => {
+                  const matched = findProductForCard(item.label, initialProducts);
+                  if (matched) {
+                    return (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1 flex flex-col cursor-pointer"
+                      >
+                        <div className="mb-4 sm:mb-5 flex items-center justify-center">
+                          <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
+                            {item.icon || category.icon}
+                          </div>
+                        </div>
+                        <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
+                          {item.label}
+                        </h3>
+                        <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 mb-4 flex-1">
+                          {category.description}
+                        </p>
+                        <div className="mt-auto flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100">
+                          <span className="text-base font-bold text-[#ff5538] tabular-nums">
+                            {formatPrice(matched.price)}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              handleRegisterOrder(matched);
+                            }}
+                            disabled={submittingId === matched.id}
+                            className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
+                          >
+                            {submittingId === matched.id ? "در حال ثبت…" : "ثبت سفارش"}
+                          </button>
+                        </div>
+                      </Link>
+                    );
+                  }
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
+                    >
+                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
+                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
+                          {item.icon || category.icon}
+                        </div>
+                      </div>
+                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
+                        {item.label}
+                      </h3>
+                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
+                        {category.description}
+                      </p>
+                    </Link>
+                  );
+                };
                 if (category.category === "gaming") {
-                  return category.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
-                    >
-                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                          {item.icon || category.icon}
-                        </div>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                        {item.label}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
-                        {category.description}
-                      </p>
-                    </Link>
-                  ));
+                  return category.items.map((item) => renderItemCard(item));
                 }
-
                 if (category.id === "visa-card") {
-                  return category.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
-                    >
-                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                          {item.icon || category.icon}
-                        </div>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                        {item.label}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
-                        {category.description}
-                      </p>
-                    </Link>
-                  ));
+                  return category.items.map((item) => renderItemCard(item));
                 }
-
                 if (category.id === "mastercard") {
-                  return category.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
-                    >
-                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                          {item.icon || category.icon}
-                        </div>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                        {item.label}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
-                        {category.description}
-                      </p>
-                    </Link>
-                  ));
+                  return category.items.map((item) => renderItemCard(item));
                 }
-
                 if (category.id === "gift-cards") {
-                  return category.items.map((item) => (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
-                    >
-                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                          {item.icon || category.icon}
-                        </div>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                        {item.label}
-                      </h3>
-                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
-                        {category.description}
-                      </p>
-                    </Link>
-                  ));
+                  return category.items.map((item) => renderItemCard(item));
                 }
 
                 return (

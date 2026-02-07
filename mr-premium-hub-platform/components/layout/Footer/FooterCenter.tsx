@@ -12,7 +12,7 @@ const footerLinks: FooterLink[] = [
   { label: "صفحه اصلی", href: "/" },
   { label: "کارت های اعتباری", href: "/valid-cards" },
   { label: "پرداخت ارزی", href: "/currency-payment" },
-  { label: "فروشگاه", href: "/shop" },
+  { label: "خدمات", href: "/services" },
   { label: "اخبار و مقالات", href: "/news" },
   { label: "سوالات متداول", href: "/faq" },
   { label: "درباره ما", href: "/about" },

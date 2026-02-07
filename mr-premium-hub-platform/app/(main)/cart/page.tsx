@@ -195,7 +195,7 @@ export default function Cart() {
               </h2>
             </div>
             <button
-              onClick={() => router.push("/shop")}
+              onClick={() => router.push("/services")}
               className="bg-[#ff5538] mt-4 text-white px-6 sm:px-8 py-2 rounded-xl cursor-pointer hover:opacity-90 transition-opacity text-sm sm:text-base font-medium"
             >
               بازگشت به فروشگاه

@@ -17,7 +17,7 @@ const travelServices: TravelCard[] = [
     ),
     title: "پرداخت هتل خارجی",
     description: "رزرو و پرداخت هتل با کارت ارزی",
-    href: "/shop",
+    href: "/services",
   },
   {
     icon: (
@@ -25,7 +25,7 @@ const travelServices: TravelCard[] = [
     ),
     title: "خرید بلیت هواپیما",
     description: "خرید بلیت هواپیما با پرداخت ارزی",
-    href: "/shop",
+    href: "/services",
   },
 ];
 

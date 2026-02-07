@@ -7,10 +7,11 @@ import RegisterForm from "@/app/(main)/auth/Components/RegisterForm";
 import MainContainer from "@/app/(main)/auth/Components/ui/MainContainer";
 
 function AuthContent() {
-  const [isLogin, setIsLogin] = useState(true);
-  const [initialPhone, setInitialPhone] = useState("");
   const searchParams = useSearchParams();
   const next = searchParams.get("next") ?? undefined;
+  const modeRegister = searchParams.get("mode") === "register";
+  const [isLogin, setIsLogin] = useState(!modeRegister);
+  const [initialPhone, setInitialPhone] = useState("");
 
   return (
     <main className="min-h-screen bg-white pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">

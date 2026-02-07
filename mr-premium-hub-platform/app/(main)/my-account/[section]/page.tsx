@@ -121,7 +121,7 @@ export default function MyAccountSectionPage() {
         buttonText="مشاهده فروشگاه"
         onButtonClick={() => {
           handleSectionChange("dashboard");
-          router.push("/shop", { scroll: false });
+          router.push("/services", { scroll: false });
         }}
       />
     );
