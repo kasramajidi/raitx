@@ -8,13 +8,13 @@ import {
 
 export const metadata: Metadata = {
   title: "تماس با ما | مستر پریمیوم هاب",
-  description: "تماس با مستر پریمیوم هاب: ۰۲۱-۹۱۳۲۰۷۰۰ | support@tehranpayment.com | تهران، کارگر شمالی، جلال آل احمد، کوچه چهارم، پلاک ۴۰",
+  description: "تماس با مستر پریمیوم هاب: ۰۲۱-۹۱۳۲۰۷۰۰ | support@mrpremiumhub.org | تهران، کارگر شمالی، جلال آل احمد، کوچه چهارم، پلاک ۴۰",
   keywords: [
     "تماس با ما",
     "پشتیبانی",
     "مستر پریمیوم هاب",
     "۰۲۱۹۱۳۲۰۷۰۰",
-    "support@tehranpayment.com",
+    "support@mrpremiumhub.org",
   ],
   alternates: {
     canonical: "/contact",

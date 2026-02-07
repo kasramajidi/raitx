@@ -7,7 +7,7 @@ import type { Product } from "../productsData";
 import FlightTicketContent from "../FlightTicketContent";
 
 const PLACEHOLDER_TEXTS = [
-  "این محصول توسط مستر پریمیوم هاب (Mr Premium Hub) ارائه می‌شود. برای جزئیات بیشتر و خرید با پشتیبانی تماس بگیرید: ۰۲۱-۹۱۳۲۰۷۰۰ یا support@tehranpayment.com",
+  "این محصول توسط مستر پریمیوم هاب (Mr Premium Hub) ارائه می‌شود. برای جزئیات بیشتر و خرید با پشتیبانی تماس بگیرید: ۰۲۱-۹۱۳۲۰۷۰۰ یا support@mrpremiumhub.org",
 ];
 
 function normalizeText(t: string): string {

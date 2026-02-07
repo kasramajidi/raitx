@@ -8,6 +8,7 @@ import ProductForm, { ShopApiPayload } from "./components/ProductForm";
 import { useCart } from "../../context/CartContext";
 
 const API_URL = "https://mrpremiumhub.org/api.ashx?action=shop";
+const EXCHANGE_RATE_API = "https://mrpremiumhub.org/api.ashx?action=change";
 const PAGE_SIZE = 11;
 
 interface Product {
@@ -164,6 +165,13 @@ export default function ProductsPage() {
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
+  const [showBulkPriceModal, setShowBulkPriceModal] = useState(false);
+  const [bulkPriceInput, setBulkPriceInput] = useState("");
+  const [bulkPriceLoading, setBulkPriceLoading] = useState(false);
+  const [bulkPriceError, setBulkPriceError] = useState<string | null>(null);
+  const [bulkPriceProgress, setBulkPriceProgress] = useState<{ current: number; total: number } | null>(null);
+  const [exchangeRate, setExchangeRate] = useState<number>(0);
+
   const handleDelete = async (id: string) => {
     if (!confirm("آیا از حذف این محصول اطمینان دارید؟")) return;
     setDeleteError(null);
@@ -198,6 +206,101 @@ export default function ProductsPage() {
     setShowForm(false);
     setEditingProduct(null);
     fetchProducts();
+  };
+
+  const handleBulkPriceOpen = async () => {
+    setBulkPriceError(null);
+    setBulkPriceInput("");
+    setBulkPriceProgress(null);
+    setShowBulkPriceModal(true);
+    try {
+      const res = await fetch(EXCHANGE_RATE_API);
+      const data = await res.json();
+      if (data?.buy != null) setExchangeRate(Number(data.buy));
+      else setExchangeRate(0);
+    } catch {
+      setExchangeRate(0);
+    }
+  };
+
+  const handleBulkPriceSubmit = async () => {
+    const priceDollar = parseFloat(bulkPriceInput);
+    if (!Number.isFinite(priceDollar) || priceDollar < 0) {
+      setBulkPriceError("قیمت را به‌صورت عدد معتبر (دلار) وارد کنید.");
+      return;
+    }
+    if (exchangeRate <= 0) {
+      setBulkPriceError("نرخ ارز در دسترس نیست. لطفاً چند ثانیه صبر کنید و دوباره امتحان کنید.");
+      return;
+    }
+    if (products.length === 0) {
+      setBulkPriceError("محصولی برای به‌روزرسانی وجود ندارد.");
+      return;
+    }
+    const priceNum = Math.round(priceDollar * exchangeRate);
+    setBulkPriceError(null);
+    setBulkPriceLoading(true);
+    setBulkPriceProgress({ current: 0, total: products.length });
+    let failed = 0;
+    try {
+      for (let i = 0; i < products.length; i++) {
+        setBulkPriceProgress({ current: i + 1, total: products.length });
+        const id = products[i].id;
+        let getRes: Response;
+        try {
+          getRes = await fetch(`${API_URL}&id=${id}`, { method: "GET" });
+        } catch {
+          failed++;
+          continue;
+        }
+        let raw: Record<string, unknown> = {};
+        try {
+          const parsed = await getRes.json();
+          raw = typeof parsed === "object" && parsed != null ? (parsed as Record<string, unknown>) : {};
+        } catch {
+          failed++;
+          continue;
+        }
+        if (!getRes.ok) {
+          failed++;
+          continue;
+        }
+        const payload: ShopApiPayload = { id: raw.id ?? id, price: priceNum };
+        if (raw.title != null && raw.title !== "") payload.title = String(raw.title);
+        if (raw.groups != null && raw.groups !== "") payload.groups = String(raw.groups);
+        if (raw.img != null && raw.img !== "") payload.img = String(raw.img);
+        if (raw.video != null && raw.video !== "") payload.video = String(raw.video);
+        if (typeof raw.value === "number" && raw.value >= 0) payload.value = raw.value;
+        if (raw.text != null && raw.text !== "") payload.text = String(raw.text);
+        if (raw.search != null && raw.search !== "") payload.search = String(raw.search);
+        if (raw.RelatedProducts != null && raw.RelatedProducts !== "") payload.RelatedProducts = String(raw.RelatedProducts);
+        const patchRes = await fetch(`${API_URL}&id=${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        let patchData: Record<string, unknown> = {};
+        try {
+          patchData = (await patchRes.json()) as Record<string, unknown>;
+        } catch {
+          patchData = {};
+        }
+        if (!patchRes.ok || patchData.statu === 0) failed++;
+      }
+      await fetchProducts();
+      setShowBulkPriceModal(false);
+      setBulkPriceInput("");
+      setBulkPriceProgress(null);
+      if (failed > 0) {
+        setBulkPriceError(`قیمت ${products.length - failed} محصول به‌روز شد. ${failed} مورد خطا داشت.`);
+        setShowBulkPriceModal(true);
+      }
+    } catch (err) {
+      setBulkPriceError(err instanceof Error ? err.message : "خطا در به‌روزرسانی قیمت‌ها");
+    } finally {
+      setBulkPriceLoading(false);
+      setBulkPriceProgress(null);
+    }
   };
 
   const { items: cartItems } = useCart();
@@ -270,15 +373,27 @@ export default function ProductsPage() {
               افزودن محصول جدید، ویرایش و حذف محصولات موجود
             </p>
           </div>
-          <button
-            onClick={handleAdd}
-            className="inline-flex items-center gap-2 bg-[#ff5538] text-white px-6 py-2.5 text-sm font-medium rounded-xl hover:bg-[#ff6b52] hover:shadow-lg hover:shadow-[#ff5538]/25 transition-all duration-200 shrink-0"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            افزودن محصول جدید
-          </button>
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              onClick={handleBulkPriceOpen}
+              disabled={products.length === 0}
+              className="inline-flex items-center gap-2 bg-amber-500 text-white px-5 py-2.5 text-sm font-medium rounded-xl hover:bg-amber-600 hover:shadow-lg hover:shadow-amber-500/25 transition-all duration-200 shrink-0 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              یکسان‌سازی قیمت همه
+            </button>
+            <button
+              onClick={handleAdd}
+              className="inline-flex items-center gap-2 bg-[#ff5538] text-white px-6 py-2.5 text-sm font-medium rounded-xl hover:bg-[#ff6b52] hover:shadow-lg hover:shadow-[#ff5538]/25 transition-all duration-200 shrink-0"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              افزودن محصول جدید
+            </button>
+          </div>
         </div>
 
         <AdminStatsCards items={productStats} />
@@ -436,6 +551,74 @@ export default function ProductsPage() {
             }}
             onSave={handleSave}
           />
+        )}
+
+        {showBulkPriceModal && (
+          <div className="fixed inset-0 bg-black/20 backdrop-blur-md flex items-center justify-center z-50 p-4">
+            <div className="bg-white w-full max-w-md rounded-2xl shadow-xl p-6">
+              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                یکسان‌سازی قیمت همه محصولات
+              </h3>
+              <p className="text-sm text-gray-500 mb-4">
+                قیمت تمام {products.length} محصول بر اساس مبلغ دلاری واردشده و نرخ ارز API به تومان تبدیل و ذخیره می‌شود.
+              </p>
+              {exchangeRate > 0 && (
+                <p className="text-xs text-gray-500 mb-2">نرخ ارز فعلی: {new Intl.NumberFormat("fa-IR").format(exchangeRate)} تومان</p>
+              )}
+              <input
+                type="number"
+                min={0}
+                step="0.01"
+                value={bulkPriceInput}
+                onChange={(e) => {
+                  setBulkPriceInput(e.target.value);
+                  setBulkPriceError(null);
+                }}
+                placeholder="قیمت جدید (دلار)"
+                disabled={bulkPriceLoading}
+                className="w-full h-12 bg-gray-50 border border-gray-200 rounded-xl px-4 text-right text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-amber-500/30 focus:border-amber-500 transition-all text-sm mb-2"
+              />
+              {exchangeRate > 0 && bulkPriceInput.trim() !== "" && !Number.isNaN(parseFloat(bulkPriceInput)) && parseFloat(bulkPriceInput) >= 0 && (
+                <p className="text-xs text-amber-600 mb-4">
+                  معادل: {new Intl.NumberFormat("fa-IR").format(Math.round(parseFloat(bulkPriceInput) * exchangeRate))} تومان (در API ذخیره می‌شود)
+                </p>
+              )}
+              {bulkPriceProgress && (
+                <p className="text-sm text-amber-600 mb-4">
+                  در حال به‌روزرسانی {bulkPriceProgress.current} از {bulkPriceProgress.total}...
+                </p>
+              )}
+              {bulkPriceError && (
+                <div className="p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm mb-4">
+                  {bulkPriceError}
+                </div>
+              )}
+              <div className="flex items-center justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (!bulkPriceLoading) {
+                      setShowBulkPriceModal(false);
+                      setBulkPriceError(null);
+                      setBulkPriceProgress(null);
+                    }
+                  }}
+                  disabled={bulkPriceLoading}
+                  className="px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-100 rounded-xl disabled:opacity-50"
+                >
+                  انصراف
+                </button>
+                <button
+                  type="button"
+                  onClick={handleBulkPriceSubmit}
+                  disabled={bulkPriceLoading}
+                  className="px-5 py-2.5 text-sm font-medium bg-amber-500 text-white rounded-xl hover:bg-amber-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {bulkPriceLoading ? "در حال اعمال..." : "اعمال قیمت برای همه"}
+                </button>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </AdminLayout>

@@ -45,7 +45,7 @@ export default function SettingsPage() {
   const [settings, setSettings] = useState({
     siteName: "مستر پریمیوم هاب",
     siteDescription: "خدمات ارزی و پرداخت ارزی",
-    email: "support@tehranpayment.com",
+    email: "support@mrpremiumhub.org",
   });
   const [saved, setSaved] = useState(false);
 

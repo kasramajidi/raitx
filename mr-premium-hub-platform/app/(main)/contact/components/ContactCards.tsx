@@ -23,7 +23,7 @@ export default function ContactCards() {
           <h2 className="text-[11px] sm:text-[10px] md:text-xs font-bold text-gray-800 leading-tight">آدرس ایمیل</h2>
         </div>
         <div className="space-y-0.5 sm:space-y-0.5 text-gray-600 text-[10px] sm:text-[9px] md:text-[10px] text-center mt-1">
-          <a href="mailto:support@tehranpayment.com" className="break-all text-[9px] sm:text-[9px] hover:text-[#ff5538]">support@tehranpayment.com</a>
+          <a href="mailto:support@mrpremiumhub.org" className="break-all text-[9px] sm:text-[9px] hover:text-[#ff5538]">support@mrpremiumhub.org</a>
         </div>
       </div>
 

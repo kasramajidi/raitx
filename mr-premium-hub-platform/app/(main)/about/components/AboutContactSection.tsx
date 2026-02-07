@@ -1,7 +1,7 @@
 import { HiPhone, HiMail, HiLocationMarker } from "react-icons/hi";
 
 const PHONE = "02191320700";
-const EMAIL = "support@tehranpayment.com";
+const EMAIL = "support@mrpremiumhub.org";
 const ADDRESS =
   "تهران، خیابان کارگر شمالی، نبش بزرگراه جلال آل احمد، کوچه چهارم، پلاک ۴۰، طبقه سوم";
 

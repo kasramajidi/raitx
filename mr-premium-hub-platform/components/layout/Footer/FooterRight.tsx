@@ -21,7 +21,7 @@ export default function FooterRight() {
           مستر پریمیوم هاب (Mr Premium Hub) — خدمات ارزی و پرداخت ارزی
         </p>
         <p className="text-xs md:text-sm text-gray-400 leading-relaxed">
-          تلفن: <a href="tel:02191320700" className="hover:text-white">۰۲۱-۹۱۳۲۰۷۰۰</a> | ایمیل: <a href="mailto:support@tehranpayment.com" className="hover:text-white">support@tehranpayment.com</a>
+          تلفن: <a href="tel:02191320700" className="hover:text-white">۰۲۱-۹۱۳۲۰۷۰۰</a> | ایمیل: <a href="mailto:support@mrpremiumhub.org" className="hover:text-white">support@mrpremiumhub.org</a>
         </p>
         <p className="text-xs md:text-sm text-gray-400 leading-relaxed">
           آدرس: تهران، خیابان کارگر شمالی، نبش بزرگراه جلال آل احمد، کوچه چهارم، پلاک ۴۰، طبقه سوم
