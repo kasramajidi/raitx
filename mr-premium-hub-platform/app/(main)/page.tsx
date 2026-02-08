@@ -3,7 +3,6 @@ import {
   Hero,
   ServicesSection,
   PaymentMethods,
-  TravelPayments,
   ExamRegistration,
   VisaPayments,
 } from "@/app/(main)/components/home";
@@ -92,7 +91,6 @@ export default function Home() {
         <Hero />
         <ServicesSection />
         <PaymentMethods />
-        <TravelPayments />
         <ExamRegistration />
         <VisaPayments />
       </main>

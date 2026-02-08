@@ -132,7 +132,7 @@ export default function DashboardCards() {
             پرداخت ارزی
           </Link>
           <Link
-            href="/services"
+            href="/"
             className="inline-flex items-center gap-2 rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-[#ff5538]/30 hover:text-[#ff5538] hover:shadow-md hover:shadow-[#ff5538]/5"
           >
             <ShoppingBag size={16} strokeWidth={2} />

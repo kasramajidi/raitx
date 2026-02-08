@@ -64,7 +64,7 @@ export default function MyAccountPage() {
         buttonText="مشاهده فروشگاه"
         onButtonClick={() => {
           handleSectionChange("dashboard");
-          router.push("/services", { scroll: false });
+          router.push("/", { scroll: false });
         }}
       />
     );

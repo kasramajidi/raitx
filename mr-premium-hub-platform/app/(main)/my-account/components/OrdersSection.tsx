@@ -59,7 +59,7 @@ export default function OrdersSection() {
       <AccountEmptyState
         message="هنوز سفارشی ثبت نکرده‌اید. از فروشگاه یا خدمات پرداخت ارزی می‌توانید خرید کنید."
         buttonText="مرور فروشگاه"
-        onButtonClick={() => router.push("/services")}
+        onButtonClick={() => router.push("/")}
       />
     );
   }
