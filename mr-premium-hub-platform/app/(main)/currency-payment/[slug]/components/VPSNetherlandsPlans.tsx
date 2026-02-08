@@ -101,7 +101,19 @@ export default function VPSNetherlandsPlans({
               <button
                 key={plan.id}
                 type="button"
-                onClick={() => setSelectedProduct(isSelected ? null : matched)}
+                onClick={() => {
+                  setSelectedProduct(isSelected ? null : matched);
+                  if (typeof window !== "undefined" && window.innerWidth < 768 && matched) {
+                    setTimeout(
+                      () =>
+                        document.getElementById("order-box")?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                      150
+                    );
+                  }
+                }}
                 className={`${plan.bgClass} rounded-xl p-6 shadow-sm border-2 w-full text-right transition-all duration-200 hover:shadow-md ${
                   isSelected
                     ? "border-[#ff5538] ring-2 ring-[#ff5538]/30"

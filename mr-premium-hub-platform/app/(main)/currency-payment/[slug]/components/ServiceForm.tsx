@@ -154,7 +154,7 @@ export default function ServiceForm({
 
   if (useOrderFlow) {
     return (
-      <div className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6">
+      <div id="order-box" className="bg-white rounded-lg sm:rounded-xl shadow-sm p-4 sm:p-5 md:p-6">
         <h2 className="text-sm sm:text-base md:text-lg font-bold text-gray-900 mb-4 sm:mb-6 text-right">
           {service.label}
         </h2>
@@ -208,7 +208,11 @@ export default function ServiceForm({
         ) : (
           <div className="space-y-3 text-right">
             <p className="text-xs sm:text-sm text-gray-600">
-              {selection ? "یک سیم کارت را از لیست زیر انتخاب کنید." : "اگر ثبت‌نام نکرده‌اید به صفحه ثبت‌نام و اگر وارد شده‌اید به سبد خرید منتقل می‌شوید."}
+              {selection
+                ? service.id === "international-sim"
+                  ? "یک سیم کارت را از لیست زیر انتخاب کنید."
+                  : "محصول مورد نظر را از لیست زیر انتخاب کنید."
+                : "اگر ثبت‌نام نکرده‌اید به صفحه ثبت‌نام و اگر وارد شده‌اید به سبد خرید منتقل می‌شوید."}
             </p>
             <button
               type="button"

@@ -130,7 +130,19 @@ export default function VirtualNumberTypes({
               <button
                 key={virtualNumber.id}
                 type="button"
-                onClick={() => setSelectedProduct(isSelected ? null : matched)}
+                onClick={() => {
+                  setSelectedProduct(isSelected ? null : matched);
+                  if (typeof window !== "undefined" && window.innerWidth < 768 && matched) {
+                    setTimeout(
+                      () =>
+                        document.getElementById("order-box")?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                      150
+                    );
+                  }
+                }}
                 className={`bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 md:p-6 shadow-sm hover:shadow-lg transition-all duration-300 border-2 text-right flex flex-col w-full group ${
                   isSelected
                     ? "border-[#ff5538] ring-2 ring-[#ff5538]/30"

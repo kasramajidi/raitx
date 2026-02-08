@@ -134,7 +134,19 @@ export default function LanguageExamTypes({
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setSelectedProduct(isSelected ? null : matched)}
+                onClick={() => {
+                  setSelectedProduct(isSelected ? null : matched);
+                  if (typeof window !== "undefined" && window.innerWidth < 768 && matched) {
+                    setTimeout(
+                      () =>
+                        document.getElementById("order-box")?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                      150
+                    );
+                  }
+                }}
                 title={`ثبت نام ${item.title}`}
                 aria-label={`ثبت نام ${item.title} - ${item.description}`}
                 className={`bg-white rounded-lg p-6 shadow-sm border-2 flex flex-col w-full text-right transition-all duration-200 group hover:shadow-md ${

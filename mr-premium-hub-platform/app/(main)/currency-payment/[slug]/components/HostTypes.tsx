@@ -106,7 +106,19 @@ export default function HostTypes({
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setSelectedProduct(isSelected ? null : matched)}
+                onClick={() => {
+                  setSelectedProduct(isSelected ? null : matched);
+                  if (typeof window !== "undefined" && window.innerWidth < 768 && matched) {
+                    setTimeout(
+                      () =>
+                        document.getElementById("order-box")?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                      150
+                    );
+                  }
+                }}
                 className={`bg-white rounded-lg sm:rounded-xl p-4 sm:p-5 shadow-sm border-2 transition-all duration-200 w-full text-right group hover:shadow-md ${
                   isSelected
                     ? "border-[#ff5538] ring-2 ring-[#ff5538]/30"

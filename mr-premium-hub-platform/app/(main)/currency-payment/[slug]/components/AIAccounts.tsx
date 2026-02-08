@@ -142,7 +142,19 @@ export default function AIAccounts({
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setSelectedProduct(isSelected ? null : matched)}
+                onClick={() => {
+                  setSelectedProduct?.(isSelected ? null : matched);
+                  if (typeof window !== "undefined" && window.innerWidth < 768 && matched) {
+                    setTimeout(
+                      () =>
+                        document.getElementById("order-box")?.scrollIntoView({
+                          behavior: "smooth",
+                          block: "start",
+                        }),
+                      150
+                    );
+                  }
+                }}
                 title={`خرید اکانت ${item.title}`}
                 aria-label={`خرید اکانت ${item.title} - ${item.description}`}
                 className={`bg-white rounded-xl sm:rounded-2xl p-5 sm:p-6 shadow-sm border-2 flex flex-col h-full w-full text-right transition-all duration-300 group hover:shadow-lg hover:-translate-y-0.5 ${
