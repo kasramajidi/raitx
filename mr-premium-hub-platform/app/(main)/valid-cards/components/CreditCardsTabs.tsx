@@ -276,6 +276,40 @@ function findProductForCard(cardLabel: string, products: ShopProduct[]): ShopPro
   );
 }
 
+/** بخش اول کارت: آیکون، عنوان، توضیح */
+function GiftCardContent({
+  icon,
+  label,
+  labelEn,
+  description,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  labelEn?: string;
+  description: string;
+}) {
+  return (
+    <>
+      <div className="mb-4 sm:mb-5 flex items-center justify-center">
+        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
+          {icon}
+        </div>
+      </div>
+      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
+        {label}
+      </h3>
+      {labelEn && (
+        <p className="text-[10px] sm:text-xs text-gray-400 mb-2 font-medium">
+          {labelEn}
+        </p>
+      )}
+      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 mb-4 flex-1">
+        {description}
+      </p>
+    </>
+  );
+}
+
 export default function CreditCardsTabs({ initialProducts = [] }: { initialProducts?: ShopProduct[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -435,96 +469,20 @@ export default function CreditCardsTabs({ initialProducts = [] }: { initialProdu
               </div>
             )}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5 md:gap-6">
-              {currentPageCards.map((card) => {
-                const matchedProduct = findProductForCard(card.label, initialProducts);
-                if (matchedProduct) {
-                  return (
-                    <Link
-                      key={card.id}
-                      href={card.href}
-                      className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1 flex flex-col cursor-pointer"
-                    >
-                      <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                        <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                          {card.icon}
-                        </div>
-                      </div>
-                      <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                        {card.label}
-                      </h3>
-                      {card.labelEn && (
-                        <p className="text-[10px] sm:text-xs text-gray-400 mb-2 font-medium">
-                          {card.labelEn}
-                        </p>
-                      )}
-                      <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 mb-4 flex-1">
-                        {card.description}
-                      </p>
-                      <div className="mt-auto flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100">
-                        {isLoggedIn ? (
-                          <>
-                            <span className="text-base font-bold text-[#ff5538] tabular-nums">
-                              {formatPrice(matchedProduct.price)}
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleRegisterOrder(matchedProduct);
-                              }}
-                              disabled={submittingId === matchedProduct.id}
-                              className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-                            >
-                              {submittingId === matchedProduct.id ? "در حال ثبت…" : "ثبت سفارش"}
-                            </button>
-                          </>
-                        ) : (
-                          <>
-                            <span className="text-xs text-gray-600 flex-1 text-center">
-                              برای مشاهده قیمت و ثبت سفارش وارد حساب کاربری شوید.
-                            </span>
-                            <button
-                              type="button"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                router.push("/auth?next=/valid-cards");
-                              }}
-                              className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors text-center"
-                            >
-                              ورود / ثبت‌نام
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </Link>
-                  );
-                }
-                return (
+              {currentPageCards.map((card) => (
                 <Link
                   key={card.id}
                   href={card.href}
                   className="group bg-white rounded-xl p-5 sm:p-6 shadow-sm hover:shadow-lg transition-all duration-300 cursor-pointer text-center border border-gray-100 hover:border-[#ff5538]/30 hover:-translate-y-1"
                 >
-                  <div className="mb-4 sm:mb-5 flex items-center justify-center">
-                    <div className="p-3 sm:p-4 rounded-xl bg-gray-50 group-hover:bg-[#ff5538]/5 transition-all duration-300 group-hover:scale-110">
-                      {card.icon}
-                    </div>
-                  </div>
-                  <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1.5 sm:mb-2 group-hover:text-[#ff5538] transition-colors">
-                    {card.label}
-                  </h3>
-                  {card.labelEn && (
-                    <p className="text-[10px] sm:text-xs text-gray-400 mb-3 font-medium">
-                      {card.labelEn}
-                    </p>
-                  )}
-                  <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6">
-                    {card.description}
-                  </p>
+                  <GiftCardContent
+                    icon={card.icon}
+                    label={card.label}
+                    labelEn={card.labelEn}
+                    description={card.description}
+                  />
                 </Link>
-              );})}
+              ))}
             </div>
 
             {totalPages > 1 && (
@@ -601,44 +559,6 @@ export default function CreditCardsTabs({ initialProducts = [] }: { initialProdu
                         <p className="text-[10px] sm:text-xs text-gray-600 leading-5 sm:leading-6 mb-4 flex-1">
                           {category.description}
                         </p>
-                        <div className="mt-auto flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-gray-100">
-                          {isLoggedIn ? (
-                            <>
-                              <span className="text-base font-bold text-[#ff5538] tabular-nums">
-                                {formatPrice(matched.price)}
-                              </span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  handleRegisterOrder(matched);
-                                }}
-                                disabled={submittingId === matched.id}
-                                className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors disabled:opacity-70 disabled:cursor-not-allowed cursor-pointer"
-                              >
-                                {submittingId === matched.id ? "در حال ثبت…" : "ثبت سفارش"}
-                              </button>
-                            </>
-                          ) : (
-                            <>
-                              <span className="text-xs text-gray-600 flex-1 text-center">
-                                برای مشاهده قیمت و ثبت سفارش وارد حساب کاربری شوید.
-                              </span>
-                              <button
-                                type="button"
-                                onClick={(e) => {
-                                  e.preventDefault();
-                                  e.stopPropagation();
-                                  router.push("/auth?next=/valid-cards");
-                                }}
-                                className="w-full sm:w-auto bg-[#ff5538] text-white px-4 py-2.5 rounded-xl text-sm font-medium hover:bg-[#e54d32] transition-colors text-center"
-                              >
-                                ورود / ثبت‌نام
-                              </button>
-                            </>
-                          )}
-                        </div>
                       </Link>
                     );
                   }
