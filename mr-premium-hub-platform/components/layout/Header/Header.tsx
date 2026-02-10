@@ -18,8 +18,8 @@ export default function Header({
   return (
     <header className="z-50 bg-white border-b-2 border-[#ff5538]/20 shadow-sm">
       <div className="w-full px-3 sm:px-4 md:px-5 lg:px-6 xl:px-8">
-        <div className="flex items-center justify-between h-14 min-[500px]:h-18 sm:h-20 md:h-24 lg:h-28 xl:h-32 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4 lg:gap-4">
-          <div className="flex items-center gap-2 order-1 shrink-0 max-[500px]:flex">
+        <div className="flex items-center justify-between max-sm:h-18 min-[500px]:max-sm:h-20 sm:h-20 md:h-24 lg:h-28 xl:h-32 max-w-7xl mx-auto gap-2 sm:gap-3 md:gap-4 lg:gap-4 py-0">
+          <div className="flex items-center justify-center order-1 shrink-0 max-[500px]:flex h-full min-h-0 self-center">
             <MobileMenu cartCount={cartCount} isAuthenticated={isAuthenticated} />
           </div>
 
@@ -40,7 +40,7 @@ export default function Header({
             <NavLinks />
           </div>
 
-          <div className="shrink-0 order-3">
+          <div className="shrink-0 order-3 flex items-center h-full min-h-0 self-center">
             <Logo />
           </div>
         </div>

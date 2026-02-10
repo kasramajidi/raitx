@@ -33,7 +33,9 @@ export default function ConditionalSiteLayout({
   return (
     <>
       <Header isAuthenticated={isAuthenticated} />
-      {children}
+      <main className="pt-4 sm:pt-5 md:pt-6">
+        {children}
+      </main>
       <Footer />
       <ChatWidgetWrapper adminAvatars={[]} />
     </>

@@ -57,14 +57,14 @@ export default function MobileMenu({
     <>
       <button
         onClick={toggleMenu}
-        className="max-[500px]:block hidden relative z-50 p-2 rounded-lg text-gray-700 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+        className="max-[500px]:flex hidden items-center justify-center relative z-50 w-12 h-12 rounded-lg text-gray-800 hover:text-gray-900 hover:bg-gray-100 transition-colors duration-200 cursor-pointer shrink-0"
         aria-label="منو"
         aria-expanded={isOpen}
       >
         {isOpen ? (
-          <HiX className="text-2xl" />
+          <HiX className="text-[1.75rem] w-8 h-8" />
         ) : (
-          <HiMenu className="text-2xl" />
+          <HiMenu className="text-[1.75rem] w-8 h-8" />
         )}
       </button>
 
