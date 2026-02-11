@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const [orderDetails, setOrderDetails] = useState<Record<string, StoredOrderDetailItem> | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState<string | null>(null);
+  const DISABLE_PAYMENT_GATEWAY = false;
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -61,7 +62,7 @@ export default function CheckoutPage() {
         setSubmitError("شماره تماس معتبر برای ثبت فاکتور نیست.");
         return;
       }
-      if (paymentGateway === "wallet") {
+      if (!DISABLE_PAYMENT_GATEWAY && paymentGateway === "wallet") {
         const balanceCheck = await validateWalletBalance(total);
         if (!balanceCheck.ok) {
           setSubmitError(balanceCheck.message ?? "موجودی کیف پول کافی نیست.");
@@ -117,6 +118,11 @@ export default function CheckoutPage() {
         setSubmitError(data.error || "خطا در ثبت سفارش.");
         return;
       }
+      if (DISABLE_PAYMENT_GATEWAY) {
+        clearCart();
+        router.push("/my-account/orders");
+        return;
+      }
       if (paymentDetails) {
         try {
           const phone = (document.getElementById("billing-phone") as HTMLInputElement | null)?.value?.trim() || getLoginPhoneFromStorage() || "";
@@ -147,6 +153,17 @@ export default function CheckoutPage() {
         } catch {
           // نادیده
         }
+        if (orderId) {
+          try {
+            await fetch(`/api/order?id=${encodeURIComponent(orderId)}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ isPaid: true, status: "پرداخت شده" }),
+            });
+          } catch {
+            // نادیده
+          }
+        }
         clearCart();
         const q = new URLSearchParams();
         q.set("wallet", "1");
@@ -158,6 +175,19 @@ export default function CheckoutPage() {
       }
       setSubmitSuccess("پرداخت با موفقیت انجام شد.");
       clearCart();
+      if (orderId) {
+        (async () => {
+          try {
+            await fetch(`/api/order?id=${encodeURIComponent(orderId)}`, {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ isPaid: true, status: "پرداخت شده" }),
+            });
+          } catch {
+            // نادیده
+          }
+        })();
+      }
       (async () => {
         try {
           const list = await fetchInvoicesForUser();

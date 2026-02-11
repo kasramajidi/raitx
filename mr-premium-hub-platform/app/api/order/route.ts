@@ -37,6 +37,8 @@ export interface StoredOrder extends CreateOrderPayload {
   createdAt: string;
   /** وضعیت سفارش برای پنل ادمین */
   status?: string;
+  /** true بعد از پرداخت موفق از درگاه یا کیف پول */
+  isPaid?: boolean;
 }
 
 async function readOrders(): Promise<StoredOrder[]> {
@@ -91,6 +93,7 @@ export async function POST(request: Request) {
       id: generateOrderId(),
       createdAt: new Date().toISOString(),
       status: "در حال پردازش",
+      isPaid: false,
       contact: {
         name: String(contact.name).trim(),
         phone: String(contact.phone).trim(),
@@ -147,15 +150,15 @@ export async function GET() {
   }
 }
 
-/** به‌روزرسانی وضعیت یک سفارش (ادمین) */
+/** به‌روزرسانی وضعیت یک سفارش (ادمین یا بعد از پرداخت موفق درگاه/کیف‌پول) */
 export async function PATCH(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const id = searchParams.get("id");
-    const body = (await request.json()) as { status?: string };
-    if (!id?.trim() || !body.status?.trim()) {
+    const body = (await request.json()) as { status?: string; isPaid?: boolean };
+    if (!id?.trim()) {
       return NextResponse.json(
-        { error: "شناسه سفارش و وضعیت الزامی است" },
+        { error: "شناسه سفارش (id) الزامی است" },
         { status: 400 }
       );
     }
@@ -164,7 +167,13 @@ export async function PATCH(request: Request) {
     if (index < 0) {
       return NextResponse.json({ error: "سفارش یافت نشد" }, { status: 404 });
     }
-    orders[index] = { ...orders[index], status: String(body.status).trim() };
+    const updated = { ...orders[index] };
+    if (body.status != null && String(body.status).trim()) updated.status = String(body.status).trim();
+    if (body.isPaid === true) {
+      updated.isPaid = true;
+      if (!updated.status || updated.status === "در حال پردازش") updated.status = "پرداخت شده";
+    }
+    orders[index] = updated;
     await writeOrders(orders);
     return NextResponse.json({ ok: true, order: orders[index] });
   } catch (e) {

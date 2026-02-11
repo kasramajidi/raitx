@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import AccountEmptyState from "./AccountEmptyState";
-import { fetchInvoicesForUser, type InvoiceItem } from "../lib/my-account-api";
+import { fetchInvoicesForUser, getLoginPhoneFromStorage, normalizePhoneForComparison, type InvoiceItem } from "../lib/my-account-api";
 
 function shopTitle(item: InvoiceItem): string {
   const t = (item.shop as { title?: string } | undefined)?.title;
@@ -18,6 +18,10 @@ function shopPrice(item: InvoiceItem): number | undefined {
   return typeof sp === "number" ? sp : undefined;
 }
 
+function isPaidItem(item: InvoiceItem): boolean {
+  return item.isPaid === true || String(item.paymentStatus || "").trim() === "پرداخت شده";
+}
+
 const ITEMS_PER_PAGE = 10;
 
 export default function OrdersSection() {
@@ -29,6 +33,42 @@ export default function OrdersSection() {
   const load = async () => {
     setLoading(true);
     try {
+      // اول: سفارش‌های همین سایت (data/orders.json) تا وضعیت پرداخت (isPaid) درست نمایش داده شود
+      const res = await fetch("/api/order", { cache: "no-store" });
+      const data = await res.json().catch(() => null);
+      let orders: any[] = Array.isArray(data?.orders) ? data.orders : [];
+
+      const loginPhone = getLoginPhoneFromStorage();
+      if (loginPhone?.trim()) {
+        const normalized = normalizePhoneForComparison(loginPhone);
+        const orderPhone = (o: any) => (o.contact?.phone && normalizePhoneForComparison(String(o.contact.phone).trim())) || "";
+        orders = orders.filter((o) => orderPhone(o) === normalized);
+      }
+
+      if (orders.length > 0) {
+        const mapped: InvoiceItem[] = orders.flatMap((order) => {
+          const items = Array.isArray(order.items) ? order.items : [];
+          if (!items.length) return [];
+          const first = items[0];
+          const paid = order.isPaid === true || String(order.status || "").trim() === "پرداخت شده";
+          return [
+            {
+              id: order.id,
+              shopid: first.productId,
+              quantity: first.quantity,
+              isPaid: paid,
+              paymentStatus: paid ? "پرداخت شده" : (order.status ?? "در حال پردازش"),
+              price: first.finalPrice,
+              shop: { id: first.productId, title: first.productName, price: first.finalPrice },
+              user: { phone: order.contact?.phone },
+            },
+          ];
+        });
+        setInvoices(mapped);
+        return;
+      }
+
+      // اگر سفارش محلی نداشت، از بک‌اند فاکتور (mrpremiumhub) بگیر
       const list = await fetchInvoicesForUser();
       setInvoices(list);
     } finally {
@@ -95,13 +135,13 @@ export default function OrdersSection() {
                   <td className="px-4 py-3 text-gray-700">{item.quantity ?? "—"}</td>
                   <td className="px-4 py-3 text-gray-700">{formatPrice(shopPrice(item))}</td>
                   <td className="px-4 py-3">
-                    <span className={item.paymentStatus === "not payed" || !item.isPaid ? "text-amber-600" : "text-emerald-600"}>
-                      {item.paymentStatus ?? "—"}
+                    <span className={isPaidItem(item) ? "text-emerald-600 font-medium" : "text-amber-600"}>
+                      {isPaidItem(item) ? "پرداخت شده" : (item.paymentStatus ?? "در حال پردازش")}
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${item.isPaid ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
-                      {item.isPaid ? "پرداخت شده" : "پرداخت نشده"}
+                    <span className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${isPaidItem(item) ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-800"}`}>
+                      {isPaidItem(item) ? "پرداخت شده" : "پرداخت نشده"}
                     </span>
                   </td>
                 </tr>

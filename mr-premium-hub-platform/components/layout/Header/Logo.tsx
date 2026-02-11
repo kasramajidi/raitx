@@ -24,7 +24,7 @@ export default function Logo({
           height={200}
           className="h-full w-auto object-contain object-center"
           sizes="(max-width: 640px) 320px, (max-width: 768px) 300px, (max-width: 1024px) 360px, 440px"
-          quality={95}
+          quality={92}
           priority
         />
       </div>

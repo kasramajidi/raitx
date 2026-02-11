@@ -191,7 +191,9 @@ export default function OrderSummary({
           )}
           {paymentMethod === "card" && (
             <>
-              <p className="text-sm text-gray-600 text-right mb-4">مبلغ و اطلاعات کارت را وارد کنید تا به درگاه پرداخت منتقل شوید.</p>
+              <p className="text-sm text-gray-600 text-right mb-4">
+                مبلغ و اطلاعات کارت را وارد کنید تا درخواست شما ثبت و برای کارشناسان ارسال شود.
+              </p>
               <div className="space-y-4 mb-5">
                 <div>
                   <label htmlFor="checkout-amount" className="block text-sm font-medium text-gray-700 text-right mb-1">مبلغ (ریال)</label>
@@ -281,7 +283,11 @@ export default function OrderSummary({
             }}
             className="w-full bg-[#ff5538] text-white py-3.5 px-6 rounded-xl font-medium text-base hover:opacity-90 transition-opacity shadow-md shadow-[#ff5538]/25 disabled:opacity-70 disabled:cursor-not-allowed"
           >
-            {isSubmitting ? "در حال پردازش…" : paymentMethod === "wallet" ? "پرداخت از کیف پول" : "انتقال به درگاه پرداخت"}
+            {isSubmitting
+              ? "در حال پردازش…"
+              : paymentMethod === "wallet"
+              ? "پرداخت از کیف پول"
+              : "ثبت سفارش و ارسال اطلاعات کارت"}
           </button>
         </div>
       </div>

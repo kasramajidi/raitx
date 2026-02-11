@@ -43,7 +43,7 @@ const nextConfig: NextConfig = {
     ],
     unoptimized: false,
     loader: "default",
-    qualities: [100, 25, 50, 75, 90, 92],
+    qualities: [100, 25, 50, 75, 90, 92, 95],
   },
 };
 

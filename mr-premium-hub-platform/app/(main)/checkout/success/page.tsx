@@ -23,6 +23,15 @@ function CheckoutSuccessContent() {
     let cancelled = false;
     (async () => {
       try {
+        const orderId = searchParams.get("orderId");
+        if (orderId?.trim()) {
+          await fetch(`/api/order?id=${encodeURIComponent(orderId.trim())}`, {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ isPaid: true, status: "پرداخت شده" }),
+          });
+        }
+        if (cancelled) return;
         const list = await fetchInvoicesForUser();
         const unpaid = list.filter((item) => item.id != null && !item.isPaid);
         for (const item of unpaid) {
@@ -38,7 +47,7 @@ function CheckoutSuccessContent() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="mt-8 rounded-2xl bg-emerald-50 border border-emerald-200 p-8 text-center max-w-lg mx-auto">
