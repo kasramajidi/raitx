@@ -281,13 +281,13 @@ export default function OrderSummary({
                 setIsSubmitting(false);
               }
             }}
-            className="w-full bg-[#ff5538] text-white py-3.5 px-6 rounded-xl font-medium text-base hover:opacity-90 transition-opacity shadow-md shadow-[#ff5538]/25 disabled:opacity-70 disabled:cursor-not-allowed"
+            className="w-full bg-[#ff5538] text-white py-3.5 px-6 rounded-xl font-medium text-base hover:opacity-90 transition-opacity shadow-md shadow-[#ff5538]/25 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
           >
             {isSubmitting
               ? "در حال پردازش…"
               : paymentMethod === "wallet"
               ? "پرداخت از کیف پول"
-              : "ثبت سفارش و ارسال اطلاعات کارت"}
+              : "ثبت سفارش"}
           </button>
         </div>
       </div>

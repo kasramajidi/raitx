@@ -177,7 +177,7 @@ export default function ServiceForm({
                 type="button"
                 onClick={handleRegisterOrder}
                 disabled={submitting}
-                className="w-full text-white text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-opacity hover:opacity-90 disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full text-white text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-opacity hover:opacity-90 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
                 style={{ backgroundColor: "#ff5538" }}
               >
                 {submitting ? "در حال ثبت…" : "ثبت سفارش"}
@@ -198,7 +198,7 @@ export default function ServiceForm({
               </p>
               <Link
                 href={`/auth?next=${encodeURIComponent(`/currency-payment/${service.id}`)}`}
-                className="block w-full text-white text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-opacity hover:opacity-90 text-center"
+                className="block w-full text-white text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-opacity hover:opacity-90 text-center cursor-pointer"
                 style={{ backgroundColor: "#ff5538" }}
               >
                 ورود / ثبت‌نام
@@ -212,22 +212,14 @@ export default function ServiceForm({
                 ? service.id === "international-sim"
                   ? "یک سیم کارت را از لیست زیر انتخاب کنید."
                   : "محصول مورد نظر را از لیست زیر انتخاب کنید."
-                : "اگر ثبت‌نام نکرده‌اید به صفحه ثبت‌نام و اگر وارد شده‌اید به سبد خرید منتقل می‌شوید."}
+                : "محصول مورد نظر را از لیست زیر انتخاب کنید."}
             </p>
             <button
               type="button"
-              onClick={() => {
-                const loginPhone = getLoginPhoneFromStorage();
-                if (!loginPhone?.trim()) {
-                  router.push("/auth?mode=register&next=/cart");
-                  return;
-                }
-                router.push("/cart");
-              }}
-              className="w-full text-center text-white text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg transition-opacity hover:opacity-90"
-              style={{ backgroundColor: "#ff5538" }}
+              disabled
+              className="w-full text-center text-gray-400 text-xs sm:text-sm font-medium py-2.5 sm:py-3 px-4 sm:px-6 rounded-lg cursor-not-allowed bg-gray-200"
             >
-              ثبت سفارش
+              ابتدا یک گزینه از لیست زیر انتخاب کنید
             </button>
           </div>
         )}

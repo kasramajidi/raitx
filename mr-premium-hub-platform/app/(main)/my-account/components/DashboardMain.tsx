@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Info, Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Info, Plus } from "lucide-react";
 import {
   fetchWalletBalance,
   fetchInvoicesForUser,
