@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
 import { getRecentOrders, type OrderItem } from "../lib/dashboard-api";
 
 export default function RecentOrders() {
@@ -36,12 +35,12 @@ export default function RecentOrders() {
     <div className="bg-white rounded-xl border border-gray-200/80 overflow-hidden shadow-sm">
       <div className="flex items-center justify-between px-4 sm:px-6 py-4 border-b border-gray-100">
         <h3 className="text-sm font-semibold text-gray-900">سفارشات اخیر</h3>
-        <Link
-          href="/admin/orders"
+        <a
+          href="/admin/orders/"
           className="text-xs sm:text-sm text-[#ff5538] hover:underline font-medium"
         >
           مشاهده همه
-        </Link>
+        </a>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">

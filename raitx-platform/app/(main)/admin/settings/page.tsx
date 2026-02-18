@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
 import AdminLayout from "../components/AdminLayout";
 import AdminStatsCards from "../components/AdminStatsCards";
 
@@ -29,10 +28,10 @@ function Field({
 }
 
 const quickLinks = [
-  { label: "داشبورد", href: "/admin" },
-  { label: "مقالات", href: "/admin/articles" },
-  { label: "محصولات", href: "/admin/products" },
-  { label: "سفارشات", href: "/admin/orders" },
+  { label: "داشبورد", href: "/admin/" },
+  { label: "مقالات", href: "/admin/articles/" },
+  { label: "محصولات", href: "/admin/products/" },
+  { label: "سفارشات", href: "/admin/orders/" },
 ];
 
 const settingsStats = [
@@ -204,13 +203,13 @@ export default function SettingsPage() {
               </div>
               <nav className="p-2">
                 {quickLinks.map((item) => (
-                  <Link
+                  <a
                     key={item.href}
                     href={item.href}
                     className="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
                   >
                     {item.label}
-                  </Link>
+                  </a>
                 ))}
               </nav>
             </div>

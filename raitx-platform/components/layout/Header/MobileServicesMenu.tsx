@@ -1,26 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { HiChevronDown } from "react-icons/hi";
 
 interface ServiceItem {
   label: string;
-  labelEn?: string;
   href: string;
-  icon?: React.ReactNode;
 }
 
 const services: ServiceItem[] = [
-  {
-    label: "کارت های اعتباری",
-    href: "/valid-cards",
-  },
-  {
-    label: "پرداخت ارزی",
-    href: "/currency-payment",
-  },
+  { label: "کارت های اعتباری", href: "/valid-cards/" },
+  { label: "پرداخت ارزی", href: "/currency-payment/" },
 ];
 
 interface MobileServicesMenuProps {
@@ -67,23 +58,23 @@ export default function MobileServicesMenu({
           {services.map((service) => {
             const isServiceActive =
               pathname === service.href ||
-              pathname?.startsWith(service.href + "/");
+              pathname?.startsWith(service.href.replace(/\/$/, "") + "/");
             return (
-              <Link
+              <a
                 key={service.href}
                 href={service.href}
                 onClick={handleClose}
                 className={`
-                  block px-10 py-3 text-sm transition-colors duration-150
+                  block w-full text-right px-10 py-3 text-sm transition-colors duration-150 border-b border-gray-200 last:border-b-0
                   ${
                     isServiceActive
-                      ? "text-gray-900 font-medium"
-                      : "text-gray-600 hover:text-gray-900"
+                      ? "text-gray-900 font-medium bg-white"
+                      : "text-gray-600 hover:text-gray-900 hover:bg-white/50"
                   }
                 `}
               >
                 {service.label}
-              </Link>
+              </a>
             );
           })}
         </div>

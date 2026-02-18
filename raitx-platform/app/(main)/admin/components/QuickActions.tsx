@@ -1,13 +1,12 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 
 const actions = [
-  { name: "افزودن مقاله", href: "/admin/articles", icon: "➕" },
-  { name: "افزودن محصول", href: "/admin/products", icon: "➕" },
-  { name: "مدیریت کاربران", href: "/admin/users", icon: "👥" },
-  { name: "تنظیمات", href: "/admin/settings", icon: "⚙️" },
+  { name: "افزودن مقاله", href: "/admin/articles/", icon: "➕" },
+  { name: "افزودن محصول", href: "/admin/products/", icon: "➕" },
+  { name: "مدیریت کاربران", href: "/admin/users/", icon: "👥" },
+  { name: "تنظیمات", href: "/admin/settings/", icon: "⚙️" },
 ];
 
 export default function QuickActions() {
@@ -18,14 +17,14 @@ export default function QuickActions() {
       </h3>
       <div className="space-y-0.5">
         {actions.map((action) => (
-          <Link
+          <a
             key={action.href}
             href={action.href}
             className="flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
           >
             <span className="text-base">{action.icon}</span>
             <span>{action.name}</span>
-          </Link>
+          </a>
         ))}
       </div>
     </div>

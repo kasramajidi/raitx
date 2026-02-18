@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { getAuthCookie } from "@/app/(main)/auth/lib/cookie";
 import { useCart, type CartItem } from "../context/CartContext";
 import MainContainer from "./Components/ui/MainContainer";
@@ -46,7 +45,6 @@ function deserializeFromStorage(stored: StoredOrderDetails): OrderDetailsData {
 export default function Cart() {
   const { items, removeFromCart, updateQuantity, getTotalPrice, clearCart } =
     useCart();
-  const router = useRouter();
   const [mounted, setMounted] = useState(false);
   const [expandedAccordion, setExpandedAccordion] = useState<number | null>(null);
   const [orderDetailsByIndex, setOrderDetailsByIndex] = useState<Record<number, OrderDetailsData>>({});
@@ -57,14 +55,7 @@ export default function Cart() {
     setMounted(true);
   }, []);
 
-  useEffect(() => {
-    if (!mounted) return;
-    const hasUser = typeof window !== "undefined" && (localStorage.getItem("user") || getAuthCookie());
-    if (!hasUser) {
-      router.replace("/auth?next=/cart");
-      return;
-    }
-  }, [mounted, router]);
+  // در خروجی استاتیک API نداریم؛ فقط برای ادامهٔ پرداخت چک می‌کنیم
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -98,7 +89,7 @@ export default function Cart() {
     } catch {
       localStorage.removeItem(CART_ORDER_DETAILS_STORAGE_KEY);
     }
-  }, [router]);
+  }, []);
 
   const getOrderDetails = (index: number): OrderDetailsData =>
     orderDetailsByIndex[index] ?? defaultOrderDetails;
@@ -112,6 +103,11 @@ export default function Cart() {
   };
 
   const saveToLocalStorageAndGoToCheckout = () => {
+    const hasUser = typeof window !== "undefined" && (localStorage.getItem("user") || getAuthCookie());
+    if (!hasUser) {
+      window.location.href = "/auth/?next=/cart/";
+      return;
+    }
     const orderDetailsSerialized: Record<string, StoredOrderDetails> = {};
     for (const [key, data] of Object.entries(orderDetailsByIndex)) {
       orderDetailsSerialized[key] = serializeForStorage(data);
@@ -131,7 +127,7 @@ export default function Cart() {
     } catch {
       // ignore
     }
-    router.push("/checkout");
+    window.location.href = "/checkout/";
   };
 
   const formatPrice = (price: number): string => {
@@ -174,15 +170,6 @@ export default function Cart() {
     );
   }
 
-  const hasUser = typeof window !== "undefined" && (localStorage.getItem("user") || getAuthCookie());
-  if (!hasUser) {
-    return (
-      <div className="bg-gray-50 py-8 min-h-screen flex items-center justify-center">
-        <p className="text-gray-500 text-sm">در حال انتقال به صفحهٔ ورود…</p>
-      </div>
-    );
-  }
-
   if (items.length === 0) {
     return (
       <div className="bg-gray-50 py-8 min-h-screen">
@@ -194,12 +181,12 @@ export default function Cart() {
                 سبد خرید شما در حال حاضر خالی است
               </h2>
             </div>
-            <button
-              onClick={() => router.push("/")}
-              className="bg-[#ff5538] mt-4 text-white px-6 sm:px-8 py-2 rounded-xl cursor-pointer hover:opacity-90 transition-opacity text-sm sm:text-base font-medium"
+            <a
+              href="/"
+              className="inline-block bg-[#ff5538] mt-4 text-white px-6 sm:px-8 py-2 rounded-xl cursor-pointer hover:opacity-90 transition-opacity text-sm sm:text-base font-medium text-center"
             >
               بازگشت به فروشگاه
-            </button>
+            </a>
           </div>
         </MainContainer>
       </div>

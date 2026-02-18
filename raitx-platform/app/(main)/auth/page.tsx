@@ -1,17 +1,31 @@
 "use client";
 
-import { useState, Suspense } from "react";
-import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 import LoginForm from "@/app/(main)/auth/Components/LoginForm";
 import RegisterForm from "@/app/(main)/auth/Components/RegisterForm";
 import MainContainer from "@/app/(main)/auth/Components/ui/MainContainer";
 
-function AuthContent() {
-  const searchParams = useSearchParams();
-  const next = searchParams.get("next") ?? undefined;
-  const modeRegister = searchParams.get("mode") === "register";
-  const [isLogin, setIsLogin] = useState(!modeRegister);
-  const [initialPhone, setInitialPhone] = useState("");
+function getInitialState() {
+  if (typeof window === "undefined")
+    return { next: undefined as string | undefined, modeRegister: false, initialPhone: "" };
+  const p = new URLSearchParams(window.location.search);
+  return {
+    next: p.get("next") ?? undefined,
+    modeRegister: p.get("mode") === "register",
+    initialPhone: "",
+  };
+}
+
+export default function AuthPage() {
+  const [state, setState] = useState(getInitialState);
+  const [isLogin, setIsLogin] = useState(!state.modeRegister);
+  const [initialPhone, setInitialPhone] = useState(state.initialPhone);
+
+  useEffect(() => {
+    const s = getInitialState();
+    setState(s);
+    setIsLogin(!s.modeRegister);
+  }, []);
 
   return (
     <main className="min-h-screen bg-white pt-8 sm:pt-12 md:pt-16 pb-8 sm:pb-12 md:pb-16">
@@ -21,7 +35,7 @@ function AuthContent() {
             <LoginForm
               initialPhone={initialPhone}
               onSwitchToRegister={() => setIsLogin(false)}
-              redirectNext={next}
+              redirectNext={state.next}
             />
           ) : (
             <RegisterForm
@@ -34,13 +48,5 @@ function AuthContent() {
         </MainContainer>
       </div>
     </main>
-  );
-}
-
-export default function AuthPage() {
-  return (
-    <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-gray-500">در حال بارگذاری…</div>}>
-      <AuthContent />
-    </Suspense>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import Link from "next/link";
 
 interface BreadcrumbBoxProps {
   pageName: string;
@@ -28,12 +27,12 @@ const BreadcrumbBox = ({ pageName }: BreadcrumbBoxProps) => {
           />
         </svg>
         <div className="flex items-center gap-1 sm:gap-2 flex-wrap justify-center text-center">
-          <Link
+          <a
             href="/"
             className="text-gray-800 font-bold text-xs sm:text-sm hover:text-[#ff5538] transition-colors"
           >
             خانه
-          </Link>
+          </a>
           <span className="text-gray-600 text-xs sm:text-sm">/</span>
           <span className="text-gray-800 font-bold text-xs sm:text-sm wrap-break-word">
             {pageName}

@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { FiShoppingCart } from "react-icons/fi";
 
 interface CartIconProps {
@@ -9,8 +8,8 @@ interface CartIconProps {
 
 export default function CartIcon({ cartCount = 0 }: CartIconProps) {
   return (
-    <Link
-      href="/cart"
+    <a
+      href="/cart/"
       className="relative inline-flex items-center justify-center text-gray-700 hover:text-[#ff5538] transition-colors duration-200 p-1.5 sm:p-2 md:p-2 lg:p-2 rounded-lg hover:bg-[#ff5538]/10 cursor-pointer"
       aria-label="سبد خرید"
     >
@@ -20,7 +19,7 @@ export default function CartIcon({ cartCount = 0 }: CartIconProps) {
           {cartCount > 99 ? "99+" : cartCount}
         </span>
       )}
-    </Link>
+    </a>
   );
 }
 

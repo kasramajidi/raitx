@@ -1,11 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
 
 export default function AdminHeader() {
-  const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
 
   const handleLogout = async () => {
@@ -13,13 +10,11 @@ export default function AdminHeader() {
     setLoggingOut(true);
     try {
       await fetch("/api/admin-logout", { method: "POST" });
-      router.push("/admin/login");
-      router.refresh();
     } catch {
-      router.push("/admin/login");
-    } finally {
-      setLoggingOut(false);
+      // در خروجی استاتیک API وجود ندارد
     }
+    window.location.href = "/admin/login/";
+    setLoggingOut(false);
   };
 
   return (
@@ -30,12 +25,12 @@ export default function AdminHeader() {
             پنل مدیریت
           </h2>
           <div className="flex items-center gap-3 sm:gap-4">
-            <Link
+            <a
               href="/"
               className="text-xs sm:text-sm text-gray-500 hover:text-[#ff5538] transition-colors"
             >
               بازگشت به سایت
-            </Link>
+            </a>
             <button
               type="button"
               onClick={handleLogout}
